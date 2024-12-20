@@ -8,6 +8,7 @@ import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 
 type Props = {
+  testID?: string;
   checked: boolean;
   onPress: () => void;
   size?: number;
@@ -15,6 +16,7 @@ type Props = {
 };
 
 export const Checkbox: React.FC<Props> = ({
+  testID,
   checked,
   onPress,
   size = 20,
@@ -24,7 +26,10 @@ export const Checkbox: React.FC<Props> = ({
   const styles = createStyles(theme);
 
   return (
-    <TouchableOpacity onPress={onPress} disabled={disabled}>
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      testID={testID ?? 'checkbox'}>
       <View
         style={[
           styles.checkbox,
@@ -32,7 +37,12 @@ export const Checkbox: React.FC<Props> = ({
           checked ? styles.checkedBox : styles.uncheckedBox,
         ]}>
         {checked && (
-          <Icon source="check" size={size * 0.7} color={theme.colors.surface} />
+          <Icon
+            source="check"
+            size={size * 0.7}
+            color={theme.colors.surface}
+            testID="check-icon"
+          />
         )}
       </View>
     </TouchableOpacity>

@@ -7,7 +7,7 @@ import {useTheme} from '../../../hooks';
 
 import {createStyles} from './styles';
 
-import {formatBytes} from '../../../utils';
+import {formatBytes, formatNumber} from '../../../utils';
 import {BenchmarkResult} from '../../../utils/types';
 
 type Props = {
@@ -15,10 +15,6 @@ type Props = {
   onDelete: (timestamp: string) => void;
   onShare: (result: BenchmarkResult) => Promise<void>;
 };
-
-const formatSize = (bytes: number) =>
-  `${(bytes / 1024.0 / 1024.0 / 1024.0).toFixed(2)} GiB`;
-const formatParams = (params: number) => `${(params / 1e9).toFixed(2)}B`;
 
 export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
   const theme = useTheme();
@@ -68,8 +64,8 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
               {result.modelName}
             </Text>
             <Text style={styles.modelMeta}>
-              {formatSize(result.modelSize)} •{' '}
-              {formatParams(result.modelNParams)} params
+              {formatBytes(result.modelSize)} •{' '}
+              {formatNumber(result.modelNParams, 2, true, false)} params
             </Text>
           </View>
           <Button
@@ -164,6 +160,7 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
           ) : (
             <View style={styles.actionContainer}>
               <Button
+                testID="submit-benchmark-button"
                 mode="outlined"
                 onPress={handleSubmit}
                 loading={isSubmitting}

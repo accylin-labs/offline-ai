@@ -391,6 +391,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
 
   const renderShareDialog = () => (
     <Dialog
+      testID="share-benchmark-dialog"
       visible={showShareDialog}
       onDismiss={() => {
         setShowShareDialog(false);
@@ -400,6 +401,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
       scrollable
       actions={[
         {
+          testID: 'share-benchmark-dialog-cancel-button',
           label: 'Cancel',
           onPress: () => {
             setShowShareDialog(false);
@@ -408,6 +410,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
           disabled: isSubmitting,
         },
         {
+          testID: 'share-benchmark-dialog-confirm-button',
           label: isSubmitting ? 'Sharing...' : 'Share',
           onPress: handleConfirmShare,
           mode: 'contained',
@@ -522,6 +525,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
                 <View style={styles.resultsHeader}>
                   <Text variant="titleSmall">Test Results</Text>
                   <Button
+                    testID="clear-all-button"
                     mode="text"
                     onPress={handleDeleteAll}
                     icon="delete"
@@ -561,15 +565,18 @@ export const BenchmarkScreen: React.FC = observer(() => {
             </Dialog>
 
             <Dialog
+              testID="clear-all-dialog"
               visible={deleteAllConfirmVisible}
               onDismiss={() => setDeleteAllConfirmVisible(false)}
               title="Clear All Results"
               actions={[
                 {
+                  testID: 'clear-all-dialog-cancel-button',
                   label: 'Cancel',
                   onPress: () => setDeleteAllConfirmVisible(false),
                 },
                 {
+                  testID: 'clear-all-dialog-confirm-button',
                   label: 'Clear All',
                   onPress: handleConfirmDeleteAll,
                 },

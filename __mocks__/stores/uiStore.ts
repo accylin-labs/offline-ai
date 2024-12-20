@@ -8,6 +8,9 @@ export class UIStore {
 export const mockUiStore = {
   colorScheme: 'light',
   autoNavigatetoChat: false,
+  benchmarkShareDialog: {
+    shouldShow: true,
+  },
   pageStates: {
     modelsScreen: {
       filters: [],

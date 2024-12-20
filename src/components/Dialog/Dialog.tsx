@@ -22,9 +22,11 @@ export interface DialogAction {
   mode?: 'text' | 'contained' | 'outlined';
   loading?: boolean;
   disabled?: boolean;
+  testID?: string;
 }
 
 interface CustomDialogProps {
+  testID?: string;
   visible: boolean;
   onDismiss: () => void;
   title: string;
@@ -41,6 +43,7 @@ interface CustomDialogProps {
 }
 
 export const Dialog: React.FC<CustomDialogProps> = ({
+  testID,
   visible,
   onDismiss,
   title,
@@ -148,6 +151,7 @@ export const Dialog: React.FC<CustomDialogProps> = ({
   return (
     <Portal>
       <PaperDialog
+        testID={testID}
         dismissableBackButton={dismissableBackButton}
         dismissable={dismissable}
         visible={visible}
@@ -163,6 +167,7 @@ export const Dialog: React.FC<CustomDialogProps> = ({
               {actions.map(action => (
                 <Button
                   key={action.label}
+                  testID={action.testID}
                   mode={action.mode || 'text'}
                   onPress={action.onPress}
                   loading={action.loading}

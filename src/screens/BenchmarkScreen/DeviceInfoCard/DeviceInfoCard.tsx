@@ -73,7 +73,7 @@ export const DeviceInfoCard = ({onDeviceInfo}: Props) => {
   const [deviceInfo, setDeviceInfo] = useState({
     model: RNDeviceInfo.getModel(),
     systemName: Platform.OS === 'ios' ? 'iOS' : 'Android',
-    systemVersion: Platform.Version.toString(),
+    systemVersion: String(Platform.Version || ''),
     brand: RNDeviceInfo.getBrand(),
     cpuArch: [] as string[],
     isEmulator: false,
@@ -116,7 +116,7 @@ export const DeviceInfoCard = ({onDeviceInfo}: Props) => {
         const newDeviceInfo = {
           model: RNDeviceInfo.getModel(),
           systemName: Platform.OS === 'ios' ? 'iOS' : 'Android',
-          systemVersion: Platform.Version.toString(),
+          systemVersion: String(Platform.Version || ''),
           brand: RNDeviceInfo.getBrand(),
           version: RNDeviceInfo.getVersion(),
           buildNumber: RNDeviceInfo.getBuildNumber(),
