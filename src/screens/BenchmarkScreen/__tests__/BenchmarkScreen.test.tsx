@@ -124,9 +124,7 @@ describe('BenchmarkScreen', () => {
       fireEvent.press(getByTestId('start-test-button'));
 
       expect(getByTestId('loading-indicator-benchmark')).toBeDefined();
-      expect(
-        getByText('Please keep this screen open until the test completes'),
-      ).toBeDefined();
+      expect(getByText('Please keep this screen open.')).toBeDefined();
     });
 
     it('should disable start button during benchmark execution', async () => {
