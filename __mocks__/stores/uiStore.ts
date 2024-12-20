@@ -24,4 +24,5 @@ export const mockUiStore = {
   setAutoNavigateToChat: jest.fn(),
   setColorScheme: jest.fn(),
   setDisplayMemUsage: jest.fn(),
+  setBenchmarkShareDialogPreference: jest.fn(),
 };

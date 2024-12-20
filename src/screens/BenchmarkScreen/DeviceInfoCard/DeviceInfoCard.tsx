@@ -65,9 +65,10 @@ const getCPUInfo = async () => {
 
 type Props = {
   onDeviceInfo?: (info: DeviceInfo) => void;
+  testId?: string;
 };
 
-export const DeviceInfoCard = ({onDeviceInfo}: Props) => {
+export const DeviceInfoCard = ({onDeviceInfo, testId}: Props) => {
   const theme = useTheme();
   const styles = createStyles(theme);
   const [deviceInfo, setDeviceInfo] = useState({
@@ -154,7 +155,10 @@ export const DeviceInfoCard = ({onDeviceInfo}: Props) => {
   };
 
   return (
-    <Card elevation={0} style={styles.deviceInfoCard}>
+    <Card
+      testID={testId ?? 'device-info-card'}
+      elevation={0}
+      style={styles.deviceInfoCard}>
       <TouchableOpacity onPress={() => setExpanded(!expanded)}>
         <View style={styles.headerRow}>
           <View style={styles.headerContent}>

@@ -300,15 +300,18 @@ export const BenchmarkScreen: React.FC = observer(() => {
   const renderSlider = ({
     name,
     step = 1,
+    testId,
   }: {
     name: keyof typeof BENCHMARK_PARAMS_METADATA;
     step?: number;
+    testId?: string;
   }) => (
     <View style={styles.settingItem}>
       <Text variant="labelSmall" style={styles.settingLabel}>
         {name.toUpperCase()}
       </Text>
       <Slider
+        testID={testId ?? `${name}-slider`}
         style={styles.slider}
         minimumValue={BENCHMARK_PARAMS_METADATA[name].validation.min}
         maximumValue={BENCHMARK_PARAMS_METADATA[name].validation.max}
@@ -340,6 +343,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
 
   const renderAdvancedSettings = () => (
     <Dialog
+      testID="advanced-settings-dialog"
       visible={showAdvancedDialog}
       onDismiss={() => setShowAdvancedDialog(false)}
       title="Advanced Settings"
@@ -427,6 +431,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
       </View>
 
       <Button
+        testID="share-benchmark-dialog-view-raw-data-button"
         mode="text"
         onPress={() => setShowDetails(!showDetails)}
         icon={showDetails ? 'chevron-up' : 'chevron-down'}
@@ -435,7 +440,9 @@ export const BenchmarkScreen: React.FC = observer(() => {
       </Button>
 
       {showDetails && pendingShareResult && deviceInfo && (
-        <View style={styles.detailsContainer}>
+        <View
+          testID="share-benchmark-dialog-raw-data-container"
+          style={styles.detailsContainer}>
           <Text variant="bodySmall" style={styles.codeBlock}>
             {JSON.stringify(
               {
@@ -453,6 +460,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
 
       <View style={styles.checkboxContainer}>
         <Checkbox
+          testID="dont-show-again-checkbox"
           checked={dontShowAgain}
           onPress={() => setDontShowAgain(!dontShowAgain)}
         />
@@ -476,7 +484,10 @@ export const BenchmarkScreen: React.FC = observer(() => {
 
             {modelStore.loadingModel ? (
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" />
+                <ActivityIndicator
+                  testID="loading-indicator-model-init"
+                  size="large"
+                />
                 <Text style={styles.loadingText}>Initializing model...</Text>
               </View>
             ) : (
@@ -488,6 +499,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
                 ) : (
                   <>
                     <Button
+                      testID="advanced-settings-button"
                       mode="text"
                       onPress={() => setShowAdvancedDialog(true)}
                       icon="tune"
@@ -498,6 +510,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
                     {!isRunning && renderWarningMessage()}
 
                     <Button
+                      testID="start-test-button"
                       mode="contained"
                       onPress={runBenchmark}
                       disabled={isRunning}
@@ -507,7 +520,10 @@ export const BenchmarkScreen: React.FC = observer(() => {
 
                     {isRunning && (
                       <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" />
+                        <ActivityIndicator
+                          testID="loading-indicator-benchmark"
+                          size="large"
+                        />
                         <Text style={styles.warningText}>
                           Please keep this screen open until the test completes
                         </Text>

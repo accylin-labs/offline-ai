@@ -1,42 +1,39 @@
-import {makeAutoObservable} from 'mobx';
 import {BenchmarkResult} from '../../src/utils/types';
 import {mockResult} from '../../jest/fixtures/benchmark';
 
-class MockBenchmarkStore {
-  results: BenchmarkResult[] = [mockResult];
+// Create mock functions
+const mockRemoveResult = jest.fn((timestamp: string) => {
+  benchmarkStore.results = benchmarkStore.results.filter(
+    result => result.timestamp !== timestamp,
+  );
+});
 
-  constructor() {
-    makeAutoObservable(this);
+const mockClearResults = jest.fn(() => {
+  benchmarkStore.results = [];
+});
+
+const mockAddResult = jest.fn((result: BenchmarkResult) => {
+  benchmarkStore.results.unshift(result);
+});
+
+const mockMarkAsSubmitted = jest.fn((uuid: string) => {
+  const result = benchmarkStore.results.find(r => r.uuid === uuid);
+  if (result) {
+    result.submitted = true;
   }
+});
 
-  addResult = jest.fn((result: BenchmarkResult) => {
-    this.results.unshift(result);
-  });
+const mockGetResultsByModel = jest.fn((modelId: string): BenchmarkResult[] => {
+  return benchmarkStore.results.filter(result => result.modelId === modelId);
+});
 
-  removeResult = jest.fn((timestamp: string) => {
-    this.results = this.results.filter(
-      result => result.timestamp !== timestamp,
-    );
-  });
-
-  clearResults = jest.fn(() => {
-    this.results = [];
-  });
-
-  getResultsByModel = jest.fn((modelId: string): BenchmarkResult[] => {
-    return this.results.filter(result => result.modelId === modelId);
-  });
-
-  get latestResult(): BenchmarkResult | undefined {
-    return this.results[0];
-  }
-
-  markAsSubmitted = jest.fn((uuid: string) => {
-    const result = this.results.find(r => r.uuid === uuid);
-    if (result) {
-      result.submitted = true;
-    }
-  });
-}
-
-export const mockBenchmarkStore = new MockBenchmarkStore();
+// Define the mockBenchmarkStore
+export const benchmarkStore = {
+  results: [mockResult],
+  addResult: mockAddResult,
+  removeResult: mockRemoveResult,
+  clearResults: mockClearResults,
+  markAsSubmitted: mockMarkAsSubmitted,
+  getResultsByModel: mockGetResultsByModel,
+  latestResult: mockResult,
+};

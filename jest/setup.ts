@@ -32,7 +32,7 @@ import {mockUiStore} from '../__mocks__/stores/uiStore';
 import {mockHFStore} from '../__mocks__/stores/hfStore';
 import {mockModelStore} from '../__mocks__/stores/modelStore';
 import {mockChatSessionStore} from '../__mocks__/stores/chatSessionStore';
-import {mockBenchmarkStore} from '../__mocks__/stores/benchmarkStore';
+import {benchmarkStore as mockBenchmarkStore} from '../__mocks__/stores/benchmarkStore';
 
 jest.mock('@react-native-clipboard/clipboard', () => mockClipboard);
 

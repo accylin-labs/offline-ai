@@ -69,6 +69,7 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
             </Text>
           </View>
           <Button
+            testID="delete-result-button"
             mode="text"
             onPress={() => onDelete(result.timestamp)}
             icon="delete"
