@@ -39,7 +39,7 @@ export const createStyles = (theme: Theme) =>
       marginTop: 4,
     },
     section: {
-      marginBottom: 16,
+      marginVertical: 8,
     },
     sectionTitle: {
       color: theme.colors.primary,

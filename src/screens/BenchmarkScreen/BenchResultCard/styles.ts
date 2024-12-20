@@ -110,6 +110,15 @@ export const createStyles = (theme: Theme) =>
       color: theme.colors.primary,
       fontSize: 12,
     },
+    tooltipContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    infoIcon: {
+      fontSize: 14,
+      opacity: 0.6,
+    },
     disabledText: {
       color: theme.colors.onSurfaceVariant,
       fontSize: 12,

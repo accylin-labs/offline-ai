@@ -387,7 +387,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
   const renderWarningMessage = () => (
     <View style={styles.warningContainer}>
       <Text variant="bodySmall" style={styles.warningText}>
-        Note: Test could run for up to 2-3 minutes for larger models and cannot
+        Note: Test could run for up to 2-5 minutes for larger models and cannot
         be interrupted once started.
       </Text>
     </View>
@@ -525,7 +525,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
                           size="large"
                         />
                         <Text style={styles.warningText}>
-                          Please keep this screen open until the test completes
+                          Please keep this screen open.
                         </Text>
                       </View>
                     )}

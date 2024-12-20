@@ -148,15 +148,21 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
             </View>
           ) : !result.oid ? (
             <Tooltip title="Local model results cannot be shared">
-              <Text variant="bodySmall" style={styles.disabledText}>
-                Cannot share
-              </Text>
+              <View style={styles.tooltipContainer}>
+                <Text variant="bodySmall" style={styles.disabledText}>
+                  Cannot share
+                </Text>
+                <Text style={styles.infoIcon}>ⓘ</Text>
+              </View>
             </Tooltip>
           ) : result.config.label === 'Custom' ? (
             <Tooltip title="Custom benchmark results cannot be shared">
-              <Text variant="bodySmall" style={styles.disabledText}>
-                Cannot share
-              </Text>
+              <View style={styles.tooltipContainer}>
+                <Text variant="bodySmall" style={styles.disabledText}>
+                  Cannot share
+                </Text>
+                <Text style={styles.infoIcon}>ⓘ</Text>
+              </View>
             </Tooltip>
           ) : (
             <View style={styles.actionContainer}>

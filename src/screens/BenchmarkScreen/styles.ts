@@ -29,7 +29,7 @@ export const createStyles = (theme: Theme) =>
     },
     loadingContainer: {
       alignItems: 'center',
-      marginVertical: 16,
+      marginVertical: 8,
     },
     loadingText: {
       marginTop: 8,
@@ -99,7 +99,7 @@ export const createStyles = (theme: Theme) =>
     },
     warningText: {
       color: theme.colors.error,
-      marginBottom: 4,
+      marginVertical: 4,
     },
     resultsHeader: {
       flexDirection: 'row',
