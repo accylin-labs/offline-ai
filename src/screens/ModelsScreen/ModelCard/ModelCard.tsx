@@ -1,5 +1,5 @@
 import React, {useCallback, useState, useEffect} from 'react';
-import {Alert, Linking, View, Image} from 'react-native';
+import {Alert, Linking, View} from 'react-native';
 
 import {observer} from 'mobx-react-lite';
 import {useNavigation} from '@react-navigation/native';
@@ -300,12 +300,6 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
             isActiveModel && {backgroundColor: theme.colors.tertiaryContainer},
             {borderColor: theme.colors.primary},
           ]}>
-          {isHfModel && (
-            <Image
-              source={require('../../../assets/icon-hf.png')}
-              style={styles.hfBadge}
-            />
-          )}
           <View style={styles.cardInner}>
             <View style={styles.cardContent}>
               <View style={styles.headerRow}>
@@ -327,45 +321,52 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                   <Text style={styles.modelDescription}>
                     {getModelDescription(model, isActiveModel, modelStore)}
                   </Text>
+                  {model.description && (
+                    <View style={styles.descriptionContainer}>
+                      <Text style={styles.skillsLabel}>Skills: </Text>
+                      <Text style={styles.skillsText}>{model.description}</Text>
+                    </View>
+                  )}
                 </View>
               </View>
+
+              {/* Display warning icon if there's a memory warning */}
+              {shortMemoryWarning && isDownloaded && (
+                <TouchableRipple
+                  testID="memory-warning-button"
+                  onPress={handleWarningPress}
+                  style={styles.warningContainer}>
+                  <View style={styles.warningContent}>
+                    <IconButton
+                      icon="alert-circle-outline"
+                      iconColor={theme.colors.error}
+                      size={20}
+                      style={styles.warningIcon}
+                    />
+                    <Text style={styles.warningText}>{shortMemoryWarning}</Text>
+                  </View>
+                </TouchableRipple>
+              )}
+
+              {isDownloading && (
+                <>
+                  <ProgressBar
+                    testID="download-progress-bar"
+                    progress={modelStore.getDownloadProgress(model.id)}
+                    color={theme.colors.tertiary}
+                    style={styles.progressBar}
+                  />
+                  {model.downloadSpeed && (
+                    <Paragraph style={styles.downloadSpeed}>
+                      {model.downloadSpeed}
+                    </Paragraph>
+                  )}
+                </>
+              )}
             </View>
 
-            {/* Display warning icon if there's a memory warning */}
-            {shortMemoryWarning && isDownloaded && (
-              <TouchableRipple
-                testID="memory-warning-button"
-                onPress={handleWarningPress}
-                style={styles.warningContainer}>
-                <View style={styles.warningContent}>
-                  <IconButton
-                    icon="alert-circle-outline"
-                    iconColor={theme.colors.error}
-                    size={20}
-                    style={styles.warningIcon}
-                  />
-                  <Text style={styles.warningText}>{shortMemoryWarning}</Text>
-                </View>
-              </TouchableRipple>
-            )}
-
-            {isDownloading && (
-              <>
-                <ProgressBar
-                  testID="download-progress-bar"
-                  progress={modelStore.getDownloadProgress(model.id)}
-                  color={theme.colors.tertiary}
-                  style={styles.progressBar}
-                />
-                {model.downloadSpeed && (
-                  <Paragraph style={styles.downloadSpeed}>
-                    {model.downloadSpeed}
-                  </Paragraph>
-                )}
-              </>
-            )}
-
             <Divider style={styles.divider} />
+
             {isDownloaded ? (
               <Card.Actions style={styles.actions}>
                 <Button

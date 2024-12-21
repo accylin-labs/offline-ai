@@ -674,6 +674,7 @@ class ModelStore {
       author: '',
       name: filename,
       size: 0, // Placeholder for UI to ignore
+      description: '',
       params: 0, // Placeholder for UI to ignore
       isDownloaded: true,
       downloadUrl: '',
