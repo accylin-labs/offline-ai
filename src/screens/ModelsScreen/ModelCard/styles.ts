@@ -142,6 +142,7 @@ export const createStyles = (theme: Theme) =>
     },
     storageErrorText: {
       fontWeight: 'bold',
+      marginHorizontal: 8,
     },
     loadingContainer: {
       flexDirection: 'row',
