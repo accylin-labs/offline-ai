@@ -2,7 +2,7 @@ import {Model, ModelOrigin} from '../utils/types';
 import {chatTemplates, defaultCompletionParams} from '../utils/chat';
 import {Platform} from 'react-native';
 
-export const MODEL_LIST_VERSION = 9;
+export const MODEL_LIST_VERSION = 10;
 
 const iosOnlyModels: Model[] = [];
 
