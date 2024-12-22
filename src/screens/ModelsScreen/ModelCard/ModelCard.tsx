@@ -28,7 +28,10 @@ import {uiStore, modelStore} from '../../../store';
 
 import {chatTemplates} from '../../../utils/chat';
 import {getModelDescription, L10nContext} from '../../../utils';
-import {validateCompletionSettings} from '../../../utils/modelSettings';
+import {
+  COMPLETION_PARAMS_METADATA,
+  validateCompletionSettings,
+} from '../../../utils/modelSettings';
 import {Model, ModelOrigin, RootDrawerParamList} from '../../../utils/types';
 
 type ChatScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList>;
@@ -100,15 +103,54 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     }, []);
 
     const handleSaveSettings = useCallback(() => {
-      const {isValid, errors} = validateCompletionSettings(
-        tempCompletionSettings,
+      // Convert string values to numbers where needed
+      const processedSettings = Object.entries(tempCompletionSettings).reduce(
+        (acc, [key, value]) => {
+          const metadata = COMPLETION_PARAMS_METADATA[key];
+          if (metadata?.validation.type === 'numeric') {
+            // Handle numeric conversion
+            let numValue: number;
+            if (typeof value === 'string') {
+              numValue = Number(value);
+            } else if (typeof value === 'number') {
+              numValue = value;
+            } else {
+              // If it's neither string nor number, treat as invalid. Most probably won't happen.
+              acc.errors[key] = 'Must be a valid number';
+              return acc;
+            }
+
+            if (Number.isNaN(numValue)) {
+              acc.errors[key] = 'Must be a valid number';
+            } else {
+              acc.settings[key] = numValue;
+            }
+          } else {
+            // For non-numeric values, keep as is
+            acc.settings[key] = value;
+          }
+          return acc;
+        },
+        {settings: {}, errors: {}} as {
+          settings: typeof tempCompletionSettings;
+          errors: Record<string, string>;
+        },
       );
 
-      if (!isValid) {
+      // Validate the converted values
+      const validationResult = validateCompletionSettings(
+        processedSettings.settings,
+      );
+      const allErrors = {
+        ...processedSettings.errors,
+        ...validationResult.errors,
+      };
+
+      if (Object.keys(allErrors).length > 0) {
         Alert.alert(
           'Invalid Values',
           'Please correct the following:\n' +
-            Object.entries(errors)
+            Object.entries(allErrors)
               .map(([key, msg]) => `• ${key}: ${msg}`)
               .join('\n'),
           [{text: 'OK'}],
@@ -118,7 +160,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
 
       // All validations passed, save the settings
       modelStore.updateModelChatTemplate(model.id, tempChatTemplate);
-      modelStore.updateCompletionSettings(model.id, tempCompletionSettings);
+      modelStore.updateCompletionSettings(model.id, processedSettings.settings);
       handleCloseSettings();
     }, [
       model.id,
