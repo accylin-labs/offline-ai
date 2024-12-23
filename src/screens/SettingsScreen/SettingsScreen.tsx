@@ -12,9 +12,9 @@ import {debounce} from 'lodash';
 import {observer} from 'mobx-react-lite';
 import Slider from '@react-native-community/slider';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Divider, Switch, Text, Card} from 'react-native-paper';
+import {Divider, Switch, Text, Card, Button, Icon} from 'react-native-paper';
 
-import {TextInput} from '../../components';
+import {TextInput, Menu} from '../../components';
 
 import {useTheme} from '../../hooks';
 
@@ -23,6 +23,8 @@ import {createStyles} from './styles';
 import {modelStore, uiStore} from '../../store';
 
 import {L10nContext} from '../../utils';
+import {CacheType} from '../../utils/types';
+
 export const SettingsScreen: React.FC = observer(() => {
   const l10n = useContext(L10nContext);
   const theme = useTheme();
@@ -32,6 +34,18 @@ export const SettingsScreen: React.FC = observer(() => {
   );
   const [isValidInput, setIsValidInput] = useState(true);
   const inputRef = useRef<RNTextInput>(null);
+  const [showKeyCacheMenu, setShowKeyCacheMenu] = useState(false);
+  const [showValueCacheMenu, setShowValueCacheMenu] = useState(false);
+  const [keyCacheAnchor, setKeyCacheAnchor] = useState<{x: number; y: number}>({
+    x: 0,
+    y: 0,
+  });
+  const [valueCacheAnchor, setValueCacheAnchor] = useState<{
+    x: number;
+    y: number;
+  }>({x: 0, y: 0});
+  const keyCacheButtonRef = useRef<View>(null);
+  const valueCacheButtonRef = useRef<View>(null);
 
   const debouncedUpdateStore = useRef(
     debounce((value: number) => {
@@ -54,6 +68,8 @@ export const SettingsScreen: React.FC = observer(() => {
     inputRef.current?.blur();
     setContextSize(modelStore.n_context.toString());
     setIsValidInput(true);
+    setShowKeyCacheMenu(false);
+    setShowValueCacheMenu(false);
   };
 
   const handleContextSizeChange = (text: string) => {
@@ -65,6 +81,39 @@ export const SettingsScreen: React.FC = observer(() => {
     } else {
       setIsValidInput(false);
     }
+  };
+
+  const cacheTypeOptions = [
+    {label: 'F16', value: CacheType.F16},
+    {label: 'F32', value: CacheType.F32},
+    {label: 'Q8_0', value: CacheType.Q8_0},
+    {label: 'Q4_0', value: CacheType.Q4_0},
+    {label: 'Q4_1', value: CacheType.Q4_1},
+    {label: 'IQ4_NL', value: CacheType.IQ4_NL},
+    {label: 'Q5_0', value: CacheType.Q5_0},
+    {label: 'Q5_1', value: CacheType.Q5_1},
+  ];
+
+  const getCacheTypeLabel = (value: CacheType) => {
+    return (
+      cacheTypeOptions.find(option => option.value === value)?.label || value
+    );
+  };
+
+  const handleKeyCachePress = () => {
+    keyCacheButtonRef.current?.measure((x, y, width, height, pageX, pageY) => {
+      setKeyCacheAnchor({x: pageX, y: pageY + height});
+      setShowKeyCacheMenu(true);
+    });
+  };
+
+  const handleValueCachePress = () => {
+    valueCacheButtonRef.current?.measure(
+      (x, y, width, height, pageX, pageY) => {
+        setValueCacheAnchor({x: pageX, y: pageY + height});
+        setShowValueCacheMenu(true);
+      },
+    );
   };
 
   return (
@@ -95,6 +144,139 @@ export const SettingsScreen: React.FC = observer(() => {
                 </View>
               </View>
               <Divider />
+
+              {/* Thread Count Slider */}
+              <View style={styles.settingItemContainer}>
+                <Text variant="titleMedium" style={styles.textLabel}>
+                  Thread Count
+                </Text>
+                <Slider
+                  testID="thread-count-slider"
+                  value={modelStore.n_threads}
+                  onValueChange={value =>
+                    modelStore.setNThreads(Math.round(value))
+                  }
+                  minimumValue={1}
+                  maximumValue={modelStore.max_threads}
+                  step={1}
+                  style={styles.nGPUSlider}
+                  thumbTintColor={theme.colors.primary}
+                  minimumTrackTintColor={theme.colors.primary}
+                />
+                <Text variant="labelSmall" style={styles.textDescription}>
+                  {`Using ${modelStore.n_threads} of ${modelStore.max_threads} available threads`}
+                </Text>
+              </View>
+              <Divider />
+
+              {/* Flash Attention Switch */}
+              <View style={styles.settingItemContainer}>
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      Flash Attention
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      Enable Flash Attention for faster processing
+                    </Text>
+                  </View>
+                  <Switch
+                    testID="flash-attention-switch"
+                    value={modelStore.flash_attn}
+                    onValueChange={value => modelStore.setFlashAttn(value)}
+                  />
+                </View>
+              </View>
+              <Divider />
+
+              {/* Cache Type K Selection */}
+              <View style={styles.settingItemContainer}>
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      Key Cache Type
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      Select the cache type for key computation
+                    </Text>
+                  </View>
+                  <View style={styles.menuContainer} ref={keyCacheButtonRef}>
+                    <Button
+                      mode="outlined"
+                      onPress={handleKeyCachePress}
+                      style={styles.menuButton}
+                      contentStyle={styles.buttonContent}
+                      icon={({size, color}) => (
+                        <Icon source="chevron-down" size={size} color={color} />
+                      )}>
+                      {getCacheTypeLabel(modelStore.cache_type_k)}
+                    </Button>
+                    <Menu
+                      visible={showKeyCacheMenu}
+                      onDismiss={() => setShowKeyCacheMenu(false)}
+                      anchor={keyCacheAnchor}
+                      selectable>
+                      {cacheTypeOptions.map(option => (
+                        <Menu.Item
+                          key={option.value}
+                          label={option.label}
+                          selected={option.value === modelStore.cache_type_k}
+                          onPress={() => {
+                            modelStore.setCacheTypeK(option.value);
+                            setShowKeyCacheMenu(false);
+                          }}
+                        />
+                      ))}
+                    </Menu>
+                  </View>
+                </View>
+              </View>
+              <Divider />
+
+              {/* Cache Type V Selection */}
+              <View style={styles.settingItemContainer}>
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      Value Cache Type
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      Select the cache type for value computation
+                    </Text>
+                  </View>
+                  <View style={styles.menuContainer} ref={valueCacheButtonRef}>
+                    <Button
+                      mode="outlined"
+                      onPress={handleValueCachePress}
+                      style={styles.menuButton}
+                      contentStyle={styles.buttonContent}
+                      icon={({size, color}) => (
+                        <Icon source="chevron-down" size={size} color={color} />
+                      )}>
+                      {getCacheTypeLabel(modelStore.cache_type_v)}
+                    </Button>
+                    <Menu
+                      visible={showValueCacheMenu}
+                      onDismiss={() => setShowValueCacheMenu(false)}
+                      anchor={valueCacheAnchor}
+                      selectable>
+                      {cacheTypeOptions.map(option => (
+                        <Menu.Item
+                          key={option.value}
+                          label={option.label}
+                          selected={option.value === modelStore.cache_type_v}
+                          onPress={() => {
+                            modelStore.setCacheTypeV(option.value);
+                            setShowValueCacheMenu(false);
+                          }}
+                        />
+                      ))}
+                    </Menu>
+                  </View>
+                </View>
+              </View>
+              <Divider />
+
               {Platform.OS === 'ios' && (
                 <View style={styles.settingItemContainer}>
                   <View style={styles.switchContainer}>

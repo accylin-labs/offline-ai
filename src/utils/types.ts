@@ -443,3 +443,14 @@ export type DeviceInfo = {
     hasI8mm: boolean;
   };
 };
+
+export enum CacheType {
+  F16 = 'f16',
+  F32 = 'f32',
+  Q8_0 = 'q8_0',
+  Q4_0 = 'q4_0',
+  Q4_1 = 'q4_1',
+  IQ4_NL = 'iq4_nl',
+  Q5_0 = 'q5_0',
+  Q5_1 = 'q5_1',
+}

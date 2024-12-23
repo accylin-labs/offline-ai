@@ -1,4 +1,4 @@
-import {AppState, AppStateStatus, Platform} from 'react-native';
+import {AppState, AppStateStatus, Platform, NativeModules} from 'react-native';
 
 import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
@@ -19,6 +19,7 @@ import {
   stops,
 } from '../utils/chat';
 import {
+  CacheType,
   ChatTemplateConfig,
   HuggingFaceModel,
   Model,
@@ -36,6 +37,11 @@ class ModelStore {
   loadingModel: Model | undefined = undefined;
   n_context: number = 1024;
   n_gpu_layers: number = 50;
+  n_threads: number = 4;
+  max_threads: number = 1; // Will be set in constructor
+  flash_attn: boolean = false;
+  cache_type_k: CacheType = CacheType.F16;
+  cache_type_v: CacheType = CacheType.F16;
 
   activeModelId: string | undefined = undefined;
 
@@ -52,6 +58,7 @@ class ModelStore {
 
   constructor() {
     makeAutoObservable(this, {activeModel: computed});
+    this.initializeThreadCount();
     makePersistable(this, {
       name: 'ModelStore',
       properties: [
@@ -61,6 +68,10 @@ class ModelStore {
         'n_gpu_layers',
         'useMetal',
         'n_context',
+        'n_threads',
+        'flash_attn',
+        'cache_type_k',
+        'cache_type_v',
       ],
       storage: AsyncStorage,
     }).then(() => {
@@ -69,6 +80,57 @@ class ModelStore {
 
     this.setupAppStateListener();
   }
+
+  private async initializeThreadCount() {
+    try {
+      const {DeviceInfoModule} = NativeModules;
+      const info = await DeviceInfoModule.getCPUInfo();
+      const cores = info.cores;
+      this.max_threads = cores;
+
+      // Set n_threads to 80% of cores or number of cores if 4 or less
+      if (cores <= 4) {
+        runInAction(() => {
+          this.n_threads = cores;
+        });
+      } else {
+        runInAction(() => {
+          this.n_threads = Math.floor(cores * 0.8);
+        });
+      }
+    } catch (error) {
+      console.error('Failed to get CPU info:', error);
+      // Fallback to 4 threads if we can't get the CPU info
+      runInAction(() => {
+        this.max_threads = 4;
+        this.n_threads = 4;
+      });
+    }
+  }
+
+  setNThreads = (n_threads: number) => {
+    runInAction(() => {
+      this.n_threads = n_threads;
+    });
+  };
+
+  setFlashAttn = (flash_attn: boolean) => {
+    runInAction(() => {
+      this.flash_attn = flash_attn;
+    });
+  };
+
+  setCacheTypeK = (cache_type: CacheType) => {
+    runInAction(() => {
+      this.cache_type_k = cache_type;
+    });
+  };
+
+  setCacheTypeV = (cache_type: CacheType) => {
+    runInAction(() => {
+      this.cache_type_v = cache_type;
+    });
+  };
 
   initializeStore = async () => {
     const storedVersion = this.version || 0;
@@ -574,6 +636,10 @@ class ModelStore {
           model: filePath,
           use_mlock: true,
           n_ctx: this.n_context,
+          n_threads: this.n_threads,
+          flash_attn: this.flash_attn,
+          cache_type_k: this.cache_type_k,
+          cache_type_v: this.cache_type_v,
           n_gpu_layers: this.useMetal ? this.n_gpu_layers : 0, // Set as needed, 0 for no GPU // TODO ggml-metal.metal
           use_progress_callback: true,
         },

@@ -9,51 +9,60 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.background,
     },
     container: {
-      padding: 10,
+      padding: 16,
     },
     scrollViewContent: {
-      paddingVertical: 10,
-      paddingHorizontal: 15,
+      paddingVertical: 16,
+      paddingHorizontal: 16,
     },
     card: {
-      marginVertical: 10,
-      borderRadius: 15,
+      marginVertical: 8,
+      borderRadius: 12,
       backgroundColor: theme.colors.surface,
     },
     settingItemContainer: {
-      marginVertical: 15,
+      marginVertical: 8,
     },
     switchContainer: {
       flexDirection: 'row',
-      alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: 5,
+      alignItems: 'center',
+      marginVertical: 8,
     },
     textContainer: {
       flex: 1,
+      marginRight: 16,
     },
     textLabel: {
-      fontSize: 16,
-      fontWeight: '600',
+      color: theme.colors.onSurface,
     },
     textDescription: {
-      fontSize: 14,
-      marginRight: 2,
-      color: theme.colors.textSecondary,
-    },
-    textInput: {
-      marginVertical: 5,
+      color: theme.colors.onSurfaceVariant,
+      marginTop: 4,
     },
     nGPUSlider: {
       marginTop: 1,
     },
+    textInput: {
+      marginVertical: 8,
+      //backgroundColor: theme.colors.surface,
+    },
     invalidInput: {
-      borderColor: 'red',
+      borderColor: theme.colors.error,
       borderWidth: 1,
     },
     errorText: {
-      color: 'red',
-      fontSize: 12,
-      marginTop: 5,
+      color: theme.colors.error,
+      marginTop: 4,
+    },
+    menuContainer: {
+      position: 'relative',
+    },
+    menuButton: {
+      //backgroundColor: theme.colors.surface,
+      minWidth: 100,
+    },
+    buttonContent: {
+      flexDirection: 'row-reverse',
     },
   });
