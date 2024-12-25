@@ -41,11 +41,11 @@ export const createStyles = (theme: Theme) =>
       marginTop: 4,
     },
     nGPUSlider: {
-      marginTop: 1,
+      marginVertical: 8,
+      height: 40,
     },
     textInput: {
       marginVertical: 8,
-      //backgroundColor: theme.colors.surface,
     },
     invalidInput: {
       borderColor: theme.colors.error,
@@ -59,7 +59,6 @@ export const createStyles = (theme: Theme) =>
       position: 'relative',
     },
     menuButton: {
-      //backgroundColor: theme.colors.surface,
       minWidth: 100,
     },
     buttonContent: {

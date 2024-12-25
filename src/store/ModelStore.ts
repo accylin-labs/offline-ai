@@ -149,35 +149,33 @@ class ModelStore {
 
   setNBatch = (n_batch: number) => {
     runInAction(() => {
-      // Ensure n_batch doesn't exceed n_context
-      const newBatch = Math.min(n_batch, this.n_context);
-      this.n_batch = newBatch;
-      // Ensure n_ubatch doesn't exceed n_batch
-      if (this.n_ubatch > newBatch) {
-        this.n_ubatch = newBatch;
-      }
+      this.n_batch = n_batch;
     });
   };
 
   setNUBatch = (n_ubatch: number) => {
     runInAction(() => {
-      // Ensure n_ubatch doesn't exceed n_batch
-      this.n_ubatch = Math.min(n_ubatch, this.n_batch);
+      this.n_ubatch = n_ubatch;
     });
   };
 
   setNContext = (n_context: number) => {
     runInAction(() => {
       this.n_context = n_context;
-      // Ensure n_batch doesn't exceed n_context
-      if (this.n_batch > n_context) {
-        this.n_batch = n_context;
-        // Ensure n_ubatch doesn't exceed n_batch
-        if (this.n_ubatch > this.n_batch) {
-          this.n_ubatch = this.n_batch;
-        }
-      }
     });
+  };
+
+  // Helper method to get effective values respecting constraints
+  getEffectiveValues = () => {
+    const effectiveContext = this.n_context;
+    const effectiveBatch = Math.min(this.n_batch, effectiveContext);
+    const effectiveUBatch = Math.min(this.n_ubatch, effectiveBatch);
+
+    return {
+      n_context: effectiveContext,
+      n_batch: effectiveBatch,
+      n_ubatch: effectiveUBatch,
+    };
   };
 
   initializeStore = async () => {
@@ -673,18 +671,19 @@ class ModelStore {
       this.loadingModel = model;
     });
     try {
+      const effectiveValues = this.getEffectiveValues();
       const ctx = await initLlama(
         {
           model: filePath,
           use_mlock: true,
-          n_ctx: this.n_context,
-          n_batch: this.n_batch,
-          n_ubatch: this.n_ubatch,
+          n_ctx: effectiveValues.n_context,
+          n_batch: effectiveValues.n_batch,
+          n_ubatch: effectiveValues.n_ubatch,
           n_threads: this.n_threads,
           flash_attn: this.flash_attn,
           cache_type_k: this.cache_type_k,
           cache_type_v: this.cache_type_v,
-          n_gpu_layers: this.useMetal ? this.n_gpu_layers : 0, // Set as needed, 0 for no GPU // TODO ggml-metal.metal
+          n_gpu_layers: this.useMetal ? this.n_gpu_layers : 0,
           use_progress_callback: true,
         },
         (_progress: number) => {

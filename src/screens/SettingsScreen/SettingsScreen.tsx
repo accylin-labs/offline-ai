@@ -145,30 +145,7 @@ export const SettingsScreen: React.FC = observer(() => {
               </View>
               <Divider />
 
-              {/* Thread Count Slider */}
-              <View style={styles.settingItemContainer}>
-                <Text variant="titleMedium" style={styles.textLabel}>
-                  Thread Count
-                </Text>
-                <Slider
-                  testID="thread-count-slider"
-                  value={modelStore.n_threads}
-                  onValueChange={value =>
-                    modelStore.setNThreads(Math.round(value))
-                  }
-                  minimumValue={1}
-                  maximumValue={modelStore.max_threads}
-                  step={1}
-                  style={styles.nGPUSlider}
-                  thumbTintColor={theme.colors.primary}
-                  minimumTrackTintColor={theme.colors.primary}
-                />
-                <Text variant="labelSmall" style={styles.textDescription}>
-                  {`Using ${modelStore.n_threads} of ${modelStore.max_threads} available threads`}
-                </Text>
-              </View>
-              <Divider />
-
+              {/* Context Size */}
               <View style={styles.settingItemContainer}>
                 <Text variant="titleMedium" style={styles.textLabel}>
                   {l10n.contextSize}
@@ -199,6 +176,7 @@ export const SettingsScreen: React.FC = observer(() => {
                   {l10n.modelReloadNotice}
                 </Text>
               </View>
+              <Divider />
 
               {/* Batch Size Slider */}
               <View style={styles.settingItemContainer}>
@@ -212,14 +190,18 @@ export const SettingsScreen: React.FC = observer(() => {
                     modelStore.setNBatch(Math.round(value))
                   }
                   minimumValue={1}
-                  maximumValue={modelStore.n_context}
+                  maximumValue={4096}
                   step={1}
                   style={styles.nGPUSlider}
                   thumbTintColor={theme.colors.primary}
                   minimumTrackTintColor={theme.colors.primary}
                 />
                 <Text variant="labelSmall" style={styles.textDescription}>
-                  {`Batch size: ${modelStore.n_batch} (max: ${modelStore.n_context})`}
+                  {`Batch size: ${modelStore.n_batch}${
+                    modelStore.n_batch > modelStore.n_context
+                      ? ` (effective: ${modelStore.n_context})`
+                      : ''
+                  }`}
                 </Text>
               </View>
               <Divider />
@@ -236,14 +218,46 @@ export const SettingsScreen: React.FC = observer(() => {
                     modelStore.setNUBatch(Math.round(value))
                   }
                   minimumValue={1}
-                  maximumValue={modelStore.n_batch}
+                  maximumValue={4096}
                   step={1}
                   style={styles.nGPUSlider}
                   thumbTintColor={theme.colors.primary}
                   minimumTrackTintColor={theme.colors.primary}
                 />
                 <Text variant="labelSmall" style={styles.textDescription}>
-                  {`Physical batch size: ${modelStore.n_ubatch} (max: ${modelStore.n_batch})`}
+                  {`Physical batch size: ${modelStore.n_ubatch}${
+                    modelStore.n_ubatch >
+                    Math.min(modelStore.n_batch, modelStore.n_context)
+                      ? ` (effective: ${Math.min(
+                          modelStore.n_batch,
+                          modelStore.n_context,
+                        )})`
+                      : ''
+                  }`}
+                </Text>
+              </View>
+              <Divider />
+
+              {/* Thread Count Slider */}
+              <View style={styles.settingItemContainer}>
+                <Text variant="titleMedium" style={styles.textLabel}>
+                  Thread Count
+                </Text>
+                <Slider
+                  testID="thread-count-slider"
+                  value={modelStore.n_threads}
+                  onValueChange={value =>
+                    modelStore.setNThreads(Math.round(value))
+                  }
+                  minimumValue={1}
+                  maximumValue={modelStore.max_threads}
+                  step={1}
+                  style={styles.nGPUSlider}
+                  thumbTintColor={theme.colors.primary}
+                  minimumTrackTintColor={theme.colors.primary}
+                />
+                <Text variant="labelSmall" style={styles.textDescription}>
+                  {`Using ${modelStore.n_threads} of ${modelStore.max_threads} available threads`}
                 </Text>
               </View>
               <Divider />
