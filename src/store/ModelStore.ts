@@ -38,10 +38,12 @@ class ModelStore {
   n_context: number = 1024;
   n_gpu_layers: number = 50;
   n_threads: number = 4;
-  max_threads: number = 1; // Will be set in constructor
+  max_threads: number = 4; // Will be set in constructor
   flash_attn: boolean = false;
   cache_type_k: CacheType = CacheType.F16;
   cache_type_v: CacheType = CacheType.F16;
+  n_batch: number = 512;
+  n_ubatch: number = 512;
 
   activeModelId: string | undefined = undefined;
 
@@ -72,6 +74,8 @@ class ModelStore {
         'flash_attn',
         'cache_type_k',
         'cache_type_v',
+        'n_batch',
+        'n_ubatch',
       ],
       storage: AsyncStorage,
     }).then(() => {
@@ -117,18 +121,62 @@ class ModelStore {
   setFlashAttn = (flash_attn: boolean) => {
     runInAction(() => {
       this.flash_attn = flash_attn;
+      // Reset cache types to F16 if flash attention is disabled
+      if (!flash_attn) {
+        this.cache_type_k = CacheType.F16;
+        this.cache_type_v = CacheType.F16;
+      }
     });
   };
 
   setCacheTypeK = (cache_type: CacheType) => {
     runInAction(() => {
-      this.cache_type_k = cache_type;
+      // Only allow changing cache type if flash attention is enabled
+      if (this.flash_attn) {
+        this.cache_type_k = cache_type;
+      }
     });
   };
 
   setCacheTypeV = (cache_type: CacheType) => {
     runInAction(() => {
-      this.cache_type_v = cache_type;
+      // Only allow changing cache type if flash attention is enabled
+      if (this.flash_attn) {
+        this.cache_type_v = cache_type;
+      }
+    });
+  };
+
+  setNBatch = (n_batch: number) => {
+    runInAction(() => {
+      // Ensure n_batch doesn't exceed n_context
+      const newBatch = Math.min(n_batch, this.n_context);
+      this.n_batch = newBatch;
+      // Ensure n_ubatch doesn't exceed n_batch
+      if (this.n_ubatch > newBatch) {
+        this.n_ubatch = newBatch;
+      }
+    });
+  };
+
+  setNUBatch = (n_ubatch: number) => {
+    runInAction(() => {
+      // Ensure n_ubatch doesn't exceed n_batch
+      this.n_ubatch = Math.min(n_ubatch, this.n_batch);
+    });
+  };
+
+  setNContext = (n_context: number) => {
+    runInAction(() => {
+      this.n_context = n_context;
+      // Ensure n_batch doesn't exceed n_context
+      if (this.n_batch > n_context) {
+        this.n_batch = n_context;
+        // Ensure n_ubatch doesn't exceed n_batch
+        if (this.n_ubatch > this.n_batch) {
+          this.n_ubatch = this.n_batch;
+        }
+      }
     });
   };
 
@@ -286,12 +334,6 @@ class ModelStore {
   setNGPULayers = (n_gpu_layers: number) => {
     runInAction(() => {
       this.n_gpu_layers = n_gpu_layers;
-    });
-  };
-
-  setNContext = (n_context: number) => {
-    runInAction(() => {
-      this.n_context = n_context;
     });
   };
 
@@ -636,6 +678,8 @@ class ModelStore {
           model: filePath,
           use_mlock: true,
           n_ctx: this.n_context,
+          n_batch: this.n_batch,
+          n_ubatch: this.n_ubatch,
           n_threads: this.n_threads,
           flash_attn: this.flash_attn,
           cache_type_k: this.cache_type_k,

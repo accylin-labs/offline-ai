@@ -169,6 +169,85 @@ export const SettingsScreen: React.FC = observer(() => {
               </View>
               <Divider />
 
+              <View style={styles.settingItemContainer}>
+                <Text variant="titleMedium" style={styles.textLabel}>
+                  {l10n.contextSize}
+                </Text>
+                <TextInput
+                  ref={inputRef}
+                  style={[
+                    styles.textInput,
+                    !isValidInput && styles.invalidInput,
+                  ]}
+                  keyboardType="numeric"
+                  value={contextSize}
+                  onChangeText={handleContextSizeChange}
+                  placeholder={l10n.contextSizePlaceholder.replace(
+                    '{{minContextSize}}',
+                    modelStore.MIN_CONTEXT_SIZE.toString(),
+                  )}
+                />
+                {!isValidInput && (
+                  <Text style={styles.errorText}>
+                    {l10n.invalidContextSizeError.replace(
+                      '{{minContextSize}}',
+                      modelStore.MIN_CONTEXT_SIZE.toString(),
+                    )}
+                  </Text>
+                )}
+                <Text variant="labelSmall" style={styles.textDescription}>
+                  {l10n.modelReloadNotice}
+                </Text>
+              </View>
+
+              {/* Batch Size Slider */}
+              <View style={styles.settingItemContainer}>
+                <Text variant="titleMedium" style={styles.textLabel}>
+                  Batch Size
+                </Text>
+                <Slider
+                  testID="batch-size-slider"
+                  value={modelStore.n_batch}
+                  onValueChange={value =>
+                    modelStore.setNBatch(Math.round(value))
+                  }
+                  minimumValue={1}
+                  maximumValue={modelStore.n_context}
+                  step={1}
+                  style={styles.nGPUSlider}
+                  thumbTintColor={theme.colors.primary}
+                  minimumTrackTintColor={theme.colors.primary}
+                />
+                <Text variant="labelSmall" style={styles.textDescription}>
+                  {`Batch size: ${modelStore.n_batch} (max: ${modelStore.n_context})`}
+                </Text>
+              </View>
+              <Divider />
+
+              {/* Physical Batch Size Slider */}
+              <View style={styles.settingItemContainer}>
+                <Text variant="titleMedium" style={styles.textLabel}>
+                  Physical Batch Size
+                </Text>
+                <Slider
+                  testID="ubatch-size-slider"
+                  value={modelStore.n_ubatch}
+                  onValueChange={value =>
+                    modelStore.setNUBatch(Math.round(value))
+                  }
+                  minimumValue={1}
+                  maximumValue={modelStore.n_batch}
+                  step={1}
+                  style={styles.nGPUSlider}
+                  thumbTintColor={theme.colors.primary}
+                  minimumTrackTintColor={theme.colors.primary}
+                />
+                <Text variant="labelSmall" style={styles.textDescription}>
+                  {`Physical batch size: ${modelStore.n_ubatch} (max: ${modelStore.n_batch})`}
+                </Text>
+              </View>
+              <Divider />
+
               {/* Flash Attention Switch */}
               <View style={styles.settingItemContainer}>
                 <View style={styles.switchContainer}>
@@ -197,7 +276,9 @@ export const SettingsScreen: React.FC = observer(() => {
                       Key Cache Type
                     </Text>
                     <Text variant="labelSmall" style={styles.textDescription}>
-                      Select the cache type for key computation
+                      {modelStore.flash_attn
+                        ? 'Select the cache type for key computation'
+                        : 'Enable Flash Attention to change cache type'}
                     </Text>
                   </View>
                   <View style={styles.menuContainer} ref={keyCacheButtonRef}>
@@ -206,6 +287,7 @@ export const SettingsScreen: React.FC = observer(() => {
                       onPress={handleKeyCachePress}
                       style={styles.menuButton}
                       contentStyle={styles.buttonContent}
+                      disabled={!modelStore.flash_attn}
                       icon={({size, color}) => (
                         <Icon source="chevron-down" size={size} color={color} />
                       )}>
@@ -241,7 +323,9 @@ export const SettingsScreen: React.FC = observer(() => {
                       Value Cache Type
                     </Text>
                     <Text variant="labelSmall" style={styles.textDescription}>
-                      Select the cache type for value computation
+                      {modelStore.flash_attn
+                        ? 'Select the cache type for value computation'
+                        : 'Enable Flash Attention to change cache type'}
                     </Text>
                   </View>
                   <View style={styles.menuContainer} ref={valueCacheButtonRef}>
@@ -250,6 +334,7 @@ export const SettingsScreen: React.FC = observer(() => {
                       onPress={handleValueCachePress}
                       style={styles.menuButton}
                       contentStyle={styles.buttonContent}
+                      disabled={!modelStore.flash_attn}
                       icon={({size, color}) => (
                         <Icon source="chevron-down" size={size} color={color} />
                       )}>
@@ -319,36 +404,6 @@ export const SettingsScreen: React.FC = observer(() => {
                 </View>
               )}
               <Divider />
-              <View style={styles.settingItemContainer}>
-                <Text variant="titleMedium" style={styles.textLabel}>
-                  {l10n.contextSize}
-                </Text>
-                <TextInput
-                  ref={inputRef}
-                  style={[
-                    styles.textInput,
-                    !isValidInput && styles.invalidInput,
-                  ]}
-                  keyboardType="numeric"
-                  value={contextSize}
-                  onChangeText={handleContextSizeChange}
-                  placeholder={l10n.contextSizePlaceholder.replace(
-                    '{{minContextSize}}',
-                    modelStore.MIN_CONTEXT_SIZE.toString(),
-                  )}
-                />
-                {!isValidInput && (
-                  <Text style={styles.errorText}>
-                    {l10n.invalidContextSizeError.replace(
-                      '{{minContextSize}}',
-                      modelStore.MIN_CONTEXT_SIZE.toString(),
-                    )}
-                  </Text>
-                )}
-                <Text variant="labelSmall" style={styles.textDescription}>
-                  {l10n.modelReloadNotice}
-                </Text>
-              </View>
 
               <View style={styles.switchContainer}>
                 <View style={styles.textContainer}>
