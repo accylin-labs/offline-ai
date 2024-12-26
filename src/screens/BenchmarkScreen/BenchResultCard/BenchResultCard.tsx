@@ -87,6 +87,19 @@ export const BenchResultCard = ({result, onDelete, onShare}: Props) => {
           </Text>
         </View>
 
+        {result.initSettings && (
+          <View style={styles.configBar}>
+            <Text variant="labelSmall">Model Settings</Text>
+            <Text style={styles.configText}>
+              Context: {result.initSettings.n_context} • Batch:{' '}
+              {result.initSettings.n_batch} • Threads:{' '}
+              {result.initSettings.n_threads} • GPU Layers:{' '}
+              {result.initSettings.n_gpu_layers}
+              {result.initSettings.flash_attn && ' • Flash Attn'}
+            </Text>
+          </View>
+        )}
+
         <View style={styles.resultsContainer}>
           <View style={styles.resultRow}>
             <View style={styles.resultItem}>

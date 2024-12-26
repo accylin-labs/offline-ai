@@ -47,6 +47,20 @@ class ModelStore {
 
   activeModelId: string | undefined = undefined;
 
+  // Track initialization settings for the active context
+  activeContextSettings:
+    | {
+        n_context: number;
+        n_batch: number;
+        n_ubatch: number;
+        n_threads: number;
+        flash_attn: boolean;
+        cache_type_k: CacheType;
+        cache_type_v: CacheType;
+        n_gpu_layers: number;
+      }
+    | undefined = undefined;
+
   context: LlamaContext | undefined = undefined;
   downloadJobs = new ObservableMap(); //new Map();
   useMetal = false; //Platform.OS === 'ios';
@@ -672,18 +686,21 @@ class ModelStore {
     });
     try {
       const effectiveValues = this.getEffectiveValues();
+      const initSettings = {
+        n_context: effectiveValues.n_context,
+        n_batch: effectiveValues.n_batch,
+        n_ubatch: effectiveValues.n_ubatch,
+        n_threads: this.n_threads,
+        flash_attn: this.flash_attn,
+        cache_type_k: this.cache_type_k,
+        cache_type_v: this.cache_type_v,
+        n_gpu_layers: this.useMetal ? this.n_gpu_layers : 0,
+      };
       const ctx = await initLlama(
         {
           model: filePath,
           use_mlock: true,
-          n_ctx: effectiveValues.n_context,
-          n_batch: effectiveValues.n_batch,
-          n_ubatch: effectiveValues.n_ubatch,
-          n_threads: this.n_threads,
-          flash_attn: this.flash_attn,
-          cache_type_k: this.cache_type_k,
-          cache_type_v: this.cache_type_v,
-          n_gpu_layers: this.useMetal ? this.n_gpu_layers : 0,
+          ...initSettings,
           use_progress_callback: true,
         },
         (_progress: number) => {
@@ -695,6 +712,7 @@ class ModelStore {
 
       runInAction(() => {
         this.context = ctx;
+        this.activeContextSettings = initSettings;
         this.setActiveModel(model.id);
       });
       return ctx;
@@ -717,6 +735,7 @@ class ModelStore {
     console.log('released');
     runInAction(() => {
       this.context = undefined;
+      this.activeContextSettings = undefined;
       //this.activeModelId = undefined; // activeModelId is set to undefined in manualReleaseContext
     });
     return 'Context released successfully';
