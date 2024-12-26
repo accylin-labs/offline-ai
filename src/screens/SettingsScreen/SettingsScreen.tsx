@@ -276,7 +276,7 @@ export const SettingsScreen: React.FC = observer(() => {
                   {/* Thread Count Slider */}
                   <View style={styles.settingItemContainer}>
                     <Text variant="titleMedium" style={styles.textLabel}>
-                      Thread Count
+                      CPU Threads
                     </Text>
                     <Slider
                       testID="thread-count-slider"
