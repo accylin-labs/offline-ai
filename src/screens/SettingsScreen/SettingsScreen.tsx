@@ -33,6 +33,7 @@ export const SettingsScreen: React.FC = observer(() => {
     modelStore.n_context.toString(),
   );
   const [isValidInput, setIsValidInput] = useState(true);
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const inputRef = useRef<RNTextInput>(null);
   const [showKeyCacheMenu, setShowKeyCacheMenu] = useState(false);
   const [showValueCacheMenu, setShowValueCacheMenu] = useState(false);
@@ -70,6 +71,7 @@ export const SettingsScreen: React.FC = observer(() => {
     setIsValidInput(true);
     setShowKeyCacheMenu(false);
     setShowValueCacheMenu(false);
+    setShowAdvancedSettings(false);
   };
 
   const handleContextSizeChange = (text: string) => {
@@ -120,31 +122,10 @@ export const SettingsScreen: React.FC = observer(() => {
     <SafeAreaView style={styles.safeArea} edges={['bottom']}>
       <TouchableWithoutFeedback onPress={handleOutsidePress}>
         <ScrollView contentContainerStyle={styles.container}>
-          {/* Model Settings Section */}
+          {/* Model Initialization Settings */}
           <Card elevation={0} style={styles.card}>
-            <Card.Title title={l10n.modelSettingsTitle} />
+            <Card.Title title="Model Initialization Settings" />
             <Card.Content>
-              <View style={styles.settingItemContainer}>
-                <View style={styles.switchContainer}>
-                  <View style={styles.textContainer}>
-                    <Text variant="titleMedium" style={styles.textLabel}>
-                      {l10n.autoOffloadLoad}
-                    </Text>
-                    <Text variant="labelSmall" style={styles.textDescription}>
-                      {l10n.autoOffloadLoadDescription}
-                    </Text>
-                  </View>
-                  <Switch
-                    testID="auto-offload-load-switch"
-                    value={modelStore.useAutoRelease}
-                    onValueChange={value =>
-                      modelStore.updateUseAutoRelease(value)
-                    }
-                  />
-                </View>
-              </View>
-              <Divider />
-
               {/* Context Size */}
               <View style={styles.settingItemContainer}>
                 <Text variant="titleMedium" style={styles.textLabel}>
@@ -176,294 +157,352 @@ export const SettingsScreen: React.FC = observer(() => {
                   {l10n.modelReloadNotice}
                 </Text>
               </View>
-              <Divider />
 
-              {/* Batch Size Slider */}
-              <View style={styles.settingItemContainer}>
-                <Text variant="titleMedium" style={styles.textLabel}>
-                  Batch Size
-                </Text>
-                <Slider
-                  testID="batch-size-slider"
-                  value={modelStore.n_batch}
-                  onValueChange={value =>
-                    modelStore.setNBatch(Math.round(value))
-                  }
-                  minimumValue={1}
-                  maximumValue={4096}
-                  step={1}
-                  style={styles.nGPUSlider}
-                  thumbTintColor={theme.colors.primary}
-                  minimumTrackTintColor={theme.colors.primary}
-                />
-                <Text variant="labelSmall" style={styles.textDescription}>
-                  {`Batch size: ${modelStore.n_batch}${
-                    modelStore.n_batch > modelStore.n_context
-                      ? ` (effective: ${modelStore.n_context})`
-                      : ''
-                  }`}
-                </Text>
-              </View>
-              <Divider />
-
-              {/* Physical Batch Size Slider */}
-              <View style={styles.settingItemContainer}>
-                <Text variant="titleMedium" style={styles.textLabel}>
-                  Physical Batch Size
-                </Text>
-                <Slider
-                  testID="ubatch-size-slider"
-                  value={modelStore.n_ubatch}
-                  onValueChange={value =>
-                    modelStore.setNUBatch(Math.round(value))
-                  }
-                  minimumValue={1}
-                  maximumValue={4096}
-                  step={1}
-                  style={styles.nGPUSlider}
-                  thumbTintColor={theme.colors.primary}
-                  minimumTrackTintColor={theme.colors.primary}
-                />
-                <Text variant="labelSmall" style={styles.textDescription}>
-                  {`Physical batch size: ${modelStore.n_ubatch}${
-                    modelStore.n_ubatch >
-                    Math.min(modelStore.n_batch, modelStore.n_context)
-                      ? ` (effective: ${Math.min(
-                          modelStore.n_batch,
-                          modelStore.n_context,
-                        )})`
-                      : ''
-                  }`}
-                </Text>
-              </View>
-              <Divider />
-
-              {/* Thread Count Slider */}
-              <View style={styles.settingItemContainer}>
-                <Text variant="titleMedium" style={styles.textLabel}>
-                  Thread Count
-                </Text>
-                <Slider
-                  testID="thread-count-slider"
-                  value={modelStore.n_threads}
-                  onValueChange={value =>
-                    modelStore.setNThreads(Math.round(value))
-                  }
-                  minimumValue={1}
-                  maximumValue={modelStore.max_threads}
-                  step={1}
-                  style={styles.nGPUSlider}
-                  thumbTintColor={theme.colors.primary}
-                  minimumTrackTintColor={theme.colors.primary}
-                />
-                <Text variant="labelSmall" style={styles.textDescription}>
-                  {`Using ${modelStore.n_threads} of ${modelStore.max_threads} available threads`}
-                </Text>
-              </View>
-              <Divider />
-
-              {/* Flash Attention Switch */}
-              <View style={styles.settingItemContainer}>
-                <View style={styles.switchContainer}>
-                  <View style={styles.textContainer}>
-                    <Text variant="titleMedium" style={styles.textLabel}>
-                      Flash Attention
-                    </Text>
-                    <Text variant="labelSmall" style={styles.textDescription}>
-                      Enable Flash Attention for faster processing
-                    </Text>
-                  </View>
-                  <Switch
-                    testID="flash-attention-switch"
-                    value={modelStore.flash_attn}
-                    onValueChange={value => modelStore.setFlashAttn(value)}
-                  />
-                </View>
-              </View>
-              <Divider />
-
-              {/* Cache Type K Selection */}
-              <View style={styles.settingItemContainer}>
-                <View style={styles.switchContainer}>
-                  <View style={styles.textContainer}>
-                    <Text variant="titleMedium" style={styles.textLabel}>
-                      Key Cache Type
-                    </Text>
-                    <Text variant="labelSmall" style={styles.textDescription}>
-                      {modelStore.flash_attn
-                        ? 'Select the cache type for key computation'
-                        : 'Enable Flash Attention to change cache type'}
-                    </Text>
-                  </View>
-                  <View style={styles.menuContainer} ref={keyCacheButtonRef}>
-                    <Button
-                      mode="outlined"
-                      onPress={handleKeyCachePress}
-                      style={styles.menuButton}
-                      contentStyle={styles.buttonContent}
-                      disabled={!modelStore.flash_attn}
-                      icon={({size, color}) => (
-                        <Icon source="chevron-down" size={size} color={color} />
-                      )}>
-                      {getCacheTypeLabel(modelStore.cache_type_k)}
-                    </Button>
-                    <Menu
-                      visible={showKeyCacheMenu}
-                      onDismiss={() => setShowKeyCacheMenu(false)}
-                      anchor={keyCacheAnchor}
-                      selectable>
-                      {cacheTypeOptions.map(option => (
-                        <Menu.Item
-                          key={option.value}
-                          label={option.label}
-                          selected={option.value === modelStore.cache_type_k}
-                          onPress={() => {
-                            modelStore.setCacheTypeK(option.value);
-                            setShowKeyCacheMenu(false);
-                          }}
-                        />
-                      ))}
-                    </Menu>
-                  </View>
-                </View>
-              </View>
-              <Divider />
-
-              {/* Cache Type V Selection */}
-              <View style={styles.settingItemContainer}>
-                <View style={styles.switchContainer}>
-                  <View style={styles.textContainer}>
-                    <Text variant="titleMedium" style={styles.textLabel}>
-                      Value Cache Type
-                    </Text>
-                    <Text variant="labelSmall" style={styles.textDescription}>
-                      {modelStore.flash_attn
-                        ? 'Select the cache type for value computation'
-                        : 'Enable Flash Attention to change cache type'}
-                    </Text>
-                  </View>
-                  <View style={styles.menuContainer} ref={valueCacheButtonRef}>
-                    <Button
-                      mode="outlined"
-                      onPress={handleValueCachePress}
-                      style={styles.menuButton}
-                      contentStyle={styles.buttonContent}
-                      disabled={!modelStore.flash_attn}
-                      icon={({size, color}) => (
-                        <Icon source="chevron-down" size={size} color={color} />
-                      )}>
-                      {getCacheTypeLabel(modelStore.cache_type_v)}
-                    </Button>
-                    <Menu
-                      visible={showValueCacheMenu}
-                      onDismiss={() => setShowValueCacheMenu(false)}
-                      anchor={valueCacheAnchor}
-                      selectable>
-                      {cacheTypeOptions.map(option => (
-                        <Menu.Item
-                          key={option.value}
-                          label={option.label}
-                          selected={option.value === modelStore.cache_type_v}
-                          onPress={() => {
-                            modelStore.setCacheTypeV(option.value);
-                            setShowValueCacheMenu(false);
-                          }}
-                        />
-                      ))}
-                    </Menu>
-                  </View>
-                </View>
-              </View>
-              <Divider />
-
+              {/* Metal Settings (iOS only) */}
               {Platform.OS === 'ios' && (
-                <View style={styles.settingItemContainer}>
-                  <View style={styles.switchContainer}>
-                    <View style={styles.textContainer}>
-                      <Text variant="titleMedium" style={styles.textLabel}>
-                        {l10n.metal}
-                      </Text>
-                      <Text variant="labelSmall" style={styles.textDescription}>
-                        {l10n.metalDescription}
-                      </Text>
+                <>
+                  <Divider />
+                  <View style={styles.settingItemContainer}>
+                    <View style={styles.switchContainer}>
+                      <View style={styles.textContainer}>
+                        <Text variant="titleMedium" style={styles.textLabel}>
+                          {l10n.metal}
+                        </Text>
+                        <Text
+                          variant="labelSmall"
+                          style={styles.textDescription}>
+                          {l10n.metalDescription}
+                        </Text>
+                      </View>
+                      <Switch
+                        testID="metal-switch"
+                        value={modelStore.useMetal}
+                        onValueChange={value =>
+                          modelStore.updateUseMetal(value)
+                        }
+                      />
                     </View>
-                    <Switch
-                      testID="metal-switch"
-                      value={modelStore.useMetal}
-                      onValueChange={value => modelStore.updateUseMetal(value)}
-                    />
-                  </View>
-                  <Slider
-                    testID="gpu-layers-slider"
-                    disabled={!modelStore.useMetal}
-                    value={modelStore.n_gpu_layers}
-                    onValueChange={value =>
-                      modelStore.setNGPULayers(Math.round(value))
-                    }
-                    minimumValue={1}
-                    maximumValue={100}
-                    step={1}
-                    style={styles.nGPUSlider}
-                    thumbTintColor={theme.colors.primary}
-                    minimumTrackTintColor={theme.colors.primary}
-                  />
-                  <Text
-                    variant="labelSmall"
-                    style={[styles.textDescription, {}]}>
-                    {l10n.layersOnGPU.replace(
-                      '{{gpuLayers}}',
-                      modelStore.n_gpu_layers.toString(),
-                    )}
-                  </Text>
-                </View>
-              )}
-              <Divider />
-
-              <View style={styles.switchContainer}>
-                <View style={styles.textContainer}>
-                  <Text variant="titleMedium" style={styles.textLabel}>
-                    {l10n.autoNavigateToChat}
-                  </Text>
-                  <Text variant="labelSmall" style={styles.textDescription}>
-                    {l10n.autoNavigateToChatDescription}
-                  </Text>
-                </View>
-                <Switch
-                  testID="auto-navigate-to-chat-switch"
-                  value={uiStore.autoNavigatetoChat}
-                  onValueChange={value => uiStore.setAutoNavigateToChat(value)}
-                />
-              </View>
-
-              {Platform.OS === 'ios' && (
-                <View style={styles.settingItemContainer}>
-                  <View style={styles.switchContainer}>
-                    <View style={styles.textContainer}>
-                      <Text variant="titleMedium" style={styles.textLabel}>
-                        {l10n.iOSBackgroundDownload}
-                      </Text>
-                      <Text variant="labelSmall" style={styles.textDescription}>
-                        {l10n.iOSBackgroundDownloadDescription}
-                      </Text>
-                    </View>
-                    <Switch
-                      testID="ios-background-download-switch"
-                      value={uiStore.iOSBackgroundDownloading}
+                    <Slider
+                      testID="gpu-layers-slider"
+                      disabled={!modelStore.useMetal}
+                      value={modelStore.n_gpu_layers}
                       onValueChange={value =>
-                        uiStore.setiOSBackgroundDownloading(value)
+                        modelStore.setNGPULayers(Math.round(value))
                       }
+                      minimumValue={1}
+                      maximumValue={100}
+                      step={1}
+                      style={styles.nGPUSlider}
+                      thumbTintColor={theme.colors.primary}
+                      minimumTrackTintColor={theme.colors.primary}
                     />
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.layersOnGPU.replace(
+                        '{{gpuLayers}}',
+                        modelStore.n_gpu_layers.toString(),
+                      )}
+                    </Text>
+                  </View>
+                </>
+              )}
+
+              {/* Advanced Settings Button */}
+              <Button
+                mode="outlined"
+                onPress={() => setShowAdvancedSettings(!showAdvancedSettings)}
+                style={styles.advancedSettingsButton}
+                contentStyle={styles.buttonContent}
+                icon={({size, color}) => (
+                  <Icon
+                    source={
+                      showAdvancedSettings ? 'chevron-up' : 'chevron-down'
+                    }
+                    size={size}
+                    color={color}
+                  />
+                )}>
+                Advanced Settings
+              </Button>
+
+              {/* Advanced Settings Content */}
+              {showAdvancedSettings && (
+                <View style={styles.advancedSettingsContent}>
+                  <Divider />
+                  {/* Batch Size Slider */}
+                  <View style={styles.settingItemContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      Batch Size
+                    </Text>
+                    <Slider
+                      testID="batch-size-slider"
+                      value={modelStore.n_batch}
+                      onValueChange={value =>
+                        modelStore.setNBatch(Math.round(value))
+                      }
+                      minimumValue={1}
+                      maximumValue={4096}
+                      step={1}
+                      style={styles.nGPUSlider}
+                      thumbTintColor={theme.colors.primary}
+                      minimumTrackTintColor={theme.colors.primary}
+                    />
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {`Batch size: ${modelStore.n_batch}${
+                        modelStore.n_batch > modelStore.n_context
+                          ? ` (effective: ${modelStore.n_context})`
+                          : ''
+                      }`}
+                    </Text>
+                  </View>
+                  <Divider />
+
+                  {/* Physical Batch Size Slider */}
+                  <View style={styles.settingItemContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      Physical Batch Size
+                    </Text>
+                    <Slider
+                      testID="ubatch-size-slider"
+                      value={modelStore.n_ubatch}
+                      onValueChange={value =>
+                        modelStore.setNUBatch(Math.round(value))
+                      }
+                      minimumValue={1}
+                      maximumValue={4096}
+                      step={1}
+                      style={styles.nGPUSlider}
+                      thumbTintColor={theme.colors.primary}
+                      minimumTrackTintColor={theme.colors.primary}
+                    />
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {`Physical batch size: ${modelStore.n_ubatch}${
+                        modelStore.n_ubatch >
+                        Math.min(modelStore.n_batch, modelStore.n_context)
+                          ? ` (effective: ${Math.min(
+                              modelStore.n_batch,
+                              modelStore.n_context,
+                            )})`
+                          : ''
+                      }`}
+                    </Text>
+                  </View>
+                  <Divider />
+
+                  {/* Thread Count Slider */}
+                  <View style={styles.settingItemContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      Thread Count
+                    </Text>
+                    <Slider
+                      testID="thread-count-slider"
+                      value={modelStore.n_threads}
+                      onValueChange={value =>
+                        modelStore.setNThreads(Math.round(value))
+                      }
+                      minimumValue={1}
+                      maximumValue={modelStore.max_threads}
+                      step={1}
+                      style={styles.nGPUSlider}
+                      thumbTintColor={theme.colors.primary}
+                      minimumTrackTintColor={theme.colors.primary}
+                    />
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {`Using ${modelStore.n_threads} of ${modelStore.max_threads} available threads`}
+                    </Text>
+                  </View>
+                  <Divider />
+
+                  {/* Flash Attention and Cache Types */}
+                  <View style={styles.settingItemContainer}>
+                    <View style={styles.switchContainer}>
+                      <View style={styles.textContainer}>
+                        <Text variant="titleMedium" style={styles.textLabel}>
+                          Flash Attention
+                        </Text>
+                        <Text
+                          variant="labelSmall"
+                          style={styles.textDescription}>
+                          Enable Flash Attention for faster processing
+                        </Text>
+                      </View>
+                      <Switch
+                        testID="flash-attention-switch"
+                        value={modelStore.flash_attn}
+                        onValueChange={value => modelStore.setFlashAttn(value)}
+                      />
+                    </View>
+                  </View>
+                  <Divider />
+
+                  {/* Cache Type K Selection */}
+                  <View style={styles.settingItemContainer}>
+                    <View style={styles.switchContainer}>
+                      <View style={styles.textContainer}>
+                        <Text variant="titleMedium" style={styles.textLabel}>
+                          Key Cache Type
+                        </Text>
+                        <Text
+                          variant="labelSmall"
+                          style={styles.textDescription}>
+                          {modelStore.flash_attn
+                            ? 'Select the cache type for key computation'
+                            : 'Enable Flash Attention to change cache type'}
+                        </Text>
+                      </View>
+                      <View
+                        style={styles.menuContainer}
+                        ref={keyCacheButtonRef}>
+                        <Button
+                          mode="outlined"
+                          onPress={handleKeyCachePress}
+                          style={styles.menuButton}
+                          contentStyle={styles.buttonContent}
+                          disabled={!modelStore.flash_attn}
+                          icon={({size, color}) => (
+                            <Icon
+                              source="chevron-down"
+                              size={size}
+                              color={color}
+                            />
+                          )}>
+                          {getCacheTypeLabel(modelStore.cache_type_k)}
+                        </Button>
+                        <Menu
+                          visible={showKeyCacheMenu}
+                          onDismiss={() => setShowKeyCacheMenu(false)}
+                          anchor={keyCacheAnchor}
+                          selectable>
+                          {cacheTypeOptions.map(option => (
+                            <Menu.Item
+                              key={option.value}
+                              label={option.label}
+                              selected={
+                                option.value === modelStore.cache_type_k
+                              }
+                              onPress={() => {
+                                modelStore.setCacheTypeK(option.value);
+                                setShowKeyCacheMenu(false);
+                              }}
+                            />
+                          ))}
+                        </Menu>
+                      </View>
+                    </View>
+                  </View>
+                  <Divider />
+
+                  {/* Cache Type V Selection */}
+                  <View style={styles.settingItemContainer}>
+                    <View style={styles.switchContainer}>
+                      <View style={styles.textContainer}>
+                        <Text variant="titleMedium" style={styles.textLabel}>
+                          Value Cache Type
+                        </Text>
+                        <Text
+                          variant="labelSmall"
+                          style={styles.textDescription}>
+                          {modelStore.flash_attn
+                            ? 'Select the cache type for value computation'
+                            : 'Enable Flash Attention to change cache type'}
+                        </Text>
+                      </View>
+                      <View
+                        style={styles.menuContainer}
+                        ref={valueCacheButtonRef}>
+                        <Button
+                          mode="outlined"
+                          onPress={handleValueCachePress}
+                          style={styles.menuButton}
+                          contentStyle={styles.buttonContent}
+                          disabled={!modelStore.flash_attn}
+                          icon={({size, color}) => (
+                            <Icon
+                              source="chevron-down"
+                              size={size}
+                              color={color}
+                            />
+                          )}>
+                          {getCacheTypeLabel(modelStore.cache_type_v)}
+                        </Button>
+                        <Menu
+                          visible={showValueCacheMenu}
+                          onDismiss={() => setShowValueCacheMenu(false)}
+                          anchor={valueCacheAnchor}
+                          selectable>
+                          {cacheTypeOptions.map(option => (
+                            <Menu.Item
+                              key={option.value}
+                              label={option.label}
+                              selected={
+                                option.value === modelStore.cache_type_v
+                              }
+                              onPress={() => {
+                                modelStore.setCacheTypeV(option.value);
+                                setShowValueCacheMenu(false);
+                              }}
+                            />
+                          ))}
+                        </Menu>
+                      </View>
+                    </View>
                   </View>
                 </View>
               )}
             </Card.Content>
           </Card>
 
-          {/* UI Settings Section */}
+          {/* Model Loading Settings */}
           <Card elevation={0} style={styles.card}>
-            <Card.Title title={l10n.uiSettingsTitle} />
+            <Card.Title title="Model Loading Settings" />
             <Card.Content>
               <View style={styles.settingItemContainer}>
+                {/* Auto Offload/Load */}
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.autoOffloadLoad}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.autoOffloadLoadDescription}
+                    </Text>
+                  </View>
+                  <Switch
+                    testID="auto-offload-load-switch"
+                    value={modelStore.useAutoRelease}
+                    onValueChange={value =>
+                      modelStore.updateUseAutoRelease(value)
+                    }
+                  />
+                </View>
+
+                {/* Auto Navigate to Chat */}
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.autoNavigateToChat}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.autoNavigateToChatDescription}
+                    </Text>
+                  </View>
+                  <Switch
+                    testID="auto-navigate-to-chat-switch"
+                    value={uiStore.autoNavigatetoChat}
+                    onValueChange={value =>
+                      uiStore.setAutoNavigateToChat(value)
+                    }
+                  />
+                </View>
+              </View>
+            </Card.Content>
+          </Card>
+
+          {/* UI Settings */}
+          <Card elevation={0} style={styles.card}>
+            <Card.Title title="UI Settings" />
+            <Card.Content>
+              <View style={styles.settingItemContainer}>
+                {/* Dark Mode */}
                 <View style={styles.switchContainer}>
                   <View style={styles.textContainer}>
                     <Text variant="titleMedium" style={styles.textLabel}>
@@ -482,6 +521,28 @@ export const SettingsScreen: React.FC = observer(() => {
                   />
                 </View>
 
+                {/* iOS Background Download */}
+                {Platform.OS === 'ios' && (
+                  <View style={styles.switchContainer}>
+                    <View style={styles.textContainer}>
+                      <Text variant="titleMedium" style={styles.textLabel}>
+                        {l10n.iOSBackgroundDownload}
+                      </Text>
+                      <Text variant="labelSmall" style={styles.textDescription}>
+                        {l10n.iOSBackgroundDownloadDescription}
+                      </Text>
+                    </View>
+                    <Switch
+                      testID="ios-background-download-switch"
+                      value={uiStore.iOSBackgroundDownloading}
+                      onValueChange={value =>
+                        uiStore.setiOSBackgroundDownloading(value)
+                      }
+                    />
+                  </View>
+                )}
+
+                {/* Display Memory Usage (iOS only) */}
                 {Platform.OS === 'ios' && (
                   <View style={styles.switchContainer}>
                     <View style={styles.textContainer}>

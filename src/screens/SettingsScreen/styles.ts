@@ -63,5 +63,12 @@ export const createStyles = (theme: Theme) =>
     },
     buttonContent: {
       flexDirection: 'row-reverse',
+      justifyContent: 'space-between',
+    },
+    advancedSettingsButton: {
+      marginVertical: 8,
+    },
+    advancedSettingsContent: {
+      marginTop: 8,
     },
   });
