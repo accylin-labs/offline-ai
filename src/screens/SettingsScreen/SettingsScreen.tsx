@@ -12,9 +12,9 @@ import {debounce} from 'lodash';
 import {observer} from 'mobx-react-lite';
 import Slider from '@react-native-community/slider';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {Divider, Switch, Text, Card, Button, Icon} from 'react-native-paper';
+import {Switch, Text, Card, Button, Icon, List} from 'react-native-paper';
 
-import {TextInput, Menu} from '../../components';
+import {TextInput, Menu, Divider} from '../../components';
 
 import {useTheme} from '../../hooks';
 
@@ -71,7 +71,6 @@ export const SettingsScreen: React.FC = observer(() => {
     setIsValidInput(true);
     setShowKeyCacheMenu(false);
     setShowValueCacheMenu(false);
-    setShowAdvancedSettings(false);
   };
 
   const handleContextSizeChange = (text: string) => {
@@ -86,14 +85,14 @@ export const SettingsScreen: React.FC = observer(() => {
   };
 
   const cacheTypeOptions = [
-    {label: 'F16', value: CacheType.F16},
     {label: 'F32', value: CacheType.F32},
+    {label: 'F16', value: CacheType.F16},
     {label: 'Q8_0', value: CacheType.Q8_0},
-    {label: 'Q4_0', value: CacheType.Q4_0},
-    {label: 'Q4_1', value: CacheType.Q4_1},
-    {label: 'IQ4_NL', value: CacheType.IQ4_NL},
-    {label: 'Q5_0', value: CacheType.Q5_0},
     {label: 'Q5_1', value: CacheType.Q5_1},
+    {label: 'Q5_0', value: CacheType.Q5_0},
+    {label: 'Q4_1', value: CacheType.Q4_1},
+    {label: 'Q4_0', value: CacheType.Q4_0},
+    {label: 'IQ4_NL', value: CacheType.IQ4_NL},
   ];
 
   const getCacheTypeLabel = (value: CacheType) => {
@@ -126,6 +125,54 @@ export const SettingsScreen: React.FC = observer(() => {
           <Card elevation={0} style={styles.card}>
             <Card.Title title="Model Initialization Settings" />
             <Card.Content>
+              {/* Metal Settings (iOS only) */}
+              {Platform.OS === 'ios' && (
+                <>
+                  <View style={styles.settingItemContainer}>
+                    <View style={styles.switchContainer}>
+                      <View style={styles.textContainer}>
+                        <Text variant="titleMedium" style={styles.textLabel}>
+                          {l10n.metal}
+                        </Text>
+                        <Text
+                          variant="labelSmall"
+                          style={styles.textDescription}>
+                          {l10n.metalDescription}
+                        </Text>
+                      </View>
+                      <Switch
+                        testID="metal-switch"
+                        value={modelStore.useMetal}
+                        onValueChange={value =>
+                          modelStore.updateUseMetal(value)
+                        }
+                      />
+                    </View>
+                    <Slider
+                      testID="gpu-layers-slider"
+                      disabled={!modelStore.useMetal}
+                      value={modelStore.n_gpu_layers}
+                      onValueChange={value =>
+                        modelStore.setNGPULayers(Math.round(value))
+                      }
+                      minimumValue={1}
+                      maximumValue={100}
+                      step={1}
+                      style={styles.slider}
+                      thumbTintColor={theme.colors.primary}
+                      minimumTrackTintColor={theme.colors.primary}
+                    />
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.layersOnGPU.replace(
+                        '{{gpuLayers}}',
+                        modelStore.n_gpu_layers.toString(),
+                      )}
+                    </Text>
+                  </View>
+                </>
+              )}
+              <Divider />
+
               {/* Context Size */}
               <View style={styles.settingItemContainer}>
                 <Text variant="titleMedium" style={styles.textLabel}>
@@ -158,76 +205,14 @@ export const SettingsScreen: React.FC = observer(() => {
                 </Text>
               </View>
 
-              {/* Metal Settings (iOS only) */}
-              {Platform.OS === 'ios' && (
-                <>
-                  <Divider />
-                  <View style={styles.settingItemContainer}>
-                    <View style={styles.switchContainer}>
-                      <View style={styles.textContainer}>
-                        <Text variant="titleMedium" style={styles.textLabel}>
-                          {l10n.metal}
-                        </Text>
-                        <Text
-                          variant="labelSmall"
-                          style={styles.textDescription}>
-                          {l10n.metalDescription}
-                        </Text>
-                      </View>
-                      <Switch
-                        testID="metal-switch"
-                        value={modelStore.useMetal}
-                        onValueChange={value =>
-                          modelStore.updateUseMetal(value)
-                        }
-                      />
-                    </View>
-                    <Slider
-                      testID="gpu-layers-slider"
-                      disabled={!modelStore.useMetal}
-                      value={modelStore.n_gpu_layers}
-                      onValueChange={value =>
-                        modelStore.setNGPULayers(Math.round(value))
-                      }
-                      minimumValue={1}
-                      maximumValue={100}
-                      step={1}
-                      style={styles.nGPUSlider}
-                      thumbTintColor={theme.colors.primary}
-                      minimumTrackTintColor={theme.colors.primary}
-                    />
-                    <Text variant="labelSmall" style={styles.textDescription}>
-                      {l10n.layersOnGPU.replace(
-                        '{{gpuLayers}}',
-                        modelStore.n_gpu_layers.toString(),
-                      )}
-                    </Text>
-                  </View>
-                </>
-              )}
-
-              {/* Advanced Settings Button */}
-              <Button
-                mode="outlined"
-                onPress={() => setShowAdvancedSettings(!showAdvancedSettings)}
-                style={styles.advancedSettingsButton}
-                contentStyle={styles.buttonContent}
-                icon={({size, color}) => (
-                  <Icon
-                    source={
-                      showAdvancedSettings ? 'chevron-up' : 'chevron-down'
-                    }
-                    size={size}
-                    color={color}
-                  />
-                )}>
-                Advanced Settings
-              </Button>
-
-              {/* Advanced Settings Content */}
-              {showAdvancedSettings && (
+              {/* Advanced Settings */}
+              <List.Accordion
+                title="Advanced Settings"
+                titleStyle={styles.accordionTitle}
+                style={styles.advancedAccordion}
+                expanded={showAdvancedSettings}
+                onPress={() => setShowAdvancedSettings(!showAdvancedSettings)}>
                 <View style={styles.advancedSettingsContent}>
-                  <Divider />
                   {/* Batch Size Slider */}
                   <View style={styles.settingItemContainer}>
                     <Text variant="titleMedium" style={styles.textLabel}>
@@ -242,7 +227,7 @@ export const SettingsScreen: React.FC = observer(() => {
                       minimumValue={1}
                       maximumValue={4096}
                       step={1}
-                      style={styles.nGPUSlider}
+                      style={styles.slider}
                       thumbTintColor={theme.colors.primary}
                       minimumTrackTintColor={theme.colors.primary}
                     />
@@ -270,7 +255,7 @@ export const SettingsScreen: React.FC = observer(() => {
                       minimumValue={1}
                       maximumValue={4096}
                       step={1}
-                      style={styles.nGPUSlider}
+                      style={styles.slider}
                       thumbTintColor={theme.colors.primary}
                       minimumTrackTintColor={theme.colors.primary}
                     />
@@ -302,7 +287,7 @@ export const SettingsScreen: React.FC = observer(() => {
                       minimumValue={1}
                       maximumValue={modelStore.max_threads}
                       step={1}
-                      style={styles.nGPUSlider}
+                      style={styles.slider}
                       thumbTintColor={theme.colors.primary}
                       minimumTrackTintColor={theme.colors.primary}
                     />
@@ -375,6 +360,7 @@ export const SettingsScreen: React.FC = observer(() => {
                           {cacheTypeOptions.map(option => (
                             <Menu.Item
                               key={option.value}
+                              style={styles.menu}
                               label={option.label}
                               selected={
                                 option.value === modelStore.cache_type_k
@@ -433,6 +419,7 @@ export const SettingsScreen: React.FC = observer(() => {
                             <Menu.Item
                               key={option.value}
                               label={option.label}
+                              style={styles.menu}
                               selected={
                                 option.value === modelStore.cache_type_v
                               }
@@ -447,7 +434,7 @@ export const SettingsScreen: React.FC = observer(() => {
                     </View>
                   </View>
                 </View>
-              )}
+              </List.Accordion>
             </Card.Content>
           </Card>
 
@@ -474,6 +461,7 @@ export const SettingsScreen: React.FC = observer(() => {
                     }
                   />
                 </View>
+                <Divider />
 
                 {/* Auto Navigate to Chat */}
                 <View style={styles.switchContainer}>
@@ -499,7 +487,7 @@ export const SettingsScreen: React.FC = observer(() => {
 
           {/* UI Settings */}
           <Card elevation={0} style={styles.card}>
-            <Card.Title title="UI Settings" />
+            <Card.Title title="App Settings" />
             <Card.Content>
               <View style={styles.settingItemContainer}>
                 {/* Dark Mode */}
@@ -520,6 +508,7 @@ export const SettingsScreen: React.FC = observer(() => {
                     }
                   />
                 </View>
+                <Divider />
 
                 {/* iOS Background Download */}
                 {Platform.OS === 'ios' && (
@@ -541,6 +530,7 @@ export const SettingsScreen: React.FC = observer(() => {
                     />
                   </View>
                 )}
+                <Divider />
 
                 {/* Display Memory Usage (iOS only) */}
                 {Platform.OS === 'ios' && (

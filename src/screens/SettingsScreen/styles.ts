@@ -21,7 +21,7 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.surface,
     },
     settingItemContainer: {
-      marginVertical: 8,
+      marginVertical: 16,
     },
     switchContainer: {
       flexDirection: 'row',
@@ -38,11 +38,11 @@ export const createStyles = (theme: Theme) =>
     },
     textDescription: {
       color: theme.colors.onSurfaceVariant,
-      marginTop: 4,
+      //marginTop: 4,
     },
-    nGPUSlider: {
-      marginVertical: 8,
-      height: 40,
+    slider: {
+      //marginVertical: 8,
+      //height: 40,
     },
     textInput: {
       marginVertical: 8,
@@ -70,5 +70,17 @@ export const createStyles = (theme: Theme) =>
     },
     advancedSettingsContent: {
       marginTop: 8,
+    },
+    advancedAccordion: {
+      borderRadius: 8,
+      height: 55,
+      backgroundColor: theme.colors.surface,
+    },
+    accordionTitle: {
+      fontSize: 14,
+      color: theme.colors.secondary,
+    },
+    menu: {
+      width: 170,
     },
   });
