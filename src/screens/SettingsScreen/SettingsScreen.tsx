@@ -180,6 +180,7 @@ export const SettingsScreen: React.FC = observer(() => {
                 </Text>
                 <TextInput
                   ref={inputRef}
+                  testID="context-size-input"
                   style={[
                     styles.textInput,
                     !isValidInput && styles.invalidInput,
