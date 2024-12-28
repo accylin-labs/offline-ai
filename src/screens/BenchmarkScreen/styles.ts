@@ -16,8 +16,10 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.surface,
     },
     description: {
-      marginBottom: 16,
+      flex: 1,
       color: theme.colors.onSurfaceVariant,
+      paddingRight: 8,
+      fontSize: 12,
     },
     warning: {
       color: theme.colors.error,
@@ -71,9 +73,17 @@ export const createStyles = (theme: Theme) =>
       textAlign: 'right',
       color: theme.colors.onSurface,
       marginTop: 0,
+      minWidth: 40,
+      marginLeft: 8,
     },
     slider: {
-      height: 40,
+      //height: 40,
+      ...Platform.select({
+        android: {
+          marginLeft: -12,
+          marginRight: -10,
+        },
+      }),
     },
     sectionTitle: {
       color: theme.colors.primary,

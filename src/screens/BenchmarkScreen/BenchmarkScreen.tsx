@@ -376,6 +376,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
       visible={showAdvancedDialog}
       onDismiss={() => setShowAdvancedDialog(false)}
       title="Advanced Settings"
+      scrollable
       actions={[
         {
           label: 'Done',
