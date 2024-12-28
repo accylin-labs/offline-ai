@@ -335,8 +335,7 @@ export const SettingsScreen: React.FC = observer(() => {
                             : 'Enable Flash Attention to change cache type'}
                         </Text>
                       </View>
-                      <View
-                        style={styles.menuContainer}>
+                      <View style={styles.menuContainer}>
                         <Button
                           ref={keyCacheButtonRef}
                           mode="outlined"
@@ -393,9 +392,7 @@ export const SettingsScreen: React.FC = observer(() => {
                             : 'Enable Flash Attention to change cache type'}
                         </Text>
                       </View>
-                      <View
-                        style={styles.menuContainer}
-                        >
+                      <View style={styles.menuContainer}>
                         <Button
                           ref={valueCacheButtonRef}
                           mode="outlined"
@@ -518,18 +515,20 @@ export const SettingsScreen: React.FC = observer(() => {
                     <View style={styles.switchContainer}>
                       <View style={styles.textContainer}>
                         <Text variant="titleMedium" style={styles.textLabel}>
-                        {l10n.iOSBackgroundDownload}
-                      </Text>
-                      <Text variant="labelSmall" style={styles.textDescription}>
-                        {l10n.iOSBackgroundDownloadDescription}
-                      </Text>
-                    </View>
-                    <Switch
-                      testID="ios-background-download-switch"
-                      value={uiStore.iOSBackgroundDownloading}
-                      onValueChange={value =>
-                        uiStore.setiOSBackgroundDownloading(value)
-                      }
+                          {l10n.iOSBackgroundDownload}
+                        </Text>
+                        <Text
+                          variant="labelSmall"
+                          style={styles.textDescription}>
+                          {l10n.iOSBackgroundDownloadDescription}
+                        </Text>
+                      </View>
+                      <Switch
+                        testID="ios-background-download-switch"
+                        value={uiStore.iOSBackgroundDownloading}
+                        onValueChange={value =>
+                          uiStore.setiOSBackgroundDownloading(value)
+                        }
                       />
                     </View>
                   </>
@@ -541,17 +540,21 @@ export const SettingsScreen: React.FC = observer(() => {
                     <Divider />
                     <View style={styles.switchContainer}>
                       <View style={styles.textContainer}>
-                      <Text variant="titleMedium" style={styles.textLabel}>
-                        {l10n.displayMemoryUsage}
-                      </Text>
-                      <Text variant="labelSmall" style={styles.textDescription}>
-                        {l10n.displayMemoryUsageDescription}
-                      </Text>
-                    </View>
-                    <Switch
-                      testID="display-memory-usage-switch"
-                      value={uiStore.displayMemUsage}
-                      onValueChange={value => uiStore.setDisplayMemUsage(value)}
+                        <Text variant="titleMedium" style={styles.textLabel}>
+                          {l10n.displayMemoryUsage}
+                        </Text>
+                        <Text
+                          variant="labelSmall"
+                          style={styles.textDescription}>
+                          {l10n.displayMemoryUsageDescription}
+                        </Text>
+                      </View>
+                      <Switch
+                        testID="display-memory-usage-switch"
+                        value={uiStore.displayMemUsage}
+                        onValueChange={value =>
+                          uiStore.setDisplayMemUsage(value)
+                        }
                       />
                     </View>
                   </>
