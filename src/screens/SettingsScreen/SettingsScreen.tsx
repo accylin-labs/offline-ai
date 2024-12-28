@@ -169,9 +169,9 @@ export const SettingsScreen: React.FC = observer(() => {
                       )}
                     </Text>
                   </View>
+                  <Divider />
                 </>
               )}
-              <Divider />
 
               {/* Context Size */}
               <View style={styles.settingItemContainer}>
@@ -336,9 +336,9 @@ export const SettingsScreen: React.FC = observer(() => {
                         </Text>
                       </View>
                       <View
-                        style={styles.menuContainer}
-                        ref={keyCacheButtonRef}>
+                        style={styles.menuContainer}>
                         <Button
+                          ref={keyCacheButtonRef}
                           mode="outlined"
                           onPress={handleKeyCachePress}
                           style={styles.menuButton}
@@ -395,8 +395,9 @@ export const SettingsScreen: React.FC = observer(() => {
                       </View>
                       <View
                         style={styles.menuContainer}
-                        ref={valueCacheButtonRef}>
+                        >
                         <Button
+                          ref={valueCacheButtonRef}
                           mode="outlined"
                           onPress={handleValueCachePress}
                           style={styles.menuButton}
@@ -509,13 +510,14 @@ export const SettingsScreen: React.FC = observer(() => {
                     }
                   />
                 </View>
-                <Divider />
 
                 {/* iOS Background Download */}
                 {Platform.OS === 'ios' && (
-                  <View style={styles.switchContainer}>
-                    <View style={styles.textContainer}>
-                      <Text variant="titleMedium" style={styles.textLabel}>
+                  <>
+                    <Divider />
+                    <View style={styles.switchContainer}>
+                      <View style={styles.textContainer}>
+                        <Text variant="titleMedium" style={styles.textLabel}>
                         {l10n.iOSBackgroundDownload}
                       </Text>
                       <Text variant="labelSmall" style={styles.textDescription}>
@@ -528,15 +530,17 @@ export const SettingsScreen: React.FC = observer(() => {
                       onValueChange={value =>
                         uiStore.setiOSBackgroundDownloading(value)
                       }
-                    />
-                  </View>
+                      />
+                    </View>
+                  </>
                 )}
-                <Divider />
 
                 {/* Display Memory Usage (iOS only) */}
                 {Platform.OS === 'ios' && (
-                  <View style={styles.switchContainer}>
-                    <View style={styles.textContainer}>
+                  <>
+                    <Divider />
+                    <View style={styles.switchContainer}>
+                      <View style={styles.textContainer}>
                       <Text variant="titleMedium" style={styles.textLabel}>
                         {l10n.displayMemoryUsage}
                       </Text>
@@ -548,8 +552,9 @@ export const SettingsScreen: React.FC = observer(() => {
                       testID="display-memory-usage-switch"
                       value={uiStore.displayMemUsage}
                       onValueChange={value => uiStore.setDisplayMemUsage(value)}
-                    />
-                  </View>
+                      />
+                    </View>
+                  </>
                 )}
               </View>
             </Card.Content>
