@@ -5,7 +5,7 @@ export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.background,
     },
     scrollView: {
       flex: 1,
@@ -13,7 +13,6 @@ export const createStyles = (theme: Theme) =>
     },
     card: {
       marginBottom: 16,
-      backgroundColor: theme.colors.surface,
     },
     description: {
       flex: 1,
@@ -120,7 +119,6 @@ export const createStyles = (theme: Theme) =>
     resultsCard: {
       marginTop: 16,
       padding: 0,
-      backgroundColor: theme.colors.surface,
     },
     resultItem: {
       marginBottom: 16,
