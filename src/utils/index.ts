@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import {MD3Theme} from 'react-native-paper';
 import DeviceInfo from 'react-native-device-info';
 import Blob from 'react-native/Libraries/Blob/Blob';
+import * as RNFS from '@dr.pogodin/react-native-fs';
 
 import {l10n} from './l10n';
 import {getHFDefaultSettings} from './chat';
@@ -493,3 +494,13 @@ export function hfAsModel(
   return _model;
 }
 export const randId = () => Math.random().toString(36).substring(2, 11);
+
+export const getSHA256Hash = async (filePath: string): Promise<string> => {
+  try {
+    const hash = await RNFS.hash(filePath, 'sha256');
+    return hash;
+  } catch (error) {
+    console.error('Error generating SHA256 hash:', error);
+    throw error;
+  }
+};

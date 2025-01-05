@@ -11,7 +11,13 @@ import {CompletionParams, LlamaContext, initLlama} from '@pocketpalai/llama.rn';
 import {uiStore} from './UIStore';
 import {chatSessionStore} from './ChatSessionStore';
 import {defaultModels, MODEL_LIST_VERSION} from './defaultModels';
-import {deepMerge, formatBytes, hasEnoughSpace, hfAsModel} from '../utils';
+import {
+  deepMerge,
+  formatBytes,
+  getSHA256Hash,
+  hasEnoughSpace,
+  hfAsModel,
+} from '../utils';
 
 import {
   getHFDefaultSettings,
@@ -410,7 +416,17 @@ class ModelStore {
   };
 
   async checkFileExists(model: Model) {
-    const exists = await RNFS.exists(await this.getModelFullPath(model));
+    const filePath = await this.getModelFullPath(model);
+    const exists = await RNFS.exists(filePath);
+    if (exists) {
+      // Only calculate hash if it's not already stored
+      if (!model.hash) {
+        const hash = await getSHA256Hash(filePath);
+        runInAction(() => {
+          model.hash = hash;
+        });
+      }
+    }
     runInAction(() => {
       model.isDownloaded = exists;
     });
@@ -536,8 +552,12 @@ class ModelStore {
 
       const result = await ret.promise;
       if (result.statusCode === 200) {
+        // Calculate hash after successful download
+        const hash = await getSHA256Hash(downloadDest);
+
         runInAction(() => {
           model.progress = 100; // Ensure progress is set to 100 upon completion
+          model.hash = hash;
           this.refreshDownloadStatuses();
         });
 
