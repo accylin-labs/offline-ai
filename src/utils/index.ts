@@ -504,3 +504,29 @@ export const getSHA256Hash = async (filePath: string): Promise<string> => {
     throw error;
   }
 };
+
+/**
+ * Checks if a model's file integrity is valid by comparing its hash with the expected hash from HuggingFace.
+ * @param model - The model to check integrity for
+ * @returns An object containing the integrity check result and any error message
+ */
+export const checkModelFileIntegrity = (
+  model: Model,
+): {
+  isValid: boolean;
+  errorMessage: string | null;
+} => {
+  if (model.hash && model.hfModelFile?.lfs?.oid) {
+    if (model.hash !== model.hfModelFile.lfs.oid) {
+      return {
+        isValid: false,
+        errorMessage:
+          'Model file integrity check failed. Please delete and redownload the model.',
+      };
+    }
+  }
+  return {
+    isValid: true,
+    errorMessage: null,
+  };
+};
