@@ -535,11 +535,25 @@ export const checkModelFileIntegrity = async (
 
   if (model.hash && model.hfModelFile?.lfs?.oid) {
     if (model.hash !== model.hfModelFile.lfs.oid) {
-      return {
-        isValid: false,
-        errorMessage:
-          'Model file integrity check failed. Please delete and redownload the model.',
-      };
+      try {
+        const filePath = await modelStore.getModelFullPath(model);
+        const fileStats = await RNFS.stat(filePath);
+        const actualSize = formatBytes(fileStats.size, 2);
+        const expectedSize = formatBytes(model.hfModelFile.lfs.size, 2);
+        return {
+          isValid: false,
+          errorMessage:
+            `Model file corrupted (${actualSize} vs ${expectedSize}). ` +
+            'Please delete and redownload.',
+        };
+      } catch (error) {
+        console.error('Error getting file size:', error);
+        return {
+          isValid: false,
+          errorMessage:
+            'Model file corrupted. Please delete and redownload the model.',
+        };
+      }
     }
   }
 

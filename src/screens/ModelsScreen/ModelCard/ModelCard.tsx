@@ -318,33 +318,15 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
       };
 
       return (
-        <>
-          {integrityError && (
-            <TouchableRipple
-              testID="integrity-warning-button"
-              onPress={handleWarningPress}
-              style={styles.warningContainer}>
-              <View style={styles.warningContent}>
-                <IconButton
-                  icon="alert-circle-outline"
-                  iconColor={theme.colors.error}
-                  size={20}
-                  style={styles.warningIcon}
-                />
-                <Text style={styles.warningText}>{integrityError}</Text>
-              </View>
-            </TouchableRipple>
-          )}
-          <Button
-            testID={isActiveModel ? 'offload-button' : 'load-button'}
-            icon={isActiveModel ? 'eject' : 'play-circle-outline'}
-            mode="text"
-            onPress={handlePress}
-            // disabled={!!integrityError} // for now integrity check is experimental. So won't disable the button
-            style={styles.actionButton}>
-            {isActiveModel ? l10n.offload : l10n.load}
-          </Button>
-        </>
+        <Button
+          testID={isActiveModel ? 'offload-button' : 'load-button'}
+          icon={isActiveModel ? 'eject' : 'play-circle-outline'}
+          mode="text"
+          onPress={handlePress}
+          // disabled={!!integrityError} // for now integrity check is experimental. So won't disable the button
+          style={styles.actionButton}>
+          {isActiveModel ? l10n.offload : l10n.load}
+        </Button>
       );
     };
 
@@ -418,6 +400,24 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                       style={styles.warningIcon}
                     />
                     <Text style={styles.warningText}>{shortMemoryWarning}</Text>
+                  </View>
+                </TouchableRipple>
+              )}
+
+              {/* Display integrity warning if check fails */}
+              {integrityError && (
+                <TouchableRipple
+                  testID="integrity-warning-button"
+                  //onPress={handleWarningPress}
+                  style={styles.warningContainer}>
+                  <View style={styles.warningContent}>
+                    <IconButton
+                      icon="alert-circle-outline"
+                      iconColor={theme.colors.error}
+                      size={20}
+                      style={styles.warningIcon}
+                    />
+                    <Text style={styles.warningText}>{integrityError}</Text>
                   </View>
                 </TouchableRipple>
               )}
