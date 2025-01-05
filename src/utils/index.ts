@@ -507,15 +507,32 @@ export const getSHA256Hash = async (filePath: string): Promise<string> => {
 
 /**
  * Checks if a model's file integrity is valid by comparing its hash with the expected hash from HuggingFace.
+ * For HF models, it will automatically fetch missing file details if needed.
+ * We assume lfs.oid is the hash of the file.
  * @param model - The model to check integrity for
+ * @param modelStore - The model store instance for updating model details
  * @returns An object containing the integrity check result and any error message
  */
-export const checkModelFileIntegrity = (
+export const checkModelFileIntegrity = async (
   model: Model,
-): {
+  modelStore: any,
+): Promise<{
   isValid: boolean;
   errorMessage: string | null;
-} => {
+}> => {
+  if (!model.hash) {
+    // Unsure if this is needed. As modelstore will fetch the details if needed.
+    return {
+      isValid: true,
+      errorMessage: null,
+    };
+  }
+
+  // For HF models, if we don't have lfs.oid, fetch it
+  if (model.origin === ModelOrigin.HF && !model.hfModelFile?.lfs?.oid) {
+    await modelStore.fetchAndUpdateModelFileDetails(model);
+  }
+
   if (model.hash && model.hfModelFile?.lfs?.oid) {
     if (model.hash !== model.hfModelFile.lfs.oid) {
       return {
@@ -525,6 +542,7 @@ export const checkModelFileIntegrity = (
       };
     }
   }
+
   return {
     isValid: true,
     errorMessage: null,

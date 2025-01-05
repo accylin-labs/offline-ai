@@ -8,6 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {computed, makeAutoObservable, ObservableMap, runInAction} from 'mobx';
 import {CompletionParams, LlamaContext, initLlama} from '@pocketpalai/llama.rn';
 
+import {fetchModelFilesDetails} from '../api/hf';
+
 import {uiStore} from './UIStore';
 import {chatSessionStore} from './ChatSessionStore';
 import {defaultModels, MODEL_LIST_VERSION} from './defaultModels';
@@ -1033,6 +1035,35 @@ class ModelStore {
 
   setIsStreaming(value: boolean) {
     this.isStreaming = value;
+  }
+
+  /**
+   * Fetches and updates model file details from HuggingFace.
+   * This is used when we need to get the lfs.oid for integrity checks.
+   * @param model - The model to update
+   * @returns Promise<void>
+   */
+  async fetchAndUpdateModelFileDetails(model: Model): Promise<void> {
+    if (!model.hfModel?.id) {
+      return;
+    }
+
+    try {
+      const fileDetails = await fetchModelFilesDetails(model.hfModel.id);
+      const matchingFile = fileDetails.find(
+        file => file.path === model.hfModelFile?.rfilename,
+      );
+
+      if (matchingFile && matchingFile.lfs) {
+        runInAction(() => {
+          if (model.hfModelFile) {
+            model.hfModelFile.lfs = matchingFile.lfs;
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch model file details:', error);
+    }
   }
 }
 

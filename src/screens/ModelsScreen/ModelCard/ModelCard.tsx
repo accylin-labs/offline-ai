@@ -84,8 +84,9 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     // Check integrity when model is downloaded
     useEffect(() => {
       if (isDownloaded) {
-        const {errorMessage} = checkModelFileIntegrity(model);
-        setIntegrityError(errorMessage);
+        checkModelFileIntegrity(model, modelStore).then(({errorMessage}) => {
+          setIntegrityError(errorMessage);
+        });
       } else {
         setIntegrityError(null);
       }
