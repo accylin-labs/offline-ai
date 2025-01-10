@@ -22,7 +22,10 @@ import {
   useKeyboardAnimation,
 } from 'react-native-keyboard-controller';
 
-import {useComponentSize} from '../KeyboardAccessoryView/hooks';
+import {
+  useComponentSize,
+  useKeyboardDimensions,
+} from '../KeyboardAccessoryView/hooks';
 
 import {usePrevious, useTheme, useMessageActions} from '../../hooks';
 
@@ -209,9 +212,13 @@ export const ChatView = observer(
       ],
     });
 
+    const {keyboardHeight: keyboardHeight} = useKeyboardDimensions(true);
     const translateY = progress.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, insets.bottom],
+      outputRange: [
+        0,
+        Math.max(0, Math.min(insets.bottom, keyboardHeight - insets.bottom)),
+      ],
     });
 
     const [isImageViewVisible, setIsImageViewVisible] = React.useState(false);
@@ -649,7 +656,7 @@ export const ChatView = observer(
             }
           />
           {showScrollButton && (
-            <Animated.View style={{transform: [{translateY: translateY}]}}>
+            <Animated.View style={{transform: [{translateY}]}}>
               <TouchableOpacity
                 style={[
                   styles.scrollToBottomButton,
@@ -717,7 +724,7 @@ export const ChatView = observer(
                         styles.inputContainer,
                         {
                           paddingBottom: insets.bottom,
-                          transform: [{translateY: translateY}],
+                          transform: [{translateY}],
                         },
                       ]}>
                       <ChatInput
