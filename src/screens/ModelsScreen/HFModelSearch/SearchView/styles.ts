@@ -9,6 +9,7 @@ export const createStyles = (theme: Theme, bottomInset: number) =>
     },
     list: {
       padding: 16,
+      paddingBottom: 100,
     },
     modelItem: {
       paddingVertical: 12,

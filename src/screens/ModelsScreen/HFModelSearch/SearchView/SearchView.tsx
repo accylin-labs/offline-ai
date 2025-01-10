@@ -1,10 +1,10 @@
-import {Keyboard, Platform} from 'react-native';
 import React, {useState, useEffect} from 'react';
+import {Keyboard, Platform, TouchableOpacity} from 'react-native';
 
 import {observer} from 'mobx-react';
 import {Text} from 'react-native-paper';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {BottomSheetFlatList, BottomSheetView} from '@gorhom/bottom-sheet';
 
 import {Searchbar} from '../../../../components';
@@ -74,6 +74,9 @@ export const SearchView = observer(
             keyExtractor={(item: HuggingFaceModel) => item.id}
             renderItem={renderItem}
             contentContainerStyle={styles.list}
+            renderScrollComponent={props => (
+              <KeyboardAwareScrollView bottomOffset={100} {...props} />
+            )}
           />
         )}
         <Searchbar
