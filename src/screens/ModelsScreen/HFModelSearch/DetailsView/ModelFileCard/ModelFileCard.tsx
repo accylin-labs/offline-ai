@@ -9,6 +9,7 @@ import {useTheme, useMemoryCheck} from '../../../../../hooks';
 import {createStyles} from './styles';
 import {modelStore} from '../../../../../store';
 import {formatBytes, hfAsModel} from '../../../../../utils';
+import {isLegacyQuantization} from '../../../../../utils/modelSettings';
 import {
   HuggingFaceModel,
   Model,
@@ -20,8 +21,6 @@ interface ModelFileCardProps {
   modelFile: ModelFile;
   hfModel: HuggingFaceModel;
 }
-
-const LEGACY_QUANTIZATION_WARNINGS = ['Q4_0_4_8', 'Q4_0_4_4', 'Q4_0_8_8'];
 
 type Warning = {
   type: string;
@@ -64,10 +63,6 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
 
     const {shortMemoryWarning} = useMemoryCheck(hfAsModel(hfModel, modelFile));
 
-    const isLegacyQuantization = LEGACY_QUANTIZATION_WARNINGS.some(q =>
-      modelFile.rfilename.toLowerCase().includes(q.toLowerCase()),
-    );
-
     const warnings = [
       !modelFile.canFitInStorage && {
         type: 'storage',
@@ -82,7 +77,7 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
           "Model size is close to or exceeds your device's total memory. This may cause unexpected behavior.",
         shortMessage: shortMemoryWarning,
       },
-      isLegacyQuantization && {
+      isLegacyQuantization(modelFile.rfilename) && {
         type: 'legacy',
         icon: 'alert-circle-outline',
         message: 'Legacy quantization format - model may not run.',
@@ -306,7 +301,9 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
             <View style={styles.snackbarContent}>
               {warnings.map((warning, index) => (
                 <Text key={warning.type} style={styles.snackbarText}>
-                  {`${index + 1}. ${warning.message}`}
+                  {warnings.length > 1
+                    ? `${index + 1}. ${warning.message}`
+                    : warning.message}
                 </Text>
               ))}
             </View>
