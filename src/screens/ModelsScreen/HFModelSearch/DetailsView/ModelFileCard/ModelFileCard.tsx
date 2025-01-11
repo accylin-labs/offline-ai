@@ -37,6 +37,11 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
     const styles = createStyles(theme);
     const HF_YELLOW = '#FFD21E';
 
+    // Check if we have all the necessary data, as some are fetched async, like size.
+    const isModelInfoReady = Boolean(
+      modelFile.size !== undefined && modelFile.canFitInStorage !== undefined,
+    );
+
     // Find the model in the store if exitst
     const modelId = hfAsModel(hfModel, modelFile).id;
     const storeModel = modelStore.models.find(m => m.id === modelId);
@@ -208,12 +213,12 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
                 {modelFile.rfilename}
               </Text>
               <View style={styles.metadataRow}>
-                {modelFile.size && (
+                {isModelInfoReady && modelFile.size && (
                   <Text variant="labelSmall" style={styles.fileSize}>
                     {formatBytes(modelFile.size, 2, false, true)}
                   </Text>
                 )}
-                {warnings.length > 0 && (
+                {isModelInfoReady && warnings.length > 0 && (
                   <Pressable onPress={handleWarningPress}>
                     <View style={styles.warningChip}>
                       <IconButton
@@ -238,7 +243,6 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
                   {downloadSpeed}
                 </Text>
               )}
-
             </View>
             <View style={styles.fileActions}>
               <IconButton
@@ -260,7 +264,7 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
                 <Tooltip
                   enterTouchDelay={50}
                   title={
-                    !modelFile.canFitInStorage
+                    isModelInfoReady && !modelFile.canFitInStorage
                       ? 'Not enough storage space available'
                       : ''
                   }>
@@ -277,7 +281,10 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
                       }
                       size={20}
                       animated
-                      disabled={!isDownloaded && !modelFile.canFitInStorage}
+                      disabled={
+                        !isModelInfoReady ||
+                        (!isDownloaded && !modelFile.canFitInStorage)
+                      }
                     />
                   </View>
                 </Tooltip>
