@@ -128,6 +128,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
                             style={styles.menu}
                             onPress={() => {
                               setSessionToRename(session.id);
+                              setNewTitle(session.title);
                               setRenameModalVisible(true);
                               closeMenu();
                             }}
