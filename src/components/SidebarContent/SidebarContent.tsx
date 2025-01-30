@@ -1,19 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import {TouchableOpacity, View, TextInput, Modal, Button} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {TouchableOpacity, View, TextInput, Modal} from 'react-native';
 
 import {observer} from 'mobx-react';
 import {Drawer, Text} from 'react-native-paper';
 import DeviceInfo from 'react-native-device-info';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {
   DrawerContentScrollView,
   DrawerContentComponentProps,
 } from '@react-navigation/drawer';
+
 import {useTheme} from '../../hooks';
+
 import {createStyles} from './styles';
+
 import {chatSessionStore} from '../../store';
+
 import {Menu} from '..';
 
 export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
@@ -59,7 +63,10 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
 
     const handleRename = () => {
       if (sessionToRename && newTitle.trim()) {
-        chatSessionStore.updateSessionTitleBySessionId(sessionToRename, newTitle);
+        chatSessionStore.updateSessionTitleBySessionId(
+          sessionToRename,
+          newTitle,
+        );
         setRenameModalVisible(false);
         setNewTitle('');
         setSessionToRename(null);
@@ -122,8 +129,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
                         <Menu
                           visible={menuVisible === session.id}
                           onDismiss={closeMenu}
-                          anchor={menuPosition}
-                          >
+                          anchor={menuPosition}>
                           <Menu.Item
                             style={styles.menu}
                             onPress={() => {
@@ -176,8 +182,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
             setNewTitle('');
             setSessionToRename(null);
           }}
-          animationType="fade"
-        >
+          animationType="fade">
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Rename Chat</Text>
@@ -199,8 +204,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
                     setRenameModalVisible(false);
                     setNewTitle('');
                     setSessionToRename(null);
-                  }}
-                >
+                  }}>
                   <Text style={styles.cancelText}>Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -209,8 +213,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
                     !newTitle.trim() && styles.disabledButton,
                   ]}
                   onPress={handleRename}
-                  disabled={!newTitle.trim()}
-                >
+                  disabled={!newTitle.trim()}>
                   <Text style={styles.confirmText}>Done</Text>
                 </TouchableOpacity>
               </View>

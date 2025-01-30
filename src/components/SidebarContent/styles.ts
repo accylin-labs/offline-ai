@@ -1,5 +1,6 @@
-import { StyleSheet } from 'react-native';
-import { MD3Theme } from 'react-native-paper';
+import {StyleSheet} from 'react-native';
+
+import {MD3Theme} from 'react-native-paper';
 
 export const createStyles = (theme: MD3Theme) =>
   StyleSheet.create({
@@ -70,7 +71,7 @@ export const createStyles = (theme: MD3Theme) =>
       width: 170,
     },
     sessionItem: {
-      position: 'relative', 
+      position: 'relative',
     },
     sessionTouchable: {
       flex: 1,
@@ -88,8 +89,8 @@ export const createStyles = (theme: MD3Theme) =>
       overflow: 'hidden',
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: theme.dark
-      ? theme.colors.outline + '50'
-      : theme.colors.outline + '30',
+        ? theme.colors.outline + '50'
+        : theme.colors.outline + '30',
     },
     modalTitle: {
       fontSize: 17,
@@ -99,37 +100,37 @@ export const createStyles = (theme: MD3Theme) =>
       paddingVertical: 16,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: theme.dark
-      ? theme.colors.outline + '50'
-      : theme.colors.outline + '30',
+        ? theme.colors.outline + '50'
+        : theme.colors.outline + '30',
     },
     textInput: {
       margin: 16,
       padding: 12,
       backgroundColor: theme.dark
-      ? theme.colors.surfaceVariant + '80'
-      : theme.colors.surface + '90',
+        ? theme.colors.surfaceVariant + '80'
+        : theme.colors.surface + '90',
       color: theme.colors.onSurface,
       fontSize: 17,
       borderWidth: StyleSheet.hairlineWidth * 2,
       borderColor: theme.dark
-      ? theme.colors.outline + '50'
-      : theme.colors.outline + '30',
-      borderRadius: 10
+        ? theme.colors.outline + '50'
+        : theme.colors.outline + '30',
+      borderRadius: 10,
     },
     buttonContainer: {
       flexDirection: 'row',
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: theme.dark
-      ? theme.colors.outline + '50'
-      : theme.colors.outline + '30',
+        ? theme.colors.outline + '50'
+        : theme.colors.outline + '30',
     },
     cancelButton: {
       flex: 1,
       paddingVertical: 12,
       borderRightWidth: StyleSheet.hairlineWidth,
       borderRightColor: theme.dark
-      ? theme.colors.outline + '50'
-      : theme.colors.outline + '30',
+        ? theme.colors.outline + '50'
+        : theme.colors.outline + '30',
       alignItems: 'center',
       justifyContent: 'center',
     },

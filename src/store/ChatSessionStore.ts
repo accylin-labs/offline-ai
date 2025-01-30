@@ -106,7 +106,7 @@ class ChatSessionStore {
       this.saveSessionsMetadata();
     }
   }
-  
+
   updateSessionTitle(session: SessionMetaData) {
     if (session.messages.length > 0) {
       const message = session.messages[session.messages.length - 1];
