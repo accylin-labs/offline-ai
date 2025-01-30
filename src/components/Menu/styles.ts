@@ -15,12 +15,13 @@ export const createStyles = (theme: Theme) =>
       shadowOpacity: 0,
     },
     content: {
-      paddingVertical: 4,
+      paddingVertical: 0,
       backgroundColor: theme.colors.menuBackground,
-      borderRadius: 15,
+      borderRadius: 12,
+      overflow: 'hidden',
     },
     contentWithSubmenu: {
-      backgroundColor: theme.colors.menuBackgroundDimmed,
+      backgroundColor: theme.colors.menuBackground,
     },
     groupSeparator: {
       height: 6,
@@ -28,7 +29,6 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: 'transparent',
     },
     separator: {
-      //height: 1,
       backgroundColor: theme.colors.menuSeparator,
     },
   });

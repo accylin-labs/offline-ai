@@ -10,8 +10,9 @@ export const createStyles = (theme: Theme) =>
       marginLeft: 0,
     },
     content: {
-      paddingVertical: 6,
+      paddingVertical: 0,
       backgroundColor: theme.colors.menuBackground,
-      borderRadius: 15,
+      borderRadius: 12,
+      overflow: 'hidden',
     },
   });

@@ -105,7 +105,11 @@ export const MenuItem: React.FC<MenuItemProps> = ({
       <Icon
         source={isSubmenuOpen ? 'chevron-down' : 'chevron-right'}
         size={18}
-        color={theme.colors.menuText}
+        color={
+          menuItemProps.disabled
+            ? theme.colors.onSurfaceDisabled
+            : theme.colors.primary
+        }
       />
     </View>
   );
@@ -136,7 +140,6 @@ export const MenuItem: React.FC<MenuItemProps> = ({
         title={label}
         style={[
           styles.container,
-          selectable || leadingIcon ? styles.containerWithLeading : null,
           isSubmenuOpen && styles.activeParent,
           isGroupLabel && styles.groupLabel,
           style,

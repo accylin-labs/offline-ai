@@ -4,14 +4,10 @@ import {Theme} from '../../../utils/types';
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
-      height: 30,
+      height: 46,
       backgroundColor: 'transparent',
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: 12,
-    },
-    containerWithLeading: {
-      paddingLeft: 8,
     },
     leadingContainer: {
       flexDirection: 'row',
@@ -23,10 +19,10 @@ export const createStyles = (theme: Theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      marginLeft: 0,
+      marginLeft: 10,
     },
     label: {
-      ...theme.fonts.bodySmall,
+      ...theme.fonts.titleSmall,
       textAlign: 'left',
       paddingLeft: 0,
     },

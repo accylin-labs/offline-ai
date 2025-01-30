@@ -33,7 +33,7 @@ const createBaseColors = (isDark: boolean): MD3BaseColors => {
       onTertiary: '#014C4C',
       tertiaryContainer: '#016665',
       onTertiaryContainer: '#9EE6E5',
-      error: '#E69490',
+      error: md3BaseColors.error!,
       onError: '#4C100D',
       errorContainer: '#661511',
       onErrorContainer: '#E6ACA9',
