@@ -1,6 +1,8 @@
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
+import { MD3Theme } from 'react-native-paper';
 
-export const getStyles = (theme: any) => StyleSheet.create({
+export const getStyles = (theme: MD3Theme) => StyleSheet.create({
+    
     modalContainer: {
         flex: 1,
         backgroundColor: theme.colors.background,
@@ -15,12 +17,12 @@ export const getStyles = (theme: any) => StyleSheet.create({
     headerText: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: theme.colors.text,
+        color: theme.colors.primary,
         flex: 1,
         textAlign: 'center',
     },
     contentText: {
-        color: theme.colors.text,
+        color: theme.colors.primary,
         fontSize: 16,
         lineHeight: 24,
         marginTop: 48,
