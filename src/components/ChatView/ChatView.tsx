@@ -497,6 +497,7 @@ export const ChatView = observer(
       handleEdit,
       handleMenuDismiss,
       size.width,
+      handleSelectView,
     ]);
 
     const renderMenuItem = React.useCallback(
