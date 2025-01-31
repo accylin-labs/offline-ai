@@ -275,11 +275,11 @@ export const ChatView = observer(
       handleTextSelected,
       setSelectionModalVisible,
     } = useMessageActions({
-        user,
-        messages,
-        handleSendPress: wrappedOnSendPress,
-        setInputText,
-      });
+      user,
+      messages,
+      handleSendPress: wrappedOnSendPress,
+      setInputText,
+    });
 
     const l10nValue = React.useMemo(
       () => ({...l10n[locale], ...unwrap(l10nOverride)}),
