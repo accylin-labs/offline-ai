@@ -1,8 +1,8 @@
-import React, { useRef } from 'react';
-import { Modal, Pressable, Text, View } from 'react-native';
-import { useTheme } from '../../hooks/useTheme';
+import React, {useRef} from 'react';
+import {Modal, Pressable, Text, View} from 'react-native';
+import {useTheme} from '../../hooks/useTheme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getStyles } from './styles';
+import {getStyles} from './styles';
 
 interface MessageSelectionViewProps {
   visible: boolean;
