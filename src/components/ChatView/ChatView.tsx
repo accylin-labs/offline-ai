@@ -33,7 +33,7 @@ import ImageView from './ImageView';
 import {createStyles} from './styles';
 
 import {chatSessionStore, modelStore} from '../../store';
-
+import { MessageSelectionView } from '../MessageSelectionView';
 import {l10n} from '../../utils/l10n';
 import {MessageType, User} from '../../utils/types';
 import {
@@ -264,7 +264,17 @@ export const ChatView = observer(
       chatSessionStore.exitEditMode();
     }, []);
 
-    const {handleCopy, handleEdit, handleTryAgain, handleTryAgainWith} =
+    const { 
+      handleSelectView,
+      handleCopy,
+      handleEdit,
+      handleTryAgain,
+      handleTryAgainWith,
+      isSelectionModalVisible,
+      selectedMessageContent,
+      handleTextSelected,
+      setSelectionModalVisible,
+    } =
       useMessageActions({
         user,
         messages,
@@ -427,6 +437,15 @@ export const ChatView = observer(
             handleMenuDismiss();
           },
           icon: 'content-copy',
+          disabled: false,
+        },
+        {
+          label: 'Select Text',
+          onPress: () => {
+            handleSelectView(selectedMessage);
+            handleMenuDismiss();
+          },
+          icon: 'select-drag',
           disabled: false,
         },
       ];
@@ -756,6 +775,12 @@ export const ChatView = observer(
               onRequestClose={handleRequestClose}
               visible={isImageViewVisible}
             />
+          <MessageSelectionView
+            visible={isSelectionModalVisible}
+            onClose={() => setSelectionModalVisible(false)}
+            content={selectedMessageContent}
+            onTextSelected={handleTextSelected}
+          />
             <Menu
               visible={menuVisible}
               onDismiss={handleMenuDismiss}
