@@ -774,12 +774,12 @@ export const ChatView = observer(
               onRequestClose={handleRequestClose}
               visible={isImageViewVisible}
             />
-          <MessageSelectionView
-            visible={isSelectionModalVisible}
-            onClose={() => setSelectionModalVisible(false)}
-            content={selectedMessageContent}
-            onTextSelected={handleTextSelected}
-          />
+            <MessageSelectionView
+              visible={isSelectionModalVisible}
+              onClose={() => setSelectionModalVisible(false)}
+              content={selectedMessageContent}
+              onTextSelected={handleTextSelected}
+            />
             <Menu
               visible={menuVisible}
               onDismiss={handleMenuDismiss}
