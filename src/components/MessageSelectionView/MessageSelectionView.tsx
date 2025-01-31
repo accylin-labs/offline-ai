@@ -22,7 +22,7 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
   const styles = getStyles(theme);
 
   const handleTextSelection = (event: any) => {
-    const { selection } = event.nativeEvent;
+    const {selection} = event.nativeEvent;
     if (selection && selection.start !== selection.end) {
       const selectedText = content.substring(selection.start, selection.end);
       onTextSelected(selectedText);
@@ -34,12 +34,11 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={onClose}
-    >
+      onRequestClose={onClose}>
       <View style={styles.modalContainer}>
         <View style={styles.headerContainer}>
           <Pressable onPress={onClose}>
-            {({ pressed }) => (
+            {({pressed}) => (
               <Icon
                 name="window-close"
                 size={24}
@@ -47,9 +46,7 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
               />
             )}
           </Pressable>
-          <Text style={styles.headerText}>
-            Select Text
-          </Text>
+          <Text style={styles.headerText}>Select Text</Text>
       </View>
 
       <Text
