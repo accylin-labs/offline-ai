@@ -34,8 +34,7 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={onClose}
-    >
+      onRequestClose={onClose}>
       <View style={styles.modalContainer}>
         <View style={styles.headerContainer}>
           <Pressable onPress={onClose}>
