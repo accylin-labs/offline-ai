@@ -264,7 +264,7 @@ export const ChatView = observer(
       chatSessionStore.exitEditMode();
     }, []);
 
-    const { 
+    const {
       handleSelectView,
       handleCopy,
       handleEdit,
@@ -274,8 +274,7 @@ export const ChatView = observer(
       selectedMessageContent,
       handleTextSelected,
       setSelectionModalVisible,
-    } =
-      useMessageActions({
+    } = useMessageActions({
         user,
         messages,
         handleSendPress: wrappedOnSendPress,
