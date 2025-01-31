@@ -37,16 +37,16 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
       onRequestClose={onClose}>
       <View style={styles.modalContainer}>
         <View style={styles.headerContainer}>
-          <Pressable onPress={onClose}>
-            {({pressed}) => (
-              <Icon
-                name="window-close"
-                size={24}
-                color={pressed ? theme.colors.surfaceVariant : theme.colors.text}
-              />
-            )}
-          </Pressable>
-          <Text style={styles.headerText}>Select Text</Text>
+        <Pressable onPress={onClose}>
+          {({ pressed }) => (
+            <Icon
+              name="close"
+              size={24}
+              color={pressed ? theme.colors.surfaceVariant : theme.colors.text}
+            />
+          )}
+        </Pressable>
+        <Text style={styles.headerText}>Select Text</Text>
       </View>
 
       <Text
