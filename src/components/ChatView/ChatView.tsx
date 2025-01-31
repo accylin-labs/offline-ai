@@ -33,7 +33,7 @@ import ImageView from './ImageView';
 import {createStyles} from './styles';
 
 import {chatSessionStore, modelStore} from '../../store';
-import { MessageSelectionView } from '../MessageSelectionView';
+import {MessageSelectionView} from '../MessageSelectionView';
 import {l10n} from '../../utils/l10n';
 import {MessageType, User} from '../../utils/types';
 import {
