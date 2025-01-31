@@ -8,7 +8,7 @@ export const getStyles = (theme: any) => StyleSheet.create({
     },
     headerContainer: {
         flexDirection: 'row',
-        alignItems: 'center', 
+        alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 16,
     },
