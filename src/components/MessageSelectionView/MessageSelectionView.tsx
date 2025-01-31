@@ -39,11 +39,13 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
       <View style={styles.modalContainer}>
         <View style={styles.headerContainer}>
           <Pressable onPress={onClose}>
-            {({ pressed }) => (
+            {({pressed}) => (
               <Icon
                 name="close"
                 size={24}
-                color={pressed ? theme.colors.surfaceVariant : theme.colors.text}
+                color={
+                  pressed ? theme.colors.surfaceVariant : theme.colors.text
+                }
               />
             )}
           </Pressable>
@@ -55,8 +57,7 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
           selectable
           selectionColor={theme.colors.surfaceVariant}
           onTextLayout={handleTextSelection}
-          style={styles.contentText}
-        >
+          style={styles.contentText}>
           {content}
         </Text>
       </View>
