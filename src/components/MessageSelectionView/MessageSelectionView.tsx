@@ -1,7 +1,7 @@
 import React, {useRef} from 'react';
 import {Modal, Pressable, Text, View} from 'react-native';
-import {useTheme} from '../../hooks/useTheme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useTheme} from '../../hooks/useTheme';
 import {getStyles} from './styles';
 
 interface MessageSelectionViewProps {
@@ -34,30 +34,31 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
       visible={visible}
       transparent
       animationType="slide"
-      onRequestClose={onClose}>
+      onRequestClose={onClose}
+    >
       <View style={styles.modalContainer}>
         <View style={styles.headerContainer}>
-        <Pressable onPress={onClose}>
-          {({ pressed }) => (
-            <Icon
-              name="close"
-              size={24}
-              color={pressed ? theme.colors.surfaceVariant : theme.colors.text}
-            />
-          )}
-        </Pressable>
-        <Text style={styles.headerText}>Select Text</Text>
-      </View>
+          <Pressable onPress={onClose}>
+            {({ pressed }) => (
+              <Icon
+                name="close"
+                size={24}
+                color={pressed ? theme.colors.surfaceVariant : theme.colors.text}
+              />
+            )}
+          </Pressable>
+          <Text style={styles.headerText}>Select Text</Text>
+        </View>
 
-      <Text
-        ref={textRef}
-        selectable
-        selectionColor={theme.colors.surfaceVariant}
-        onTextLayout={handleTextSelection}
-        style={styles.contentText}
-      >
-        {content}
-      </Text>
+        <Text
+          ref={textRef}
+          selectable
+          selectionColor={theme.colors.surfaceVariant}
+          onTextLayout={handleTextSelection}
+          style={styles.contentText}
+        >
+          {content}
+        </Text>
       </View>
     </Modal>
   );
