@@ -11,20 +11,20 @@ export const getStyles = (theme: MD3Theme) =>
     headerContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
       marginBottom: 16,
     },
     headerText: {
-      fontSize: 18,
+      fontSize: 22,
       fontWeight: 'bold',
       color: theme.colors.primary,
-      flex: 1,
-      textAlign: 'center',
+      marginLeft: 16,
     },
     contentText: {
       color: theme.colors.primary,
-      fontSize: 16,
+      fontSize: 18,
       lineHeight: 24,
-      marginTop: 48,
+      marginTop: 5,
+      maxWidth: 375,
+      alignSelf: 'center',
     },
   });

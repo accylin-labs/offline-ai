@@ -40,8 +40,8 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
           <Pressable onPress={onClose}>
             {({pressed}) => (
               <Icon
-                name="close"
-                size={24}
+                name="arrow-left"
+                size={26}
                 color={
                   pressed ? theme.colors.surfaceVariant : theme.colors.text
                 }
