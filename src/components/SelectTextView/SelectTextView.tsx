@@ -4,14 +4,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useTheme} from '../../hooks/useTheme';
 import {getStyles} from './styles';
 
-interface MessageSelectionViewProps {
+interface SelectTextViewProps {
   visible: boolean;
   onClose: () => void;
   content: string;
   onTextSelected: (selectedText: string) => void;
 }
 
-export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
+export const SelectTextView: React.FC<SelectTextViewProps> = ({
   visible,
   onClose,
   content,
@@ -52,15 +52,15 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-         <Text
+          <Text
             ref={textRef}
             selectable
             selectionColor={theme.colors.surfaceVariant}
             onTextLayout={handleTextSelection}
             style={styles.contentText}>
-          {content}
-         </Text>
-       </ScrollView>
+            {content}
+          </Text>
+        </ScrollView>
       </View>
     </Modal>
   );

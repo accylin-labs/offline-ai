@@ -33,7 +33,7 @@ import ImageView from './ImageView';
 import {createStyles} from './styles';
 
 import {chatSessionStore, modelStore} from '../../store';
-import {MessageSelectionView} from '../MessageSelectionView';
+import {SelectTextView} from '../SelectTextView';
 import {l10n} from '../../utils/l10n';
 import {MessageType, User} from '../../utils/types';
 import {
@@ -775,7 +775,7 @@ export const ChatView = observer(
               onRequestClose={handleRequestClose}
               visible={isImageViewVisible}
             />
-            <MessageSelectionView
+            <SelectTextView
               visible={isSelectionModalVisible}
               onClose={() => setSelectionModalVisible(false)}
               content={selectedMessageContent}
