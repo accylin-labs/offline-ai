@@ -52,14 +52,14 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <Text 
+         <Text
             ref={textRef}
             selectable
             selectionColor={theme.colors.surfaceVariant}
             onTextLayout={handleTextSelection}
-            style={styles.contentText}
-        >{content}
-        </Text>
+            style={styles.contentText}>
+          {content}
+         </Text>
        </ScrollView>
       </View>
     </Modal>
