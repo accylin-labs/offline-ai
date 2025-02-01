@@ -24,7 +24,11 @@ export const getStyles = (theme: MD3Theme) =>
       fontSize: 18,
       lineHeight: 24,
       marginTop: 5,
-      maxWidth: 375,
+      maxWidth: '95%',
       alignSelf: 'center',
+    },
+    scrollViewContent: {
+      flexGrow: 1,
+      padding: 5,
     },
   });

@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import {Modal, Pressable, Text, View} from 'react-native';
+import {Modal, Pressable, Text, View, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useTheme} from '../../hooks/useTheme';
 import {getStyles} from './styles';
@@ -51,14 +51,17 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
           <Text style={styles.headerText}>Select Text</Text>
         </View>
 
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <Text
           ref={textRef}
           selectable
           selectionColor={theme.colors.surfaceVariant}
           onTextLayout={handleTextSelection}
-          style={styles.contentText}>
+          style={styles.contentText}
+        >
           {content}
         </Text>
+      </ScrollView>
       </View>
     </Modal>
   );
