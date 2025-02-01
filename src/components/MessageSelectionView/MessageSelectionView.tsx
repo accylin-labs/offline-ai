@@ -1,8 +1,8 @@
-import React, {useRef} from 'react';
-import {Modal, Pressable, Text, View, ScrollView} from 'react-native';
+import React, { useRef } from 'react';
+import { Modal, Pressable, Text, View, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {useTheme} from '../../hooks/useTheme';
-import {getStyles} from './styles';
+import { useTheme } from '../../hooks/useTheme';
+import { getStyles } from './styles';
 
 interface MessageSelectionViewProps {
   visible: boolean;
@@ -22,7 +22,7 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
   const styles = getStyles(theme);
 
   const handleTextSelection = (event: any) => {
-    const {selection} = event.nativeEvent;
+    const { selection } = event.nativeEvent;
     if (selection && selection.start !== selection.end) {
       const selectedText = content.substring(selection.start, selection.end);
       onTextSelected(selectedText);
@@ -38,7 +38,7 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
       <View style={styles.modalContainer}>
         <View style={styles.headerContainer}>
           <Pressable onPress={onClose}>
-            {({pressed}) => (
+            {({ pressed }) => (
               <Icon
                 name="arrow-left"
                 size={26}
@@ -52,15 +52,15 @@ export const MessageSelectionView: React.FC<MessageSelectionViewProps> = ({
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-         <Text
+          <Text
             ref={textRef}
             selectable
             selectionColor={theme.colors.surfaceVariant}
             onTextLayout={handleTextSelection}
             style={styles.contentText}>
-          {content}
-         </Text>
-       </ScrollView>
+            {content}
+          </Text>
+        </ScrollView>
       </View>
     </Modal>
   );
