@@ -9,6 +9,7 @@ export const createStyles = (theme: Theme) =>
       shadowRadius: 70,
       shadowOffset: {width: 0, height: 0},
       elevation: 5,
+      borderRadius: 12,
     },
     menuWithSubmenu: {
       elevation: 0,
@@ -19,6 +20,7 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.menuBackground,
       borderRadius: 12,
       overflow: 'hidden',
+      marginRight: 10,
     },
     contentWithSubmenu: {
       backgroundColor: theme.colors.menuBackground,

@@ -3,7 +3,7 @@ import {TextInput as RNTextInput} from 'react-native';
 import {View, Keyboard, TouchableWithoutFeedback} from 'react-native';
 
 import {CompletionParams} from '@pocketpalai/llama.rn';
-import {Button, Text, Switch} from 'react-native-paper';
+import {Button, Text, Switch, Chip} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 
@@ -13,29 +13,28 @@ import {useTheme} from '../../../hooks';
 
 import {createStyles} from './styles';
 import {ChatTemplatePicker} from '../ChatTemplatePicker';
-import {CompletionSettings} from '../CompletionSettings';
+// import {CompletionSettings} from '../CompletionSettings';
 
 import {ChatTemplateConfig} from '../../../utils/types';
 
 interface ModelSettingsProps {
   chatTemplate: ChatTemplateConfig;
-  completionSettings: CompletionParams;
+  stopWords: CompletionParams['stop'];
   onChange: (name: string, value: any) => void;
-  onCompletionSettingsChange: (name: string, value: any) => void;
-  onFocus?: () => void;
+  onStopWordsChange: (stopWords: CompletionParams['stop']) => void;
 }
 
 export const ModelSettings: React.FC<ModelSettingsProps> = ({
   chatTemplate,
-  completionSettings,
+  stopWords,
   onChange,
-  onCompletionSettingsChange,
-  onFocus,
+  onStopWordsChange,
 }) => {
   const [isDialogVisible, setDialogVisible] = useState<boolean>(false);
   const [localChatTemplate, setLocalChatTemplate] = useState(
     chatTemplate.chatTemplate,
   );
+  const [newStopWord, setNewStopWord] = useState('');
 
   const [selectedTemplateName, setSelectedTemplateName] = useState(
     chatTemplate.name,
@@ -143,78 +142,108 @@ export const ModelSettings: React.FC<ModelSettingsProps> = ({
     </View>
   );
 
+  const renderStopWords = () => (
+    <View style={styles.settingItem}>
+      <View style={styles.stopLabel}>
+        <Text variant="labelSmall" style={styles.settingLabel}>
+          STOP WORDS
+        </Text>
+      </View>
+
+      {/* Display existing stop words as chips */}
+      <View style={styles.stopWordsContainer}>
+        {(stopWords ?? []).map((word, index) => (
+          <Chip
+            key={index}
+            onClose={() => {
+              const newStops = (stopWords ?? []).filter((_, i) => i !== index);
+              onStopWordsChange(newStops);
+            }}
+            compact
+            textStyle={styles.stopChipText}
+            style={styles.stopChip}>
+            {word}
+          </Chip>
+        ))}
+      </View>
+
+      {/* Input for new stop words */}
+      <TextInput
+        value={newStopWord}
+        placeholder="Add new stop word"
+        onChangeText={setNewStopWord}
+        onSubmitEditing={() => {
+          if (newStopWord.trim()) {
+            onStopWordsChange([...(stopWords ?? []), newStopWord.trim()]);
+            setNewStopWord('');
+          }
+        }}
+        testID="stop-input"
+      />
+    </View>
+  );
+
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={styles.container} testID="settings-container">
-        {/* Token Settings Section */}
+    // <TouchableWithoutFeedback onPress={dismissKeyboard}>
+    <View style={styles.container} testID="settings-container">
+      {/* Token Settings Section */}
+      <View style={styles.settingsSection}>
+        {renderTokenSetting(
+          'BOS',
+          'BOS',
+          chatTemplate.addBosToken ?? false,
+          chatTemplate.bosToken,
+          'addBosToken',
+          'bosToken',
+        )}
+
+        <Divider style={styles.divider} />
+
+        {renderTokenSetting(
+          'EOS',
+          'EOS',
+          chatTemplate.addEosToken ?? false,
+          chatTemplate.eosToken,
+          'addEosToken',
+          'eosToken',
+        )}
+
+        <Divider style={styles.divider} />
+
+        {renderTokenSetting(
+          'add-generation-prompt',
+          'Add Generation Prompt',
+          chatTemplate.addGenerationPrompt ?? false,
+          undefined,
+          'addGenerationPrompt',
+        )}
+
+        <Divider style={styles.divider} />
+
+        {/* System Prompt Section */}
         <View style={styles.settingsSection}>
-          {renderTokenSetting(
-            'BOS',
-            'BOS',
-            chatTemplate.addBosToken ?? false,
-            chatTemplate.bosToken,
-            'addBosToken',
-            'bosToken',
-          )}
-
-          <Divider style={styles.divider} />
-
-          {renderTokenSetting(
-            'EOS',
-            'EOS',
-            chatTemplate.addEosToken ?? false,
-            chatTemplate.eosToken,
-            'addEosToken',
-            'eosToken',
-          )}
-
-          <Divider style={styles.divider} />
-
-          {renderTokenSetting(
-            'add-generation-prompt',
-            'Add Generation Prompt',
-            chatTemplate.addGenerationPrompt ?? false,
-            undefined,
-            'addGenerationPrompt',
-          )}
-
-          <Divider style={styles.divider} />
-
-          {/* System Prompt Section */}
-          <View style={styles.settingsSection}>
-            <TextInput
-              testID="system-prompt-input"
-              defaultValue={chatTemplate.systemPrompt ?? ''}
-              onChangeText={text => {
-                onChange('systemPrompt', text);
-              }}
-              multiline
-              numberOfLines={3}
-              style={styles.textArea}
-              label={'System Prompt'}
-              onFocus={() => {
-                onFocus && onFocus();
-              }}
-            />
-          </View>
-
-          <Divider style={styles.divider} />
-
-          {renderTemplateSection()}
+          <TextInput
+            testID="system-prompt-input"
+            defaultValue={chatTemplate.systemPrompt ?? ''}
+            onChangeText={text => {
+              onChange('systemPrompt', text);
+            }}
+            multiline
+            numberOfLines={3}
+            style={styles.textArea}
+            label={'System Prompt'}
+          />
         </View>
 
         <Divider style={styles.divider} />
 
-        {/* Completion Settings Section */}
-        <View style={styles.completionSettingsContainer}>
-          <CompletionSettings
-            settings={completionSettings}
-            onChange={onCompletionSettingsChange}
-          />
-        </View>
+        {renderTemplateSection()}
+      </View>
 
-        {/** Chat Template Dialog */}
-        <Dialog
+      <Divider style={styles.divider} />
+      {renderStopWords()}
+      {/** Chat Template Dialog */}
+      {/* <Dialog
           visible={isDialogVisible}
           onDismiss={() => setDialogVisible(false)}
           title="Edit Chat Template"
@@ -247,8 +276,8 @@ export const ModelSettings: React.FC<ModelSettingsProps> = ({
             numberOfLines={10}
             style={styles.textArea}
           />
-        </Dialog>
-      </View>
-    </TouchableWithoutFeedback>
+        </Dialog> */}
+    </View>
+    // </TouchableWithoutFeedback>
   );
 };

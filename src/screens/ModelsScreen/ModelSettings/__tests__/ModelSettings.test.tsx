@@ -4,6 +4,7 @@ import {Keyboard} from 'react-native';
 import {render, fireEvent, waitFor, act} from '../../../../../jest/test-utils';
 
 import {ModelSettings} from '../ModelSettings';
+import {mockCompletionParams} from '../../../../../jest/fixtures/models';
 
 jest.useFakeTimers(); // Mock all timers
 
@@ -28,21 +29,23 @@ describe('ModelSettings', () => {
 
   const mockProps = {
     chatTemplate: defaultTemplate,
-    completionSettings: {},
-    isActive: false,
+    stopWords: [],
     onChange: jest.fn(),
+    onStopWordsChange: jest.fn(),
     onCompletionSettingsChange: jest.fn(),
+    isActive: false,
+    onFocus: jest.fn(),
   };
 
   beforeEach(() => {
     // Reset all properties to initial values
     mockProps.chatTemplate = {...defaultTemplate};
-    mockProps.completionSettings = {};
+    mockProps.stopWords = [];
     mockProps.isActive = false;
 
     // Create fresh mocks for all function props
     mockProps.onChange = jest.fn();
-    mockProps.onCompletionSettingsChange = jest.fn();
+    mockProps.onStopWordsChange = jest.fn();
 
     jest.clearAllMocks();
     jest.spyOn(Keyboard, 'dismiss');
@@ -173,5 +176,26 @@ describe('ModelSettings', () => {
     });
 
     expect(Keyboard.dismiss).toHaveBeenCalled();
+  });
+
+  it('handles stop words additions and removals', () => {
+    const {getByTestId, getAllByRole} = render(
+      <ModelSettings {...mockProps} />,
+    );
+
+    // Test adding new stop word
+    const stopInput = getByTestId('stop-input');
+    fireEvent.changeText(stopInput, 'newstop');
+    fireEvent(stopInput, 'submitEditing');
+
+    expect(mockProps.onStopWordsChange).toHaveBeenCalledWith(['newstop']);
+
+    // Test removing stop word
+    const closeButtons = getAllByRole('button', {name: /close/i});
+    fireEvent.press(closeButtons[0]);
+
+    expect(mockProps.onStopWordsChange).toHaveBeenCalledWith(
+      (mockCompletionParams.stop ?? []).filter(word => word !== '<stop1>'),
+    );
   });
 });

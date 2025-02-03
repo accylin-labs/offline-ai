@@ -8,6 +8,8 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: 'transparent',
       flexDirection: 'row',
       alignItems: 'center',
+      paddingRight: 16,
+      paddingLeft: 16,
     },
     leadingContainer: {
       flexDirection: 'row',
