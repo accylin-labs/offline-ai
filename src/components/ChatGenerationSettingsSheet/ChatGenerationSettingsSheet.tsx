@@ -120,7 +120,7 @@ export const ChatGenerationSettingsSheet = ({
 
   return (
     <Sheet
-      title="Chat Generation Settings"
+      title={i10n.chatGenerationSettings}
       isVisible={isVisible}
       onClose={onCloseSheet}>
       <Sheet.ScrollView

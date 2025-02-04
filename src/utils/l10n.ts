@@ -2,6 +2,8 @@
 export const l10n = {
   en: {
     model: 'Model',
+    modelSettings: 'Model Settings',
+    chatGenerationSettings: 'Chat Generation Settings',
     generationSettings: 'Generation settings',
     duplicateChatHistory: 'Duplicate chat history',
     exportChatSession: 'Export chat session',
@@ -136,6 +138,8 @@ export const l10n = {
   },
   es: {
     model: 'Modelo',
+    modelSettings: 'Configuración del modelo',
+    chatGenerationSettings: 'Configuración de generación de chat',
     save: 'Guardar',
     deleteChatTitle: 'Eliminar chat',
     deleteChatMessage: '¿Estás seguro de que quieres eliminar este chat?',
@@ -266,6 +270,8 @@ export const l10n = {
   },
   ko: {
     model: '모델',
+    modelSettings: '모델 설정',
+    chatGenerationSettings: '채팅 생성 설정',
     save: '저장',
     generationSettings: '생성 설정',
     deleteChatTitle: '채팅 삭제',
@@ -377,6 +383,8 @@ export const l10n = {
   },
   pl: {
     model: 'Model',
+    modelSettings: 'Ustawienia modelu',
+    chatGenerationSettings: 'Ustawienia generowania czatu',
     save: 'Zapisz',
     generationSettings: 'Ustawienia generowania',
     deleteChatTitle: 'Usuń czat',
@@ -502,6 +510,8 @@ export const l10n = {
   },
   pt: {
     model: 'Modelo',
+    modelSettings: 'Configuração do Modelo',
+    chatGenerationSettings: 'Configuração de geração de chat',
     save: 'Salvar',
     generationSettings: 'Configuração de geração',
     deleteChatTitle: 'Deletar chat',
@@ -628,6 +638,8 @@ export const l10n = {
   },
   ru: {
     model: 'Модель',
+    modelSettings: 'Настройки модели',
+    chatGenerationSettings: 'Настройки генерации чата',
     save: 'Сохранить',
     generationSettings: 'Настройки генерации',
     deleteChatTitle: 'Удалить чат',
@@ -756,6 +768,8 @@ export const l10n = {
   },
   tr: {
     model: 'Model',
+    modelSettings: 'Model Ayarları',
+    chatGenerationSettings: 'Chat Oluşturma Ayarları',
     save: 'Kaydet',
     generationSettings: 'Oluşturma Ayarları',
     deleteChatTitle: 'Chati Sil',
@@ -876,6 +890,8 @@ export const l10n = {
   },
   uk: {
     model: 'Модель',
+    modelSettings: 'Настройки модели',
+    chatGenerationSettings: 'Настройки генерации чата',
     save: 'Зберегти',
     generationSettings: 'Настройки генерации',
     deleteChatTitle: 'Видалити чат',
@@ -1004,6 +1020,8 @@ export const l10n = {
   },
   ca: {
     model: 'Model',
+    modelSettings: 'Configuració del model',
+    chatGenerationSettings: 'Configuració de generació de chat',
     save: 'Guardar',
     generationSettings: 'Configuració de generació',
     duplicateChatHistory: 'Duplicar històric de chat',

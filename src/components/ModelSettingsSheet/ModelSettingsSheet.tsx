@@ -1,4 +1,4 @@
-import React, {useState, useEffect, memo} from 'react';
+import React, {useState, useEffect, memo, useContext} from 'react';
 import {Button} from 'react-native-paper';
 
 import {ModelSettings} from '../../screens/ModelsScreen/ModelSettings';
@@ -9,6 +9,7 @@ import {chatTemplates} from '../../utils/chat';
 
 import {styles} from './styles';
 import {View} from 'react-native';
+import { L10nContext } from '../../utils';
 
 interface ModelSettingsSheetProps {
   isVisible: boolean;
@@ -24,6 +25,7 @@ export const ModelSettingsSheet: React.FC<ModelSettingsSheetProps> = memo(
     const [tempStopWords, setTempStopWords] = useState<string[]>(
       model?.stopWords || [],
     );
+    const i10n = useContext(L10nContext);
 
     // Reset temp settings when model changes
     useEffect(() => {
@@ -76,7 +78,7 @@ export const ModelSettingsSheet: React.FC<ModelSettingsSheetProps> = memo(
       <Sheet
         isVisible={isVisible}
         onClose={handleCancelSettings}
-        title="Model Settings"
+        title={i10n.modelSettings}
         displayFullHeight>
         <Sheet.ScrollView
           bottomOffset={16}
@@ -91,14 +93,14 @@ export const ModelSettingsSheet: React.FC<ModelSettingsSheetProps> = memo(
         <Sheet.Actions>
           <View style={styles.secondaryButtons}>
             <Button mode="text" onPress={handleReset}>
-              Reset
+              {i10n.reset}
             </Button>
             <Button mode="text" onPress={handleCancelSettings}>
-              Cancel
+              {i10n.cancel}
             </Button>
           </View>
           <Button mode="contained" onPress={handleSaveSettings}>
-            Save Changes
+            {i10n.saveChanges}
           </Button>
         </Sheet.Actions>
       </Sheet>
