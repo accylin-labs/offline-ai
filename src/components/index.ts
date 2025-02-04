@@ -21,6 +21,7 @@ export * from './Message';
 export * from './ModelsHeaderRight';
 export * from './ModelsResetDialog';
 export * from './PocketPalIconAnimation';
+export * from './RenameModal';
 export * from './Searchbar';
 export * from './SendButton';
 export * from './StopButton';

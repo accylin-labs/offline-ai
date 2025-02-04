@@ -6,10 +6,9 @@ export const createStyles = (theme: Theme) =>
     container: {
       height: 46,
       backgroundColor: 'transparent',
-      flexDirection: 'row',
-      alignItems: 'center',
       paddingRight: 16,
       paddingLeft: 16,
+      width: 250,
     },
     leadingContainer: {
       flexDirection: 'row',

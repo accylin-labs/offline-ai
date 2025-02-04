@@ -1,21 +1,21 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {TextInput as RNTextInput} from 'react-native';
-import {View, Keyboard, TouchableWithoutFeedback} from 'react-native';
+import {View, Keyboard} from 'react-native';
 
 import {CompletionParams} from '@pocketpalai/llama.rn';
 import {Button, Text, Switch, Chip} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 
-import {Dialog, Divider, TextInput} from '../../../components';
+import {Divider, TextInput} from '../../../components';
 
 import {useTheme} from '../../../hooks';
 
 import {createStyles} from './styles';
 import {ChatTemplatePicker} from '../ChatTemplatePicker';
-// import {CompletionSettings} from '../CompletionSettings';
 
 import {ChatTemplateConfig} from '../../../utils/types';
+import {Sheet} from '../../../components/Sheet';
 
 interface ModelSettingsProps {
   chatTemplate: ChatTemplateConfig;
@@ -183,8 +183,12 @@ export const ModelSettings: React.FC<ModelSettingsProps> = ({
     </View>
   );
 
+  const onCloseSheet = () => {
+    dismissKeyboard();
+    setDialogVisible(false);
+  };
+
   return (
-    // <TouchableWithoutFeedback onPress={dismissKeyboard}>
     <View style={styles.container} testID="settings-container">
       {/* Token Settings Section */}
       <View style={styles.settingsSection}>
@@ -243,18 +247,15 @@ export const ModelSettings: React.FC<ModelSettingsProps> = ({
       <Divider style={styles.divider} />
       {renderStopWords()}
       {/** Chat Template Dialog */}
-      {/* <Dialog
-          visible={isDialogVisible}
-          onDismiss={() => setDialogVisible(false)}
-          title="Edit Chat Template"
-          avoidKeyboard
-          actions={[
-            {
-              label: 'Close',
-              onPress: handleSave,
-              mode: 'contained',
-            },
-          ]}>
+      <Sheet
+        isVisible={isDialogVisible}
+        onClose={onCloseSheet}
+        title="Edit Chat Template"
+        enableContentPanningGesture={false}
+        displayFullHeight>
+        <Sheet.ScrollView
+          bottomOffset={16}
+          contentContainerStyle={styles.sheetContainer}>
           <View>
             <ChatTemplatePicker
               selectedTemplateName={selectedTemplateName}
@@ -276,8 +277,16 @@ export const ModelSettings: React.FC<ModelSettingsProps> = ({
             numberOfLines={10}
             style={styles.textArea}
           />
-        </Dialog> */}
+        </Sheet.ScrollView>
+        <Sheet.Actions style={styles.actionsContainer}>
+          <Button
+            testID="template-close-button"
+            mode="contained"
+            onPress={handleSave}>
+            Close
+          </Button>
+        </Sheet.Actions>
+      </Sheet>
     </View>
-    // </TouchableWithoutFeedback>
   );
 };

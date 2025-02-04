@@ -36,7 +36,7 @@ export const ChatHeader: React.FC = observer(() => {
     : styles.headerWithoutDivider;
 
   return (
-    <View style={[styles.container, headerStyle]}>
+    <View testID="header-view" style={[styles.container, headerStyle]}>
       <View style={styles.leftSection}>
         <HeaderLeft />
         <ChatHeaderTitle />

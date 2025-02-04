@@ -77,7 +77,7 @@ export const ModelSettingsSheet: React.FC<ModelSettingsSheetProps> = memo(
         isVisible={isVisible}
         onClose={handleCancelSettings}
         title="Model Settings"
-        snapPoints={['90%']}>
+        displayFullHeight>
         <Sheet.ScrollView
           bottomOffset={16}
           contentContainerStyle={styles.sheetScrollViewContainer}>

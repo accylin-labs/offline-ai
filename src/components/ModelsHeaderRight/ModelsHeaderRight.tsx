@@ -106,9 +106,9 @@ export const ModelsHeaderRight = observer(() => {
         />
 
         {/* Actions section */}
-        <Menu.GroupSeparator />
+        <Menu.Separator />
         <Menu.Item
-          icon="refresh"
+          leadingIcon="refresh"
           onPress={() => {
             setMenuVisible(false);
             showResetDialog();

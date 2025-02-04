@@ -29,6 +29,7 @@ export const l10n = {
     offload: 'Offload',
     reset: 'Reset',
     saveChanges: 'Save Changes',
+    save: 'Save',
     delete: 'Delete',
     dismiss: 'Dismiss',
     replace: 'Replace',
@@ -135,6 +136,7 @@ export const l10n = {
   },
   es: {
     model: 'Modelo',
+    save: 'Guardar',
     deleteChatTitle: 'Eliminar chat',
     deleteChatMessage: '¿Estás seguro de que quieres eliminar este chat?',
     generationSettings: 'Configuración de generación',
@@ -264,6 +266,7 @@ export const l10n = {
   },
   ko: {
     model: '모델',
+    save: '저장',
     generationSettings: '생성 설정',
     deleteChatTitle: '채팅 삭제',
     deleteChatMessage: '채팅을 삭제하시겠습니까?',
@@ -374,6 +377,7 @@ export const l10n = {
   },
   pl: {
     model: 'Model',
+    save: 'Zapisz',
     generationSettings: 'Ustawienia generowania',
     deleteChatTitle: 'Usuń czat',
     deleteChatMessage: 'Czy na pewno chcesz usunąć ten czat?',
@@ -498,6 +502,7 @@ export const l10n = {
   },
   pt: {
     model: 'Modelo',
+    save: 'Salvar',
     generationSettings: 'Configuração de geração',
     deleteChatTitle: 'Deletar chat',
     deleteChatMessage: 'Tem certeza de que deseja deletar este chat?',
@@ -623,6 +628,7 @@ export const l10n = {
   },
   ru: {
     model: 'Модель',
+    save: 'Сохранить',
     generationSettings: 'Настройки генерации',
     deleteChatTitle: 'Удалить чат',
     deleteChatMessage: 'Вы уверены, что хотите удалить этот чат?',
@@ -750,6 +756,7 @@ export const l10n = {
   },
   tr: {
     model: 'Model',
+    save: 'Kaydet',
     generationSettings: 'Oluşturma Ayarları',
     deleteChatTitle: 'Chati Sil',
     deleteChatMessage: 'Chati silmek istediğinizden emin misiniz?',
@@ -869,6 +876,7 @@ export const l10n = {
   },
   uk: {
     model: 'Модель',
+    save: 'Зберегти',
     generationSettings: 'Настройки генерации',
     deleteChatTitle: 'Видалити чат',
     deleteChatMessage: 'Ви впевнені, що хочете видалити цей чат?',
@@ -996,6 +1004,7 @@ export const l10n = {
   },
   ca: {
     model: 'Model',
+    save: 'Guardar',
     generationSettings: 'Configuració de generació',
     duplicateChatHistory: 'Duplicar històric de chat',
     deleteChatTitle: 'Eliminar chat',

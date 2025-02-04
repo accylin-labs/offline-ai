@@ -84,4 +84,11 @@ export const createStyles = (theme: Theme) =>
     stopChipText: {
       fontSize: 12,
     },
+    sheetContainer: {
+      padding: 16,
+    },
+    actionsContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   });

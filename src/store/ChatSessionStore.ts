@@ -9,7 +9,7 @@ import {MessageType} from '../utils/types';
 const NEW_SESSION_TITLE = 'New Session';
 const TITLE_LIMIT = 40;
 
-interface SessionMetaData {
+export interface SessionMetaData {
   id: string;
   title: string;
   date: string;

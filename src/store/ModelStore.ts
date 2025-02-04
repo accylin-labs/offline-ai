@@ -239,10 +239,10 @@ class ModelStore {
           defaultModel.chatTemplate || {},
         );
 
-        existingModel.stopWords = deepMerge(
-          existingModel.stopWords || {},
-          defaultModel.stopWords || {},
-        );
+        existingModel.stopWords = [
+          ...(existingModel.stopWords || []),
+          ...(defaultModel.stopWords || []),
+        ];
 
         // **Merge other attributes from defaultModel**
 
@@ -296,10 +296,10 @@ class ModelStore {
           model.chatTemplate || {},
           model.defaultChatTemplate,
         );
-        model.stopWords = deepMerge(
-          model.stopWords || {},
-          model.defaultStopWords,
-        );
+        model.stopWords = [
+          ...(model.stopWords || []),
+          ...(model.defaultStopWords || []),
+        ];
       }
     });
 

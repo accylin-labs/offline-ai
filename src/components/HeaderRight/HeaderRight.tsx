@@ -8,7 +8,7 @@ import {styles} from './styles';
 
 import {chatSessionStore, modelStore, uiStore} from '../../store';
 
-import {UsageStats} from '..';
+import {RenameModal, UsageStats} from '..';
 import {
   // ClockFastForwardIcon,
   DotsVerticalIcon,
@@ -28,6 +28,7 @@ import {Model} from '../../utils/types';
 export const HeaderRight: React.FC = observer(() => {
   const theme = useTheme();
   const [menuVisible, setMenuVisible] = React.useState(false);
+  const [renameModalVisible, setRenameModalVisible] = React.useState(false);
   const [chatGenerationSettingsVisible, setChatGenerationSettingsVisible] =
     React.useState(false);
 
@@ -84,6 +85,11 @@ export const HeaderRight: React.FC = observer(() => {
     }
   };
 
+  const onPressRename = () => {
+    setRenameModalVisible(true);
+    closeMenu();
+  };
+
   return (
     <View style={styles.headerRightContainer}>
       {uiStore.displayMemUsage && <UsageStats width={40} height={20} />}
@@ -104,6 +110,7 @@ export const HeaderRight: React.FC = observer(() => {
             icon={() => <DotsVerticalIcon fill={theme.colors.primary} />}
             style={styles.menuBtn}
             onPress={openMenu}
+            testID="menu-button"
           />
         }>
         <Menu.Item
@@ -141,7 +148,7 @@ export const HeaderRight: React.FC = observer(() => {
               leadingIcon={() => <ShareIcon stroke={theme.colors.primary} />}
             /> */}
             <Menu.Item
-              onPress={() => {}}
+              onPress={onPressRename}
               label={i10n.rename}
               leadingIcon={() => <EditIcon stroke={theme.colors.primary} />}
             />
@@ -166,6 +173,13 @@ export const HeaderRight: React.FC = observer(() => {
         isVisible={chatGenerationSettingsVisible}
         onClose={() => setChatGenerationSettingsVisible(false)}
       />
+      {session && (
+        <RenameModal
+          visible={renameModalVisible}
+          onClose={() => setRenameModalVisible(false)}
+          session={session}
+        />
+      )}
     </View>
   );
 });

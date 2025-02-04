@@ -3,7 +3,6 @@ import {
   BottomSheetModalProps,
   BottomSheetTextInput,
   BottomSheetView,
-  TouchableOpacity,
 } from '@gorhom/bottom-sheet';
 import React, {forwardRef, useEffect, useMemo, useRef} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -13,7 +12,7 @@ import {CloseIcon} from '../../assets/icons';
 import {useTheme} from '../../hooks';
 import {styles} from './styles';
 import BottomSheetKeyboardAwareScrollView from './BottomSheetAwareScrollview';
-import {Dimensions, View} from 'react-native';
+import {Dimensions, TouchableOpacity, View} from 'react-native';
 import {CustomBackdrop} from './CustomBackdrop';
 import {Actions} from './Actions';
 
@@ -22,6 +21,7 @@ export interface SheetProps extends Partial<BottomSheetModalProps> {
   title?: string;
   isVisible?: boolean;
   onClose?: () => void;
+  displayFullHeight?: boolean;
 }
 
 interface SheetComponent
@@ -36,7 +36,14 @@ interface SheetComponent
 
 export const Sheet = forwardRef(
   (
-    {children, title, isVisible, onClose, ...props}: SheetProps,
+    {
+      children,
+      title,
+      isVisible,
+      displayFullHeight,
+      onClose,
+      ...props
+    }: SheetProps,
     ref: React.Ref<BottomSheetModalMethods>,
   ) => {
     const insets = useSafeAreaInsets();
@@ -64,13 +71,20 @@ export const Sheet = forwardRef(
       onClose?.();
     };
 
+    const snapPoints = useMemo(() => {
+      if (displayFullHeight) {
+        return [Dimensions.get('screen').height - insets.top - 16];
+      }
+      return props.snapPoints;
+    }, [displayFullHeight, insets, props.snapPoints]);
+
     return (
       <BottomSheetModal
         ref={activeRef}
         maxDynamicContentSize={
           Dimensions.get('screen').height - insets.top - 16
         }
-        enableDynamicSizing={!props.snapPoints}
+        enableDynamicSizing={!snapPoints}
         stackBehavior="push"
         backdropComponent={CustomBackdrop}
         keyboardBlurBehavior="restore"
@@ -82,6 +96,7 @@ export const Sheet = forwardRef(
         handleIndicatorStyle={{
           backgroundColor: theme.colors.primary,
         }}
+        snapPoints={snapPoints}
         onDismiss={onDismiss}
         {...props}>
         <View style={styles.header}>
