@@ -493,19 +493,15 @@ export const ChatView = observer(
         if (item.submenu) {
           return (
             <React.Fragment key={index}>
-              {index > 0 && <Menu.Separator />}
               <Menu.Item
-                style={styles.menu}
                 label={item.label}
                 leadingIcon={item.icon}
                 disabled={item.disabled}
                 submenu={item.submenu.map(
                   (subItem: SubMenuItem, subIndex: number) => (
                     <React.Fragment key={subIndex}>
-                      {subIndex > 0 && <Menu.Separator />}
                       <Menu.Item
                         key={subIndex}
-                        style={{...styles.menu, width: subItem.width}}
                         label={subItem.label}
                         onPress={subItem.onPress}
                         disabled={subItem.disabled}
@@ -520,9 +516,7 @@ export const ChatView = observer(
 
         return (
           <React.Fragment key={index}>
-            {index > 0 && <Menu.Separator />}
             <Menu.Item
-              style={styles.menu}
               label={item.label}
               onPress={item.onPress}
               leadingIcon={item.icon}
@@ -531,7 +525,7 @@ export const ChatView = observer(
           </React.Fragment>
         );
       },
-      [styles.menu],
+      [],
     );
 
     const renderMessage = React.useCallback(

@@ -11,3 +11,5 @@ export {default as DuplicateIcon} from './duplicate.svg';
 export {default as PencilLineIcon} from './pencil-line.svg';
 export {default as RefreshIcon} from './refresh.svg';
 export {default as ReverseLeftIcon} from './reverse-left.svg';
+export {default as CloseIcon} from './close.svg';
+export {default as MenuIcon} from './menu.svg';

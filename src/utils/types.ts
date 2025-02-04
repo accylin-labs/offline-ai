@@ -224,6 +224,7 @@ export interface SemanticColors {
 export interface ThemeBorders {
   inputBorderRadius: number;
   messageBorderRadius: number;
+  default: number;
 }
 
 export interface ThemeFonts extends MD3Typescale {
@@ -305,8 +306,8 @@ export interface Model {
   origin: ModelOrigin;
   defaultChatTemplate: ChatTemplateConfig;
   chatTemplate: ChatTemplateConfig;
-  defaultCompletionSettings: CompletionParams;
-  completionSettings: CompletionParams;
+  defaultStopWords: CompletionParams['stop'];
+  stopWords: CompletionParams['stop'];
   hfModelFile?: ModelFile;
   hfModel?: HuggingFaceModel;
   hash?: string;
