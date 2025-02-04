@@ -7,7 +7,7 @@ jest.useFakeTimers();
 
 describe('CompletionSettings', () => {
   it('renders all settings correctly', async () => {
-    const {getByDisplayValue, getByTestId, getByText} = render(
+    const {getByDisplayValue, getByTestId} = render(
       <CompletionSettings
         settings={{...mockCompletionParams, mirostat: 1}}
         onChange={jest.fn()}

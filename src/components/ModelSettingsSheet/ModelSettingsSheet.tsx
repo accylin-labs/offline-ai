@@ -9,7 +9,7 @@ import {chatTemplates} from '../../utils/chat';
 
 import {styles} from './styles';
 import {View} from 'react-native';
-import { L10nContext } from '../../utils';
+import {L10nContext} from '../../utils';
 
 interface ModelSettingsSheetProps {
   isVisible: boolean;
