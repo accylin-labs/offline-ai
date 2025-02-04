@@ -308,6 +308,8 @@ export interface Model {
   chatTemplate: ChatTemplateConfig;
   defaultStopWords: CompletionParams['stop'];
   stopWords: CompletionParams['stop'];
+  defaultCompletionSettings: CompletionParams;
+  completionSettings: CompletionParams;
   hfModelFile?: ModelFile;
   hfModel?: HuggingFaceModel;
   hash?: string;

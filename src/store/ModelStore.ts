@@ -844,6 +844,8 @@ class ModelStore {
       chatTemplate: {...defaultSettings.chatTemplate},
       defaultStopWords: [...(defaultSettings?.completionParams?.stop || [])],
       stopWords: [...(defaultSettings?.completionParams?.stop || [])],
+      defaultCompletionSettings: defaultSettings.completionParams,
+      completionSettings: {...defaultSettings.completionParams},
     };
 
     runInAction(() => {

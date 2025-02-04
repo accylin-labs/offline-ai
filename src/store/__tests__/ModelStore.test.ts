@@ -75,6 +75,7 @@ describe('ModelStore', () => {
       expect(modelStore.models[0].stopWords).toEqual([
         'custom_stop_1',
         'custom_stop_2',
+        ...(newDefaultModel.stopWords || []),
       ]);
     });
 
