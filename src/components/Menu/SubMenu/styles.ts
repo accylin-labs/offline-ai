@@ -5,7 +5,7 @@ import {Theme} from '../../../utils/types';
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
     menu: {
-      //minWidth: 220,
+      maxWidth: '90%',
       marginTop: 0,
       marginLeft: 0,
     },

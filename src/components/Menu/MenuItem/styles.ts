@@ -8,7 +8,7 @@ export const createStyles = (theme: Theme) =>
       backgroundColor: 'transparent',
       paddingRight: 16,
       paddingLeft: 16,
-      width: 250,
+      maxWidth: 'auto',
     },
     leadingContainer: {
       flexDirection: 'row',
@@ -16,11 +16,13 @@ export const createStyles = (theme: Theme) =>
       justifyContent: 'flex-start',
     },
     contentContainer: {
-      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
       marginLeft: 10,
+      marginRight: 10,
+      maxWidth: 'auto',
+      flexGrow: 1,
     },
     label: {
       ...theme.fonts.titleSmall,

@@ -22,7 +22,7 @@ import {
 } from '../../assets/icons';
 import {Menu} from '../Menu';
 import {L10nContext} from '../../utils';
-import {ChatGenerationSettingsSheet} from '../ChatGenerationSettingsSheet/ChatGenerationSettingsSheet';
+import {ChatGenerationSettingsSheet} from '..';
 import {Model} from '../../utils/types';
 
 export const HeaderRight: React.FC = observer(() => {

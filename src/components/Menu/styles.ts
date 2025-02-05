@@ -10,6 +10,7 @@ export const createStyles = (theme: Theme) =>
       shadowOffset: {width: 0, height: 0},
       elevation: 5,
       borderRadius: 12,
+      maxWidth: '90%',
     },
     menuWithSubmenu: {
       elevation: 0,
