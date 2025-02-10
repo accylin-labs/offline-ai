@@ -16,18 +16,14 @@ import {KeyboardProvider} from 'react-native-keyboard-controller';
 import {useTheme} from './src/hooks';
 import {Theme} from './src/utils/types';
 
-import {
-  SidebarContent,
-  ModelsHeaderRight,
-  ChatHeader,
-  HeaderLeft,
-} from './src/components';
+import {SidebarContent, ModelsHeaderRight, HeaderLeft} from './src/components';
 import {
   ChatScreen,
   ModelsScreen,
   SettingsScreen,
   BenchmarkScreen,
 } from './src/screens';
+import {PalsScreen} from './src/screens/PalsScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -62,7 +58,7 @@ const App = observer(() => {
                     name="Chat"
                     component={gestureHandlerRootHOC(ChatScreen)}
                     options={{
-                      header: () => <ChatHeader />,
+                      headerShown: false,
                     }}
                   />
                   <Drawer.Screen
@@ -83,6 +79,13 @@ const App = observer(() => {
                   <Drawer.Screen
                     name="Benchmark"
                     component={gestureHandlerRootHOC(BenchmarkScreen)}
+                    options={{
+                      headerStyle: styles.headerWithoutDivider,
+                    }}
+                  />
+                  <Drawer.Screen
+                    name="Pals"
+                    component={gestureHandlerRootHOC(PalsScreen)}
                     options={{
                       headerStyle: styles.headerWithoutDivider,
                     }}

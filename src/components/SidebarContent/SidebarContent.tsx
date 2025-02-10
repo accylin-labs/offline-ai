@@ -109,6 +109,11 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
                 icon={'cog'}
                 onPress={() => props.navigation.navigate('Settings')}
               />
+              <Drawer.Item
+                label={'Pals'}
+                icon={'cards-playing'}
+                onPress={() => props.navigation.navigate('Pals')}
+              />
             </Drawer.Section>
 
             {/* Loop over the session groups and render them */}
