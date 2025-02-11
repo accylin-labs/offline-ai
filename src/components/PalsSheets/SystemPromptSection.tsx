@@ -92,14 +92,15 @@ export const SystemPromptSection = observer(
             required: ['prompt'],
           };
 
-          const result = await generate(
-            `
-            Generate a system prompt for an assistant scenario using the following structured details:
-            ${getValues().generatingPrompt}
-            Output the system prompt in JSON format with the key "prompt" containing the full system prompt as a string.
-            `.trim(),
-            schema,
-          );
+          const generatingPrompt = [
+            'Generate a concise and professional system prompt for an AI assistant with the following role:',
+            `Topic: "${getValues().generatingPrompt}"\n`,
+            'The system prompt should:',
+            "- Be clear and direct but concise about the assistant's primary function",
+            '- Be written in second person ("You are...")',
+            'Output the system prompt in JSON format with the key "prompt".',
+          ].join('\n');
+          const result = await generate(generatingPrompt, schema);
           setValue('systemPrompt', result?.prompt);
           setValue('originalSystemPrompt', result?.prompt);
           setValue('isSystemPromptChanged', false);
