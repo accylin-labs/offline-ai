@@ -112,7 +112,7 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
               <Drawer.Item
                 label={'Pals'}
                 icon={'cards-playing'}
-                onPress={() => props.navigation.navigate('Pals')}
+                onPress={() => props.navigation.navigate('Pals (experimental)')}
               />
             </Drawer.Section>
 
