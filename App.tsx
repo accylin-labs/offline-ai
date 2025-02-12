@@ -70,8 +70,8 @@ const App = observer(() => {
                     }}
                   />
                   <Drawer.Screen
-                    name="Settings"
-                    component={gestureHandlerRootHOC(SettingsScreen)}
+                    name="Pals (experimental)"
+                    component={gestureHandlerRootHOC(PalsScreen)}
                     options={{
                       headerStyle: styles.headerWithoutDivider,
                     }}
@@ -84,8 +84,8 @@ const App = observer(() => {
                     }}
                   />
                   <Drawer.Screen
-                    name="Pals (experimental)"
-                    component={gestureHandlerRootHOC(PalsScreen)}
+                    name="Settings"
+                    component={gestureHandlerRootHOC(SettingsScreen)}
                     options={{
                       headerStyle: styles.headerWithoutDivider,
                     }}
