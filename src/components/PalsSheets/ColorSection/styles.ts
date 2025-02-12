@@ -36,7 +36,14 @@ export const createStyles = (theme: Theme) =>
       borderLeftColor: '#E0E0E0',
     },
     selectedColorButtonContainer: {
+      width: 30,
+      height: 30,
       borderColor: theme.colors.onBackground,
-      borderWidth: 2,
+      borderWidth: 2.5,
+      shadowColor: theme.colors.onBackground,
+      shadowOffset: {width: 0, height: 1},
+      shadowOpacity: 0.3,
+      shadowRadius: 2,
+      elevation: 3,
     },
   });
