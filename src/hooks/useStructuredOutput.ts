@@ -1,4 +1,7 @@
 import {useCallback, useState} from 'react';
+
+import {toJS} from 'mobx';
+
 import {modelStore} from '../store';
 import {safeParseJSON} from '../utils';
 
@@ -23,6 +26,7 @@ export const useStructuredOutput = () => {
 
       setIsGenerating(true);
       setError(null);
+      const stopWords = toJS(modelStore.activeModel?.stopWords);
 
       try {
         const result = await modelStore.context.completion({
@@ -39,7 +43,7 @@ export const useStructuredOutput = () => {
           top_k: options?.top_k ?? 40,
           n_predict: 2000,
 
-          stop: ['<|im_end|>', '<end_of_turn>', '<eos>'],
+          stop: stopWords,
         });
 
         // Parse the completion text as JSON
