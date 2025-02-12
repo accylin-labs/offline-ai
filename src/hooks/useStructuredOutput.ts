@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useRef, useState} from 'react';
 
 import {toJS} from 'mobx';
 
@@ -8,6 +8,16 @@ import {safeParseJSON} from '../utils';
 export const useStructuredOutput = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const stopRef = useRef<(() => void) | null>(null);
+
+  const stop = useCallback(() => {
+    if (stopRef.current) {
+      stopRef.current();
+      stopRef.current = null;
+      setIsGenerating(false);
+    }
+  }, []);
 
   const generate = useCallback(
     async (
@@ -29,6 +39,9 @@ export const useStructuredOutput = () => {
       const stopWords = toJS(modelStore.activeModel?.stopWords);
 
       try {
+        // Store the stop function for later use
+        stopRef.current = () => modelStore.context?.stopCompletion();
+
         const result = await modelStore.context.completion({
           messages: [{role: 'user', content: prompt}],
           response_format: {
@@ -46,6 +59,7 @@ export const useStructuredOutput = () => {
           stop: stopWords,
         });
 
+        stopRef.current = null;
         // Parse the completion text as JSON
         return safeParseJSON(result.text);
       } catch (err) {
@@ -55,6 +69,7 @@ export const useStructuredOutput = () => {
         throw err;
       } finally {
         setIsGenerating(false);
+        stopRef.current = null;
       }
     },
     [],
@@ -64,5 +79,6 @@ export const useStructuredOutput = () => {
     generate,
     isGenerating,
     error,
+    stop,
   };
 };

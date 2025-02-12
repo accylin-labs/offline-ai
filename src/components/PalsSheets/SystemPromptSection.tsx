@@ -30,7 +30,7 @@ export const SystemPromptSection = observer(
     const useAIPrompt = watch('useAIPrompt');
     const isLoadingModel = modelStore.isContextLoading;
 
-    const {generate, isGenerating} = useStructuredOutput();
+    const {generate, isGenerating, stop} = useStructuredOutput();
 
     const handleGeneratePrompt = async () => {
       // Validate form fields if validateFields is provided
@@ -111,6 +111,10 @@ export const SystemPromptSection = observer(
       }
     };
 
+    const handleStopGeneration = () => {
+      stop();
+    };
+
     const handleReset = () => {
       const originalPrompt = getValues('originalSystemPrompt');
       if (originalPrompt) {
@@ -177,13 +181,15 @@ export const SystemPromptSection = observer(
             )}
             <Button
               mode="contained"
-              onPress={handleGeneratePrompt}
+              onPress={
+                isGenerating ? handleStopGeneration : handleGeneratePrompt
+              }
               loading={isGenerating || isLoadingModel}
-              disabled={isGenerating || isLoadingModel || isSystemPromptEdited}>
+              disabled={isLoadingModel || isSystemPromptEdited}>
               {isLoadingModel
                 ? 'Loading model...'
                 : isGenerating
-                ? 'Generating...'
+                ? 'Stop Generating'
                 : 'Generate System Prompt'}
             </Button>
           </>
