@@ -12,6 +12,7 @@ interface ModelSelectorProps {
   value?: string;
   onChange: (value: string) => void;
   label: string;
+  sublabel?: string;
   placeholder?: string;
   error?: boolean;
   helperText?: string;
@@ -26,6 +27,7 @@ export const ModelSelector = observer(
     value,
     onChange,
     label,
+    sublabel,
     placeholder = 'Select model',
     error,
     helperText,
@@ -45,6 +47,7 @@ export const ModelSelector = observer(
           {label}
           {required && '*'}
         </Text>
+        {sublabel && <Text style={styles.sublabel}>{sublabel}</Text>}
         <Menu
           visible={menuVisible}
           selectable

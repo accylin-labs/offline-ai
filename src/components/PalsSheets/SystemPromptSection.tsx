@@ -157,6 +157,7 @@ export const SystemPromptSection = observer(
                     clearErrors('promptGenerationModel');
                   }}
                   label="Select Model for Generation*"
+                  sublabel="Recommended: Llama 3.2 3B or Qwen2.5 3B."
                   placeholder="Select model"
                   error={!!error}
                   helperText={error?.message}
@@ -192,6 +193,7 @@ export const SystemPromptSection = observer(
           <FormField
             name="systemPrompt"
             label="System Prompt"
+            sublabel="Feel free to edit and experiment to find the optimal prompt for your scenario"
             placeholder="You are a helpful assistant"
             multiline
             required
