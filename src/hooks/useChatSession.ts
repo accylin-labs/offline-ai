@@ -112,17 +112,31 @@ export const useChatSession = (
       }
     }
 
+    const getSystemMessage = () => {
+      // If no system prompt is available at all, return empty array
+      if (
+        !systemPrompt &&
+        !modelStore.activeModel?.chatTemplate?.systemPrompt
+      ) {
+        return [];
+      }
+
+      // Prefer custom system prompt, fall back to template's system prompt
+      const finalSystemPrompt =
+        systemPrompt ||
+        modelStore.activeModel?.chatTemplate?.systemPrompt ||
+        '';
+
+      return [
+        {
+          role: 'system' as 'system',
+          content: finalSystemPrompt,
+        },
+      ];
+    };
+
     const chatMessages = [
-      ...(modelStore.activeModel?.chatTemplate?.systemPrompt?.trim()
-        ? [
-            {
-              role: 'system' as 'system',
-              content:
-                systemPrompt ||
-                modelStore.activeModel.chatTemplate.systemPrompt,
-            },
-          ]
-        : []),
+      ...getSystemMessage(),
       ...convertToChatMessages([
         textMessage,
         ...chatSessionStore.currentSessionMessages.filter(
