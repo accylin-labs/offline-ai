@@ -3,7 +3,7 @@ import {NativeModules} from 'react-native';
 const {KeepAwakeModule} = NativeModules;
 
 if (!KeepAwakeModule) {
-  throw new Error(
+  console.warn(
     'KeepAwakeModule is not available. Make sure:\n' +
       '- You rebuilt the app after adding the native modules\n' +
       '- The native module is properly linked\n' +
