@@ -1,6 +1,7 @@
 import {makeAutoObservable} from 'mobx';
 import {makePersistable} from 'mobx-persist-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import 'react-native-get-random-values';
 import {v4 as uuidv4} from 'uuid';
 import {
   AssistantFormData,
