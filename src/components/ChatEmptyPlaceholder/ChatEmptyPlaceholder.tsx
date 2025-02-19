@@ -6,6 +6,8 @@ import {observer} from 'mobx-react';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import {modelStore} from '../../store';
+import {useNavigation} from '@react-navigation/native';
+import {NavigationProp} from '@react-navigation/native';
 
 interface ChatEmptyPlaceholderProps {
   onSelectModel: () => void;
@@ -15,6 +17,7 @@ interface ChatEmptyPlaceholderProps {
 export const ChatEmptyPlaceholder = observer(
   ({onSelectModel, bottomComponentHeight}: ChatEmptyPlaceholderProps) => {
     const theme = useTheme();
+    const navigation = useNavigation<NavigationProp<any>>();
     const styles = createStyles({theme});
 
     const hasAvailableModels = modelStore.availableModels.length > 0;
@@ -26,6 +29,9 @@ export const ChatEmptyPlaceholder = observer(
           title: 'No Models Available',
           description: 'Download a model to start chatting with PocketPal',
           buttonText: 'Download Model',
+          onPress: () => {
+            navigation.navigate('Models');
+          },
         };
       }
 
@@ -34,10 +40,11 @@ export const ChatEmptyPlaceholder = observer(
         description:
           'Select the model and download it. After downloading, tap Load next to the model and start chatting.',
         buttonText: 'Select Model',
+        onPress: onSelectModel,
       };
     };
 
-    const {title, description, buttonText} = getContent();
+    const {title, description, buttonText, onPress} = getContent();
 
     if (hasActiveModel) {
       return null;
@@ -56,7 +63,7 @@ export const ChatEmptyPlaceholder = observer(
         </View>
         <Button
           mode="contained"
-          onPress={onSelectModel}
+          onPress={onPress}
           style={styles.button}
           loading={modelStore.isContextLoading}
           disabled={hasActiveModel}>

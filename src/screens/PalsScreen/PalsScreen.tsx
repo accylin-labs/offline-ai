@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {View, ScrollView, Pressable} from 'react-native';
+import {View, ScrollView, Pressable, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Text, Divider} from 'react-native-paper';
+import {Text, Divider, IconButton} from 'react-native-paper';
 import {observer} from 'mobx-react-lite';
 
 import {useTheme} from '../../hooks';
@@ -11,6 +11,7 @@ import {
   ChevronDownIcon,
   PlusIcon,
   PencilLineIcon,
+  TrashIcon,
 } from '../../assets/icons';
 import {
   AssistantPalSheet,
@@ -71,6 +72,20 @@ const PalCard = ({pal, onEdit}: {pal: Pal; onEdit: (pal: Pal) => void}) => {
   const insets = useSafeAreaInsets();
   const styles = createStyles(theme, insets);
 
+  const handleDelete = () => {
+    Alert.alert('Delete Pal', 'Are you sure you want to delete this pal?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => palStore.deletePal(pal.id),
+        style: 'destructive',
+      },
+    ]);
+  };
+
   return (
     <View style={styles.palCard}>
       <Pressable
@@ -78,9 +93,15 @@ const PalCard = ({pal, onEdit}: {pal: Pal; onEdit: (pal: Pal) => void}) => {
         style={[styles.itemContainer, isExpanded && styles.expandedItem]}>
         <Text style={theme.fonts.titleMediumLight}>{pal.name}</Text>
         <View style={styles.itemRight}>
-          <PencilLineIcon
-            stroke={theme.colors.onSurface}
+          <IconButton
+            icon={() => <TrashIcon stroke={theme.colors.onSurface} />}
+            onPress={handleDelete}
+            style={styles.iconBtn}
+          />
+          <IconButton
+            icon={() => <PencilLineIcon stroke={theme.colors.onSurface} />}
             onPress={() => onEdit(pal)}
+            style={styles.iconBtn}
           />
           {isExpanded ? (
             <ChevronDownIcon stroke={theme.colors.onSurface} />

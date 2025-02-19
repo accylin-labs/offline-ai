@@ -103,9 +103,9 @@ class ChatSessionStore {
 
   resetActiveSession() {
     runInAction(() => {
+      this.newChatPalId = this.activePalId;
       this.exitEditMode();
       this.activeSessionId = null;
-      this.newChatPalId = undefined;
     });
   }
 

@@ -130,7 +130,7 @@ export const useChatSession = (
       return [
         {
           role: 'system' as 'system',
-          content: finalSystemPrompt,
+          content: finalSystemPrompt?.trim(),
         },
       ];
     };

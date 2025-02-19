@@ -38,7 +38,7 @@ export const createStyles = (theme: Theme, insets: EdgeInsets) =>
     },
     itemRight: {
       flexDirection: 'row',
-      gap: theme.spacing.default,
+      alignItems: 'center',
     },
     itemDescription: {
       fontSize: 14,
@@ -71,4 +71,7 @@ export const createStyles = (theme: Theme, insets: EdgeInsets) =>
       borderTopColor: theme.colors.onPrimary,
     },
     palCard: {},
+    iconBtn: {
+      marginHorizontal: 0,
+    },
   });

@@ -61,7 +61,11 @@ export const RoleplayPalSheet: React.FC<RoleplayPalSheetProps> = observer(
     }, [editPal, methods]);
 
     const handleClose = () => {
-      methods.reset({...INITIAL_STATE, palType: PalType.ROLEPLAY});
+      if (editPal) {
+        methods.reset(editPal);
+      } else {
+        methods.reset({...INITIAL_STATE, palType: PalType.ROLEPLAY});
+      }
       onClose();
     };
 

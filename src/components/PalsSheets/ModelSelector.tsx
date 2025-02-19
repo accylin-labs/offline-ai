@@ -1,12 +1,13 @@
 import React from 'react';
 import {observer} from 'mobx-react-lite';
 import {View, TextInput as RNTextInput} from 'react-native';
-import {Text} from 'react-native-paper';
+import {Text, TextInput as PaperTextInput} from 'react-native-paper';
 import {Menu} from '../Menu';
 import {TextInput} from '../TextInput';
 import {modelStore} from '../../store';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
+import {ChevronRightIcon} from '../../assets/icons';
 
 interface ModelSelectorProps {
   value?: string;
@@ -64,6 +65,14 @@ export const ModelSelector = observer(
               helperText={helperText}
               onSubmitEditing={onSubmitEditing}
               returnKeyType="next"
+              right={
+                <PaperTextInput.Icon
+                  onPress={() => setMenuVisible(true)}
+                  icon={() => (
+                    <ChevronRightIcon stroke={theme.colors.primary} />
+                  )}
+                />
+              }
             />
           }>
           {modelStore.availableModels.map(model => (

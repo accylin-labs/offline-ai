@@ -22,7 +22,8 @@ export const createStyles = ({theme}: {theme: Theme}) =>
     tabs: {
       flexDirection: 'row',
       paddingHorizontal: 16,
-      paddingVertical: 8,
+      alignItems: 'center',
+      height: 50,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.outline,
     },

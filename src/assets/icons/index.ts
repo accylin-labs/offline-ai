@@ -19,3 +19,7 @@ export {default as ChevronRightIcon} from './chevron-right.svg';
 export {default as ChevronUpIcon} from './chevron-up.svg';
 export {default as SendIcon} from './send.svg';
 export {default as StopIcon} from './stop.svg';
+export {default as PalIcon} from './pal.svg';
+export {default as ModelIcon} from './model.svg';
+export {default as ChatIcon} from './chat.svg';
+export {default as BenchmarkIcon} from './benchmark.svg';

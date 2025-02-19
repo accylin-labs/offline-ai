@@ -74,7 +74,11 @@ export const AssistantPalSheet: React.FC<AssistantPalSheetProps> = observer(
     };
 
     const handleClose = () => {
-      methods.reset({...INITIAL_STATE, palType: PalType.ASSISTANT});
+      if (editPal) {
+        methods.reset(editPal);
+      } else {
+        methods.reset({...INITIAL_STATE, palType: PalType.ASSISTANT});
+      }
       onClose();
     };
 

@@ -711,14 +711,14 @@ export const ChatView = observer(
     const [_selectedModel, setSelectedModel] = React.useState<string | null>(
       null,
     );
-    const [_selectedPal, setSelectedPal] = React.useState<string | null>(null);
+    const [_selectedPal, setSelectedPal] = React.useState<string | undefined>();
 
     const handleModelSelect = React.useCallback((model: string) => {
       setSelectedModel(model);
       setIsPickerVisible(false);
     }, []);
 
-    const handlePalSelect = React.useCallback((pal: string) => {
+    const handlePalSelect = React.useCallback((pal: string | undefined) => {
       setSelectedPal(pal);
       setIsPickerVisible(false);
     }, []);

@@ -185,7 +185,8 @@ export const SystemPromptSection = observer(
                 isGenerating ? handleStopGeneration : handleGeneratePrompt
               }
               loading={isGenerating || isLoadingModel}
-              disabled={isLoadingModel || isSystemPromptEdited}>
+              disabled={isGenerating || isLoadingModel || isSystemPromptEdited}
+              testID="generate-button">
               {isLoadingModel
                 ? 'Loading model...'
                 : isGenerating

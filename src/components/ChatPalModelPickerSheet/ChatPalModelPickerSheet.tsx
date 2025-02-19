@@ -12,6 +12,7 @@ import {chatSessionStore} from '../../store/ChatSessionStore';
 import {CustomBackdrop} from '../Sheet/CustomBackdrop';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {CloseIcon} from '../../assets/icons';
 
 type Tab = 'models' | 'pals';
 
@@ -20,7 +21,7 @@ interface ChatPalModelPickerSheetProps {
   chatInputHeight: number;
   onClose: () => void;
   onModelSelect?: (modelId: string) => void;
-  onPalSelect?: (palId: string) => void;
+  onPalSelect?: (palId: string | undefined) => void;
 }
 
 const TABS: {id: Tab; label: string}[] = [
@@ -83,10 +84,10 @@ export const ChatPalModelPickerSheet = observer(
       }
     };
 
-    const handlePalSelect = (pal: (typeof palStore.pals)[0]) => {
-      chatSessionStore.setActivePal(pal.id);
+    const handlePalSelect = (pal: (typeof palStore.pals)[0] | undefined) => {
+      chatSessionStore.setActivePal(pal?.id);
       if (
-        pal.defaultModel &&
+        pal?.defaultModel &&
         modelStore.activeModel &&
         pal.defaultModel !== modelStore.activeModelId
       ) {
@@ -112,8 +113,27 @@ export const ChatPalModelPickerSheet = observer(
           );
         }
       }
-      onPalSelect?.(pal.id);
+      onPalSelect?.(pal?.id);
       onClose();
+    };
+
+    const renderDisablePalItem = () => {
+      const noActivePal = !chatSessionStore.activePalId;
+      if (noActivePal) {
+        return null;
+      }
+      return (
+        <Pressable
+          key="disable-pal"
+          style={styles.listItem}
+          onPress={() => handlePalSelect(undefined)}>
+          <CloseIcon stroke={theme.colors.onSurface} />
+          <View style={styles.itemContent}>
+            <Text style={styles.itemTitle}>No Pal</Text>
+            <Text style={styles.itemSubtitle}>Disable active pal</Text>
+          </View>
+        </Pressable>
+      );
     };
 
     const renderModelItem = (model: (typeof modelStore.availableModels)[0]) => {
@@ -169,10 +189,11 @@ export const ChatPalModelPickerSheet = observer(
 
     const renderContent = ({item}: {item: (typeof TABS)[0]}) => (
       <View style={{width: Dimensions.get('window').width}}>
-        <ScrollView>
+        <ScrollView
+          contentContainerStyle={{paddingBottom: chatInputHeight + 66}}>
           {item.id === 'models'
             ? modelStore.availableModels.map(renderModelItem)
-            : palStore.pals.map(renderPalItem)}
+            : [renderDisablePalItem(), ...palStore.pals.map(renderPalItem)]}
         </ScrollView>
       </View>
     );
@@ -224,7 +245,6 @@ export const ChatPalModelPickerSheet = observer(
             onViewableItemsChanged={onViewableItemsChanged}
             viewabilityConfig={viewabilityConfig}
           />
-          <View style={{height: chatInputHeight}} />
         </BottomSheetView>
       </BottomSheet>
     );
