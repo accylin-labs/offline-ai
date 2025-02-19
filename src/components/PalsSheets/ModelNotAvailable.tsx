@@ -69,7 +69,7 @@ export const ModelNotAvailable = observer(
             </>
           ) : (
             <Text style={{color: theme.colors.error}}>
-              This model is not downloaded yet. Please download it first.
+              Default model is not downloaded yet. Please download it first.
             </Text>
           )}
 
