@@ -207,11 +207,10 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
           <SafeAreaView edges={['bottom']} style={styles.versionSafeArea}>
             <Button
               mode="outlined"
-              contentStyle={styles.sponsorButton}
               style={{borderColor: theme.colors.onSurfaceDisabled}}
               labelStyle={styles.sponsorButtonLabel}
               onPress={openSponsorPage}>
-              Become a Sponsor
+              <Text variant="bodySmall">Become a Sponsor</Text>
             </Button>
             <TouchableOpacity
               onPress={copyVersionToClipboard}

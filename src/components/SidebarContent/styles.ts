@@ -21,6 +21,9 @@ export const createStyles = (theme: MD3Theme) =>
     },
     versionContainer: {
       alignItems: 'center',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      gap: 10,
     },
     versionRow: {
       flexDirection: 'row',
@@ -79,6 +82,8 @@ export const createStyles = (theme: MD3Theme) =>
       flexShrink: 1,
       paddingHorizontal: 16,
       paddingVertical: 16,
+      flexWrap: 'wrap',
+      gap: 10,
     },
     sponsorButtonLabel: {
       marginHorizontal: 16,
