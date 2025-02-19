@@ -14,20 +14,27 @@ import {ModelSelector} from './ModelSelector';
 import {useStructuredOutput} from '../../hooks/useStructuredOutput';
 import {modelStore} from '../../store';
 import {getPromptForModelGeneration} from './utils';
+import {ModelNotAvailable} from './ModelNotAvailable';
 
 interface SystemPromptSectionProps {
   hideGeneratingPrompt?: boolean;
   validateFields?: () => Promise<boolean>;
+  closeSheet: () => void;
 }
 
 export const SystemPromptSection = observer(
-  ({hideGeneratingPrompt, validateFields}: SystemPromptSectionProps) => {
+  ({
+    hideGeneratingPrompt,
+    validateFields,
+    closeSheet,
+  }: SystemPromptSectionProps) => {
     const theme = useTheme();
     const styles = createStyles(theme);
 
     const {watch, control, getValues, setValue, clearErrors} =
       useFormContext<PalFormData>();
     const useAIPrompt = watch('useAIPrompt');
+    const promptGenerationModel = watch('promptGenerationModel');
     const isLoadingModel = modelStore.isContextLoading;
 
     const {generate, isGenerating, stop} = useStructuredOutput();
@@ -44,9 +51,7 @@ export const SystemPromptSection = observer(
       clearErrors('systemPrompt');
 
       try {
-        const selectedModel = modelStore.availableModels.find(
-          m => m.id === getValues().promptGenerationModel,
-        );
+        const selectedModel = getValues().promptGenerationModel;
         if (!selectedModel) {
           console.error('Active model not found');
           return;
@@ -168,6 +173,10 @@ export const SystemPromptSection = observer(
                   disabled={isSystemPromptEdited}
                 />
               )}
+            />
+            <ModelNotAvailable
+              model={promptGenerationModel}
+              closeSheet={closeSheet}
             />
             {!hideGeneratingPrompt && (
               <FormField

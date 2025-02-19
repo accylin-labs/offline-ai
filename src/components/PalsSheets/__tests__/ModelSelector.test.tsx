@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from '../../../../jest/test-utils';
 import {ModelSelector} from '../ModelSelector';
+import {modelsList} from '../../../../jest/fixtures/models';
 
 // Mock the modelStore
 jest.mock('../../../store', () => ({
@@ -58,11 +59,11 @@ describe('ModelSelector', () => {
 
   it('displays selected model name when value is provided', () => {
     const {getByTestId} = render(
-      <ModelSelector {...defaultProps} value="model1" />,
+      <ModelSelector {...defaultProps} value={modelsList[0]} />,
     );
 
     const input = getByTestId('text-input-flat');
-    expect(input.props.value).toBe('Model 1');
+    expect(input.props.value).toBe(modelsList[0].name);
   });
 
   it('displays helper text when provided', () => {

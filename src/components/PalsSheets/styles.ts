@@ -15,6 +15,13 @@ export const createStyles = (theme: Theme) =>
     innerForm: {
       gap: theme.spacing.default,
     },
+    modelNotDownloaded: {
+      gap: 10,
+    },
+    progressBar: {
+      height: 8,
+      borderRadius: 5,
+    },
     field: {
       gap: 4,
     },

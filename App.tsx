@@ -38,8 +38,8 @@ const App = observer(() => {
       <SafeAreaProvider>
         <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
           <PaperProvider theme={theme}>
-            <BottomSheetModalProvider>
-              <NavigationContainer>
+            <NavigationContainer>
+              <BottomSheetModalProvider>
                 <Drawer.Navigator
                   useLegacyImplementation={false}
                   screenOptions={{
@@ -91,8 +91,8 @@ const App = observer(() => {
                     }}
                   />
                 </Drawer.Navigator>
-              </NavigationContainer>
-            </BottomSheetModalProvider>
+              </BottomSheetModalProvider>
+            </NavigationContainer>
           </PaperProvider>
         </KeyboardProvider>
       </SafeAreaProvider>

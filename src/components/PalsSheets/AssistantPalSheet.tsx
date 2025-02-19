@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useEffect} from 'react';
+import React, {useContext, useRef, useEffect, useCallback} from 'react';
 import {View, TextInput as RNTextInput} from 'react-native';
 import {Button} from 'react-native-paper';
 import {observer} from 'mobx-react-lite';
@@ -15,6 +15,7 @@ import {SystemPromptSection} from './SystemPromptSection';
 import {ColorSection} from './ColorSection';
 import {ModelSelector} from './ModelSelector';
 import {assistantFormSchema, PalType, type AssistantFormData} from './types';
+import {ModelNotAvailable} from './ModelNotAvailable';
 
 interface AssistantPalSheetProps {
   isVisible: boolean;
@@ -24,13 +25,13 @@ interface AssistantPalSheetProps {
 
 const INITIAL_STATE: Omit<AssistantFormData, 'palType'> = {
   name: '',
-  defaultModel: '',
+  defaultModel: undefined,
   useAIPrompt: false,
   systemPrompt: '',
   originalSystemPrompt: '',
   isSystemPromptChanged: false,
   color: undefined,
-  promptGenerationModel: '',
+  promptGenerationModel: undefined,
   generatingPrompt: '',
 };
 
@@ -73,12 +74,20 @@ export const AssistantPalSheet: React.FC<AssistantPalSheetProps> = observer(
       return true;
     };
 
-    const handleClose = () => {
+    const resetForm = useCallback(() => {
       if (editPal) {
         methods.reset(editPal);
       } else {
         methods.reset({...INITIAL_STATE, palType: PalType.ASSISTANT});
       }
+    }, [editPal, methods]);
+
+    useEffect(() => {
+      resetForm();
+    }, [resetForm]);
+
+    const handleClose = () => {
+      resetForm();
       onClose();
     };
 
@@ -129,7 +138,16 @@ export const AssistantPalSheet: React.FC<AssistantPalSheetProps> = observer(
                   />
                 )}
               />
-              <SystemPromptSection validateFields={validateAssistantFields} />
+
+              <ModelNotAvailable
+                model={editPal?.defaultModel}
+                closeSheet={handleClose}
+              />
+
+              <SystemPromptSection
+                validateFields={validateAssistantFields}
+                closeSheet={handleClose}
+              />
               <ColorSection />
             </View>
           </Sheet.ScrollView>

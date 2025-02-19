@@ -5,19 +5,24 @@ import {SystemPromptSection} from '../SystemPromptSection';
 import {modelStore} from '../../../store';
 import {useStructuredOutput} from '../../../hooks/useStructuredOutput';
 import {PalType} from '../types';
+import {modelsList} from '../../../../jest/fixtures/models';
 
 // Mock the modelStore
-jest.mock('../../../store', () => ({
-  modelStore: {
-    availableModels: [
-      {id: 'model1', name: 'Model 1'},
-      {id: 'model2', name: 'Model 2'},
-    ],
-    isContextLoading: false,
-    activeModelId: 'model1',
-    initContext: jest.fn(),
-  },
-}));
+jest.mock('../../../store', () => {
+  const {
+    modelsList: mockedModelsList,
+  } = require('../../../../jest/fixtures/models');
+  return {
+    modelStore: {
+      availableModels: [mockedModelsList[0], mockedModelsList[1]],
+      isContextLoading: false,
+      activeModelId: mockedModelsList[0].id,
+      isDownloading: () => false,
+      initContext: jest.fn(),
+      models: mockedModelsList,
+    },
+  };
+});
 
 // Mock useStructuredOutput hook
 jest.mock('../../../hooks/useStructuredOutput', () => ({
@@ -58,8 +63,11 @@ describe('SystemPromptSection', () => {
   it('renders basic fields correctly', () => {
     const {getByText, getByPlaceholderText} = render(
       <TestWrapper>
-        <SystemPromptSection />
+        <SystemPromptSection closeSheet={() => {}} />
       </TestWrapper>,
+      {
+        withNavigation: true,
+      },
     );
 
     expect(getByText('System Prompt')).toBeDefined();
@@ -70,8 +78,11 @@ describe('SystemPromptSection', () => {
   it('toggles AI prompt generation fields visibility', () => {
     const {getByText, queryByText} = render(
       <TestWrapper defaultValues={{useAIPrompt: false}}>
-        <SystemPromptSection />
+        <SystemPromptSection closeSheet={() => {}} />
       </TestWrapper>,
+      {
+        withNavigation: true,
+      },
     );
 
     // Initially, generation fields should be hidden
@@ -91,12 +102,15 @@ describe('SystemPromptSection', () => {
       <TestWrapper
         defaultValues={{
           useAIPrompt: true,
-          promptGenerationModel: 'model1',
+          promptGenerationModel: modelsList[0],
           palType: PalType.ASSISTANT,
           generatingPrompt: 'Test generating prompt',
         }}>
-        <SystemPromptSection />
+        <SystemPromptSection closeSheet={() => {}} />
       </TestWrapper>,
+      {
+        withNavigation: true,
+      },
     );
 
     // Click generate button
@@ -117,7 +131,7 @@ describe('SystemPromptSection', () => {
       <TestWrapper
         defaultValues={{
           useAIPrompt: true,
-          promptGenerationModel: 'model1',
+          promptGenerationModel: modelsList[0],
           palType: PalType.ROLEPLAY,
           world: 'Fantasy',
           location: 'Castle',
@@ -126,8 +140,11 @@ describe('SystemPromptSection', () => {
           situation: 'Quest',
           toneStyle: 'Medieval',
         }}>
-        <SystemPromptSection />
+        <SystemPromptSection closeSheet={() => {}} />
       </TestWrapper>,
+      {
+        withNavigation: true,
+      },
     );
 
     // Click generate button
@@ -150,8 +167,14 @@ describe('SystemPromptSection', () => {
           useAIPrompt: true,
           promptGenerationModel: 'model1',
         }}>
-        <SystemPromptSection validateFields={validateFields} />
+        <SystemPromptSection
+          validateFields={validateFields}
+          closeSheet={() => {}}
+        />
       </TestWrapper>,
+      {
+        withNavigation: true,
+      },
     );
 
     // Click generate button
@@ -170,22 +193,22 @@ describe('SystemPromptSection', () => {
       <TestWrapper
         defaultValues={{
           useAIPrompt: true,
-          promptGenerationModel: 'model2', // Different from activeModelId
+          promptGenerationModel: modelsList[1], // Different from activeModelId
           palType: PalType.ASSISTANT,
           generatingPrompt: 'Test prompt',
         }}>
-        <SystemPromptSection />
+        <SystemPromptSection closeSheet={() => {}} />
       </TestWrapper>,
+      {
+        withNavigation: true,
+      },
     );
 
     // Click generate button
     fireEvent.press(getByText('Generate System Prompt'));
 
     await waitFor(() => {
-      expect(modelStore.initContext).toHaveBeenCalledWith({
-        id: 'model2',
-        name: 'Model 2',
-      });
+      expect(modelStore.initContext).toHaveBeenCalledWith(modelsList[1]);
     });
   });
 
@@ -197,8 +220,11 @@ describe('SystemPromptSection', () => {
           originalSystemPrompt: 'Original prompt',
           isSystemPromptChanged: true,
         }}>
-        <SystemPromptSection />
+        <SystemPromptSection closeSheet={() => {}} />
       </TestWrapper>,
+      {
+        withNavigation: true,
+      },
     );
 
     // Check if warning is shown
@@ -219,10 +245,13 @@ describe('SystemPromptSection', () => {
         defaultValues={{
           useAIPrompt: true,
           isSystemPromptChanged: true,
-          promptGenerationModel: 'model1',
+          promptGenerationModel: modelsList[0],
         }}>
-        <SystemPromptSection />
+        <SystemPromptSection closeSheet={() => {}} />
       </TestWrapper>,
+      {
+        withNavigation: true,
+      },
     );
 
     const generateButton = getByTestId('generate-button');

@@ -13,9 +13,7 @@ type FormData = AssistantFormData | RoleplayFormData;
 // Extract only string fields
 type StringFields =
   | 'name'
-  | 'defaultModel'
   | 'systemPrompt'
-  | 'promptGenerationModel'
   | 'generatingPrompt'
   | 'world'
   | 'location'

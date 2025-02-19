@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {Model} from '../../utils/types';
 
 export enum PalType {
   ROLEPLAY = 'roleplay',
@@ -8,13 +9,13 @@ export enum PalType {
 // Base schema with common fields
 const baseFormSchema = {
   name: z.string().min(1, 'Name is required'),
-  defaultModel: z.string().optional(),
+  defaultModel: z.any().optional(),
   useAIPrompt: z.boolean(),
   systemPrompt: z.string().min(1, 'System prompt is required'),
   originalSystemPrompt: z.string().optional(),
   isSystemPromptChanged: z.boolean().default(false),
   color: z.tuple([z.string(), z.string()]).optional(),
-  promptGenerationModel: z.string().optional(),
+  promptGenerationModel: z.any().optional(),
   generatingPrompt: z.string().optional(),
 };
 
@@ -22,13 +23,13 @@ const baseFormSchema = {
 interface BaseFormData {
   id?: string;
   name: string;
-  defaultModel?: string;
+  defaultModel?: Model;
   useAIPrompt: boolean;
   systemPrompt: string;
   originalSystemPrompt?: string;
   isSystemPromptChanged: boolean;
   color?: [string, string];
-  promptGenerationModel?: string;
+  promptGenerationModel?: Model;
   generatingPrompt?: string;
 }
 

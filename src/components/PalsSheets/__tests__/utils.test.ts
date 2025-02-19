@@ -12,10 +12,10 @@ describe('PalsSheets utils', () => {
     situation: 'A dark curse has fallen upon the kingdom',
     toneStyle: 'Mysterious and dramatic',
     systemPrompt: '',
-    defaultModel: '',
+    defaultModel: undefined,
     useAIPrompt: false,
     isSystemPromptChanged: false,
-    promptGenerationModel: '',
+    promptGenerationModel: undefined,
     generatingPrompt: '',
     color: undefined,
   };

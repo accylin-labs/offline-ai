@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useEffect} from 'react';
+import React, {useContext, useRef, useEffect, useCallback} from 'react';
 import {View, TextInput as RNTextInput} from 'react-native';
 import {Button} from 'react-native-paper';
 import {observer} from 'mobx-react-lite';
@@ -26,7 +26,7 @@ interface RoleplayPalSheetProps {
 
 const INITIAL_STATE: Omit<RoleplayFormData, 'palType'> = {
   name: '',
-  defaultModel: '',
+  defaultModel: undefined,
   world: '',
   location: '',
   aiRole: '',
@@ -37,7 +37,7 @@ const INITIAL_STATE: Omit<RoleplayFormData, 'palType'> = {
   systemPrompt: '',
   isSystemPromptChanged: false,
   color: undefined,
-  promptGenerationModel: '',
+  promptGenerationModel: undefined,
   generatingPrompt: '',
 };
 
@@ -54,18 +54,20 @@ export const RoleplayPalSheet: React.FC<RoleplayPalSheetProps> = observer(
       defaultValues: {...INITIAL_STATE, palType: PalType.ROLEPLAY},
     });
 
-    useEffect(() => {
-      if (editPal) {
-        methods.reset(editPal);
-      }
-    }, [editPal, methods]);
-
-    const handleClose = () => {
+    const resetForm = useCallback(() => {
       if (editPal) {
         methods.reset(editPal);
       } else {
         methods.reset({...INITIAL_STATE, palType: PalType.ROLEPLAY});
       }
+    }, [editPal, methods]);
+
+    useEffect(() => {
+      resetForm();
+    }, [resetForm]);
+
+    const handleClose = () => {
+      resetForm();
       onClose();
     };
 
@@ -214,6 +216,7 @@ export const RoleplayPalSheet: React.FC<RoleplayPalSheetProps> = observer(
               <SystemPromptSection
                 hideGeneratingPrompt
                 validateFields={validateRoleplayFields}
+                closeSheet={handleClose}
               />
               <ColorSection />
             </View>

@@ -89,10 +89,10 @@ export const ChatPalModelPickerSheet = observer(
       if (
         pal?.defaultModel &&
         modelStore.activeModel &&
-        pal.defaultModel !== modelStore.activeModelId
+        pal.defaultModel?.id !== modelStore.activeModelId
       ) {
         const palDefaultModel = modelStore.availableModels.find(
-          m => m.id === pal.defaultModel,
+          m => m.id === pal.defaultModel?.id,
         );
         if (palDefaultModel) {
           Alert.alert(

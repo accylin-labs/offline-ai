@@ -8,10 +8,11 @@ import {modelStore} from '../../store';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import {ChevronRightIcon} from '../../assets/icons';
+import {Model} from '../../utils/types';
 
 interface ModelSelectorProps {
-  value?: string;
-  onChange: (value: string) => void;
+  value?: Model;
+  onChange: (value: Model) => void;
   label: string;
   sublabel?: string;
   placeholder?: string;
@@ -38,7 +39,6 @@ export const ModelSelector = observer(
     disabled,
   }: ModelSelectorProps) => {
     const [menuVisible, setMenuVisible] = React.useState(false);
-    const selectedModel = modelStore.availableModels.find(m => m.id === value);
     const theme = useTheme();
     const styles = createStyles(theme);
 
@@ -56,7 +56,7 @@ export const ModelSelector = observer(
           anchor={
             <TextInput
               ref={inputRef}
-              value={selectedModel?.name || ''}
+              value={value?.name || ''}
               placeholder={placeholder}
               onPressIn={() => setMenuVisible(true)}
               disabled={disabled}
@@ -80,12 +80,12 @@ export const ModelSelector = observer(
               key={model.id}
               label={model.name}
               onPress={() => {
-                onChange(model.id);
+                onChange(model);
                 setMenuVisible(false);
                 onSubmitEditing?.();
               }}
               selectable
-              selected={model.id === value}
+              selected={model.id === value?.id}
             />
           ))}
         </Menu>

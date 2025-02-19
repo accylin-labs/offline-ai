@@ -116,7 +116,7 @@ export const useChatSession = (
       // If no system prompt is available at all, return empty array
       if (
         !systemPrompt &&
-        !modelStore.activeModel?.chatTemplate?.systemPrompt
+        !modelStore.activeModel?.chatTemplate?.systemPrompt?.trim()
       ) {
         return [];
       }
@@ -127,10 +127,13 @@ export const useChatSession = (
         modelStore.activeModel?.chatTemplate?.systemPrompt ||
         '';
 
+      if (finalSystemPrompt?.trim() === '') {
+        return [];
+      }
       return [
         {
           role: 'system' as 'system',
-          content: finalSystemPrompt?.trim(),
+          content: finalSystemPrompt,
         },
       ];
     };

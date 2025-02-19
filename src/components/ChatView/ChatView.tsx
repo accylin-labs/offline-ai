@@ -231,7 +231,7 @@ export const ChatView = observer(
       if (activePal) {
         if (!modelStore.activeModel && activePal.defaultModel) {
           const palDefaultModel = modelStore.availableModels.find(
-            m => m.id === activePal.defaultModel,
+            m => m.id === activePal.defaultModel?.id,
           );
           if (palDefaultModel) {
             modelStore.initContext(palDefaultModel);

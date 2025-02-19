@@ -1,4 +1,10 @@
-import {AppState, AppStateStatus, Platform, NativeModules} from 'react-native';
+import {
+  AppState,
+  AppStateStatus,
+  Platform,
+  NativeModules,
+  Alert,
+} from 'react-native';
 
 import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
@@ -474,7 +480,7 @@ class ModelStore {
     if (isEnoughSpace) {
       this.downloadModel(model);
     } else {
-      console.error('Not enough storage space to download the model.');
+      Alert.alert('Failed', 'Not enough storage space to download the model.');
     }
   };
 
