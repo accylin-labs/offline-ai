@@ -230,7 +230,10 @@ describe('safeParseJSON', () => {
     const invalidCases = ['', 'not json at all', '{notEvenJson}'];
 
     invalidCases.forEach(invalid => {
-      expect(safeParseJSON(invalid)).toBeNull();
+      expect(safeParseJSON(invalid)).toEqual({
+        prompt: '',
+        error: expect.any(Error),
+      });
     });
   });
 });

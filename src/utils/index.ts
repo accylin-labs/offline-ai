@@ -621,6 +621,6 @@ export const safeParseJSON = (json: string) => {
   } catch (error) {
     console.log('Original json: ', json);
     console.error('Error parsing JSON:', error);
-    return null;
+    return {prompt: '', error: error};
   }
 };

@@ -96,7 +96,7 @@ describe('useStructuredOutput', () => {
       output = await result.current.generate('test', {});
     });
 
-    expect(output).toBeNull();
+    expect(output).toEqual({prompt: '', error: expect.any(Error)});
     expect(result.current.isGenerating).toBe(false);
   });
 
