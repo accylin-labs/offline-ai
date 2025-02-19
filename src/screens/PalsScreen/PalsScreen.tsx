@@ -12,6 +12,7 @@ import {
   PlusIcon,
   PencilLineIcon,
   TrashIcon,
+  AlertIcon,
 } from '../../assets/icons';
 import {
   AssistantPalSheet,
@@ -19,6 +20,7 @@ import {
   PalType,
 } from '../../components/PalsSheets';
 import {palStore, Pal} from '../../store/PalStore';
+import {modelStore} from '../../store/ModelStore';
 
 const PalDetails = ({pal}: {pal: Pal}) => {
   const theme = useTheme();
@@ -71,6 +73,8 @@ const PalCard = ({pal, onEdit}: {pal: Pal; onEdit: (pal: Pal) => void}) => {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const styles = createStyles(theme, insets);
+  const isDefaultModelMissing =
+    pal.defaultModel && !modelStore.isModelAvailable(pal.defaultModel?.id);
 
   const handleDelete = () => {
     Alert.alert('Delete Pal', 'Are you sure you want to delete this pal?', [
@@ -86,20 +90,48 @@ const PalCard = ({pal, onEdit}: {pal: Pal; onEdit: (pal: Pal) => void}) => {
     ]);
   };
 
+  const handleWarningPress = () => {
+    Alert.alert(
+      'Missing Model',
+      `The default model "${pal.defaultModel?.name}" for this pal is not available. Please download it in the edit sheet or select a different model.`,
+    );
+  };
+
+  const renderWarningIcon = () => (
+    <AlertIcon stroke={theme.colors.error} width={20} height={20} />
+  );
+
+  const renderTrashIcon = () => (
+    <TrashIcon stroke={theme.colors.onSurface} width={20} height={20} />
+  );
+
+  const renderPencilIcon = () => (
+    <PencilLineIcon stroke={theme.colors.onSurface} width={20} height={20} />
+  );
+
   return (
     <View style={styles.palCard}>
       <Pressable
         onPress={() => setIsExpanded(!isExpanded)}
         style={[styles.itemContainer, isExpanded && styles.expandedItem]}>
-        <Text style={theme.fonts.titleMediumLight}>{pal.name}</Text>
+        <View style={styles.nameContainer}>
+          {isDefaultModelMissing && (
+            <IconButton
+              icon={renderWarningIcon}
+              onPress={handleWarningPress}
+              style={styles.warningIcon}
+            />
+          )}
+          <Text style={theme.fonts.titleMediumLight}>{pal.name}</Text>
+        </View>
         <View style={styles.itemRight}>
           <IconButton
-            icon={() => <TrashIcon stroke={theme.colors.onSurface} />}
+            icon={renderTrashIcon}
             onPress={handleDelete}
             style={styles.iconBtn}
           />
           <IconButton
-            icon={() => <PencilLineIcon stroke={theme.colors.onSurface} />}
+            icon={renderPencilIcon}
             onPress={() => onEdit(pal)}
             style={styles.iconBtn}
           />

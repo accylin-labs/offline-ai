@@ -14,9 +14,7 @@ export const ModelNotAvailable = observer(
     const navigation = useNavigation<any>();
     const styles = createStyles(theme);
 
-    const isPalModelDownloaded = model
-      ? modelStore.availableModels.find(m => m.id === model.id)
-      : false;
+    const isPalModelDownloaded = modelStore.isModelAvailable(model?.id);
     const defaultModel = modelStore.models.find(m => m.id === model?.id);
 
     const isDownloading = defaultModel

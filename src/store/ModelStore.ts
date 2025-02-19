@@ -1097,6 +1097,13 @@ class ModelStore {
       });
     }
   };
+
+  isModelAvailable = (modelId?: string): boolean => {
+    if (!modelId) {
+      return false;
+    }
+    return this.availableModels.some(m => m.id === modelId);
+  };
 }
 
 export const modelStore = new ModelStore();

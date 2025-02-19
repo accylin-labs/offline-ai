@@ -74,4 +74,13 @@ export const createStyles = (theme: Theme, insets: EdgeInsets) =>
     iconBtn: {
       marginHorizontal: 0,
     },
+    nameContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    warningIcon: {
+      margin: 0,
+      padding: 0,
+    },
   });

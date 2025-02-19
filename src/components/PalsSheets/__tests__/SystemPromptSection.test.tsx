@@ -20,6 +20,14 @@ jest.mock('../../../store', () => {
       isDownloading: () => false,
       initContext: jest.fn(),
       models: mockedModelsList,
+      isModelAvailable: (modelId?: string) => {
+        if (!modelId) {
+          return false;
+        }
+        return [mockedModelsList[0].id, mockedModelsList[1].id].includes(
+          modelId,
+        );
+      },
     },
   };
 });
