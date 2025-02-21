@@ -5,6 +5,7 @@ import {Text} from 'react-native-paper';
 import BottomSheet, {
   BottomSheetFlatList,
   BottomSheetFlatListMethods,
+  BottomSheetScrollView,
   BottomSheetView,
 } from '@gorhom/bottom-sheet';
 
@@ -14,8 +15,7 @@ import {modelStore} from '../../store/ModelStore';
 import {palStore} from '../../store/PalStore';
 import {chatSessionStore} from '../../store/ChatSessionStore';
 import {CustomBackdrop} from '../Sheet/CustomBackdrop';
-import {ScrollView} from 'react-native-gesture-handler';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+//import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {CloseIcon} from '../../assets/icons';
 
 type Tab = 'models' | 'pals';
@@ -41,11 +41,12 @@ export const ChatPalModelPickerSheet = observer(
     onModelSelect,
     onPalSelect,
     chatInputHeight,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     keyboardHeight,
   }: ChatPalModelPickerSheetProps) => {
     const [activeTab, setActiveTab] = React.useState<Tab>('models');
     const theme = useTheme();
-    const insets = useSafeAreaInsets();
+    // const insets = useSafeAreaInsets();
     const styles = createStyles({theme});
     const bottomSheetRef = useRef<BottomSheet>(null);
     const flatListRef = useRef<BottomSheetFlatListMethods>(null);
@@ -195,12 +196,13 @@ export const ChatPalModelPickerSheet = observer(
 
     const renderContent = ({item}: {item: (typeof TABS)[0]}) => (
       <View style={{width: Dimensions.get('window').width}}>
-        <ScrollView
+        <BottomSheetScrollView
+          // ScrollView (react-native-gesture-handler) has the issue that for the first render and tab change the sheet gets closed.
           contentContainerStyle={{paddingBottom: chatInputHeight + 66}}>
           {item.id === 'models'
             ? modelStore.availableModels.map(renderModelItem)
             : [renderDisablePalItem(), ...palStore.pals.map(renderPalItem)]}
-        </ScrollView>
+        </BottomSheetScrollView>
       </View>
     );
 
@@ -214,7 +216,8 @@ export const ChatPalModelPickerSheet = observer(
     );
 
     const viewabilityConfig = React.useRef({
-      itemVisiblePercentThreshold: 50,
+      itemVisiblePercentThreshold: 90,
+      minimumViewTime: 100,
     }).current;
 
     return (
@@ -223,17 +226,22 @@ export const ChatPalModelPickerSheet = observer(
         index={-1}
         onClose={onClose}
         enablePanDownToClose
-        enableDynamicSizing
+        snapPoints={['70%']} // Dynamic sizing is not working properly in all situations, like keyboard open/close android/ios ...
+        enableDynamicSizing={false}
         backdropComponent={CustomBackdrop}
         backgroundStyle={{
           backgroundColor: theme.colors.background,
         }}
-        maxDynamicContentSize={
-          Dimensions.get('screen').height - insets.top - 16 - keyboardHeight
-        }
+        // Dynamic sizing is not working properly in all situations, like keyboard open/close android/ios ...
+        //maxDynamicContentSize={
+        //  Dimensions.get('screen').height - insets.top - 16 - keyboardHeight
+        //}
         handleIndicatorStyle={{
           backgroundColor: theme.colors.primary,
-        }}>
+        }}
+        // Add these props to better handle gestures
+        enableContentPanningGesture={false}
+        enableHandlePanningGesture>
         <BottomSheetView>
           <View style={styles.tabs}>
             {TABS.map((tab, index) => renderTab(tab.id, tab.label, index))}
