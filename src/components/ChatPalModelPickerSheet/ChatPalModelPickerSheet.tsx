@@ -197,7 +197,6 @@ export const ChatPalModelPickerSheet = observer(
     const renderContent = ({item}: {item: (typeof TABS)[0]}) => (
       <View style={{width: Dimensions.get('window').width}}>
         <BottomSheetScrollView
-          // ScrollView (react-native-gesture-handler) has the issue that for the first render and tab change the sheet gets closed.
           contentContainerStyle={{paddingBottom: chatInputHeight + 66}}>
           {item.id === 'models'
             ? modelStore.availableModels.map(renderModelItem)
@@ -220,13 +219,16 @@ export const ChatPalModelPickerSheet = observer(
       minimumViewTime: 100,
     }).current;
 
+    // If the snapPoints not memoized, the sheet gets closed when the tab is changed for the first time.
+    const snapPoints = React.useMemo(() => ['70%'], []);
+
     return (
       <BottomSheet
         ref={bottomSheetRef}
         index={-1}
         onClose={onClose}
         enablePanDownToClose
-        snapPoints={['70%']} // Dynamic sizing is not working properly in all situations, like keyboard open/close android/ios ...
+        snapPoints={snapPoints} // Dynamic sizing is not working properly in all situations, like keyboard open/close android/ios ...
         enableDynamicSizing={false}
         backdropComponent={CustomBackdrop}
         backgroundStyle={{
