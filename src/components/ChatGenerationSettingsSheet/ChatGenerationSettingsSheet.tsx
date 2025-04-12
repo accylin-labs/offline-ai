@@ -174,9 +174,10 @@ export const ChatGenerationSettingsSheet = ({
     onCloseSheet();
   };
 
-  const handleApplyToFutureSessions = () => {
+  const handleApplyToPreset = () => {
     if (session) {
       // Apply current session settings to preset settings
+      handleSaveSettings(); // First save the current UI settings to the session
       chatSessionStore.applySessionSettingsToGlobal();
       Alert.alert(
         'Success',
@@ -225,9 +226,7 @@ export const ChatGenerationSettingsSheet = ({
           />
           <View style={styles.rightButtons}>
             {!isEditingPresetSettings && (
-              <Button
-                mode="contained-tonal"
-                onPress={handleApplyToFutureSessions}>
+              <Button mode="contained-tonal" onPress={handleApplyToPreset}>
                 Save as Preset
               </Button>
             )}
