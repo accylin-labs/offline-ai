@@ -30,10 +30,10 @@ export class UIStore {
   colorScheme: 'light' | 'dark' = Appearance.getColorScheme() ?? 'light';
 
   // Current selected language (default to English)
-  language: AvailableLanguage = 'en';
+  _language: AvailableLanguage = 'en';
 
   // List of supported languages
-  supportedLanguages: AvailableLanguage[] = ['en', 'de', 'ja'];
+  supportedLanguages: AvailableLanguage[] = ['en', 'ja'];
 
   displayMemUsage = false;
 
@@ -58,7 +58,7 @@ export class UIStore {
         'autoNavigatetoChat',
         'displayMemUsage',
         'benchmarkShareDialog',
-        'language',
+        '_language',
       ],
       storage: AsyncStorage,
     });
@@ -89,8 +89,13 @@ export class UIStore {
 
   setLanguage(language: AvailableLanguage) {
     runInAction(() => {
-      this.language = language;
+      this._language = language;
     });
+  }
+  get language() {
+    // If the language is not in l10n, return 'en'
+    // This can happen when the app removes a language from l10n
+    return this._language in l10n ? this._language : 'en';
   }
 
   setAutoNavigateToChat(value: boolean) {

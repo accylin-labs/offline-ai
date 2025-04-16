@@ -19,6 +19,8 @@ export const mockUiStore = {
       },
     },
   },
+  language: 'en',
+  supportedLanguages: ['en', 'ja'],
   setValue: jest.fn(),
   displayMemUsage: false,
   setAutoNavigateToChat: jest.fn(),

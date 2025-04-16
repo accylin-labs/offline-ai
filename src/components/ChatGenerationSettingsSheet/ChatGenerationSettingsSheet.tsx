@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Sheet} from '../Sheet/Sheet';
-import {CompletionSettings} from '../../screens/ModelsScreen/CompletionSettings';
+import {CompletionSettings} from '..';
 import {CompletionParams} from '@pocketpalai/llama.rn';
 import {chatSessionStore, defaultCompletionSettings} from '../../store';
 import {styles} from './styles';
@@ -43,6 +43,8 @@ export const ChatGenerationSettingsSheet = ({
     );
     onClose();
   };
+
+  const l10n = useContext(L10nContext);
 
   const handleSaveSettings = () => {
     // Convert string values to numbers where needed
@@ -90,12 +92,13 @@ export const ChatGenerationSettingsSheet = ({
 
     if (Object.keys(allErrors).length > 0) {
       Alert.alert(
-        'Invalid Values',
-        'Please correct the following:\n' +
+        l10n.components.chatGenerationSettingsSheet.invalidValues,
+        l10n.components.chatGenerationSettingsSheet.pleaseCorrect +
+          '\n' +
           Object.entries(allErrors)
             .map(([key, msg]) => `• ${key}: ${msg}`)
             .join('\n'),
-        [{text: 'OK'}],
+        [{text: l10n.components.chatGenerationSettingsSheet.ok}],
       );
       return;
     }
@@ -118,11 +121,9 @@ export const ChatGenerationSettingsSheet = ({
     onCloseSheet();
   };
 
-  const i10n = useContext(L10nContext);
-
   return (
     <Sheet
-      title={i10n.chatGenerationSettings}
+      title={l10n.components.chatGenerationSettingsSheet.title}
       isVisible={isVisible}
       onClose={onCloseSheet}>
       <Sheet.ScrollView
@@ -133,14 +134,14 @@ export const ChatGenerationSettingsSheet = ({
       <Sheet.Actions>
         <View style={styles.secondaryButtons}>
           <Button mode="text" onPress={handleResetSettings}>
-            {i10n.reset}
+            {l10n.common.reset}
           </Button>
           <Button mode="text" onPress={handleCancelSettings}>
-            {i10n.cancel}
+            {l10n.common.cancel}
           </Button>
         </View>
         <Button mode="contained" onPress={handleSaveSettings}>
-          {i10n.saveChanges}
+          {l10n.components.chatGenerationSettingsSheet.saveChanges}
         </Button>
       </Sheet.Actions>
     </Sheet>

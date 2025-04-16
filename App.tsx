@@ -20,6 +20,7 @@ import {Theme} from './src/utils/types';
 import {l10n} from './src/utils/l10n';
 import {initLocale} from './src/utils';
 import {L10nContext} from './src/utils';
+import {ROUTES} from './src/utils/navigationConstants';
 
 import {SidebarContent, ModelsHeaderRight, HeaderLeft} from './src/components';
 import {
@@ -42,6 +43,7 @@ const screenWidth = Dimensions.get('window').width;
 const App = observer(() => {
   const theme = useTheme();
   const styles = createStyles(theme);
+  const currentL10n = l10n[uiStore.language];
 
   // Initialize locale with the current language
   React.useEffect(() => {
@@ -53,7 +55,7 @@ const App = observer(() => {
       <SafeAreaProvider>
         <KeyboardProvider statusBarTranslucent navigationBarTranslucent>
           <PaperProvider theme={theme}>
-            <L10nContext.Provider value={l10n[uiStore.language]}>
+            <L10nContext.Provider value={currentL10n}>
               <NavigationContainer>
                 <BottomSheetModalProvider>
                   <Drawer.Navigator
@@ -71,56 +73,62 @@ const App = observer(() => {
                     }}
                     drawerContent={props => <SidebarContent {...props} />}>
                     <Drawer.Screen
-                      name="Chat"
+                      name={ROUTES.CHAT}
                       component={gestureHandlerRootHOC(ChatScreen)}
                       options={{
                         headerShown: false,
                       }}
                     />
                     <Drawer.Screen
-                      name="Models"
+                      name={ROUTES.MODELS}
                       component={gestureHandlerRootHOC(ModelsScreen)}
                       options={{
                         headerRight: () => <ModelsHeaderRight />,
                         headerStyle: styles.headerWithoutDivider,
+                        title: currentL10n.screenTitles.models,
                       }}
                     />
                     <Drawer.Screen
-                      name="Pals (experimental)"
+                      name={ROUTES.PALS}
                       component={gestureHandlerRootHOC(PalsScreen)}
                       options={{
                         headerStyle: styles.headerWithoutDivider,
+                        title: currentL10n.screenTitles.pals,
                       }}
                     />
                     <Drawer.Screen
-                      name="Benchmark"
+                      name={ROUTES.BENCHMARK}
                       component={gestureHandlerRootHOC(BenchmarkScreen)}
                       options={{
                         headerStyle: styles.headerWithoutDivider,
+                        title: currentL10n.screenTitles.benchmark,
                       }}
                     />
                     <Drawer.Screen
-                      name="Settings"
+                      name={ROUTES.SETTINGS}
                       component={gestureHandlerRootHOC(SettingsScreen)}
                       options={{
                         headerStyle: styles.headerWithoutDivider,
+                        title: currentL10n.screenTitles.settings,
                       }}
                     />
                     <Drawer.Screen
-                      name="App Info"
+                      name={ROUTES.APP_INFO}
                       component={gestureHandlerRootHOC(AboutScreen)}
                       options={{
                         headerStyle: styles.headerWithoutDivider,
+                        title: currentL10n.screenTitles.appInfo,
                       }}
                     />
 
                     {/* Only show Test Completion screen in debug mode */}
                     {isDebugMode && (
                       <Drawer.Screen
-                        name="Test Completion"
+                        name={ROUTES.TEST_COMPLETION}
                         component={gestureHandlerRootHOC(TestCompletionScreen)}
                         options={{
                           headerStyle: styles.headerWithoutDivider,
+                          title: currentL10n.screenTitles.testCompletion,
                         }}
                       />
                     )}

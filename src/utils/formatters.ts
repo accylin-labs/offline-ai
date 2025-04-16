@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {l10n} from './l10n';
 
 /**
  * Formats a byte value into a human-readable string with appropriate units
@@ -101,11 +102,13 @@ export const getVerboseDateTimeRepresentation = (
 };
 
 export function timeAgo(
-  dateString: string,
+  dateValue: string | number | Date,
   prefix: string = 'Updated ',
   suffix: string = ' ago',
+  l10nData = l10n.en,
 ): string {
-  const inputDate = new Date(dateString);
+  const inputDate =
+    typeof dateValue === 'string' ? new Date(dateValue) : new Date(dateValue);
   const now = new Date();
 
   const seconds = Math.floor((now.getTime() - inputDate.getTime()) / 1000);
@@ -117,18 +120,30 @@ export function timeAgo(
   const years = Math.floor(days / 365);
 
   if (years > 0) {
-    return `${prefix}${years} year${years > 1 ? 's' : ''}${suffix}`;
+    return `${prefix}${years} ${
+      years > 1 ? l10nData.common.years : l10nData.common.year
+    }${suffix}`;
   } else if (months > 0) {
-    return `${prefix}${months} month${months > 1 ? 's' : ''}${suffix}`;
+    return `${prefix}${months} ${
+      months > 1 ? l10nData.common.months : l10nData.common.month
+    }${suffix}`;
   } else if (weeks > 0) {
-    return `${prefix}${weeks} week${weeks > 1 ? 's' : ''}${suffix}`;
+    return `${prefix}${weeks} ${
+      weeks > 1 ? l10nData.common.weeks : l10nData.common.week
+    }${suffix}`;
   } else if (days > 0) {
-    return `${prefix}${days} day${days > 1 ? 's' : ''}${suffix}`;
+    return `${prefix}${days} ${
+      days > 1 ? l10nData.common.days : l10nData.common.day
+    }${suffix}`;
   } else if (hours > 0) {
-    return `${prefix}${hours} hour${hours > 1 ? 's' : ''}${suffix}`;
+    return `${prefix}${hours} ${
+      hours > 1 ? l10nData.common.hours : l10nData.common.hour
+    }${suffix}`;
   } else if (minutes > 0) {
-    return `${prefix}${minutes} minute${minutes > 1 ? 's' : ''}${suffix}`;
+    return `${prefix}${minutes} ${
+      minutes > 1 ? l10nData.common.minutes : l10nData.common.minute
+    }${suffix}`;
   } else {
-    return `${prefix}just now`;
+    return `${prefix}${l10nData.common.justNow}`;
   }
 }

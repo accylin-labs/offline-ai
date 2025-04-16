@@ -261,7 +261,7 @@ export const AboutScreen: React.FC = () => {
         <Sheet.Actions>
           <View style={styles.secondaryButtons}>
             <Button mode="text" onPress={() => setShowFeedback(false)}>
-              {l10n.cancel}
+              {l10n.common.cancel}
             </Button>
           </View>
           <Button

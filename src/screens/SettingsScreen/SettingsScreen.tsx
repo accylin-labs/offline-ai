@@ -30,16 +30,17 @@ import {CacheType} from '../../utils/types';
 // Language display names in their native form
 const languageNames: Record<AvailableLanguage, string> = {
   en: 'English (EN)',
-  es: 'Español (ES)',
-  de: 'Deutsch (DE)',
+  //es: 'Español (ES)',
+  //de: 'Deutsch (DE)',
+  //ja: '日本語 (JA)',
+  //ko: '한국어 (KO)',
+  //pl: 'Polski (PL)',
+  //pt: 'Português (PT)',
+  //ru: 'Русский (RU)',
+  //tr: 'Türkçe (TR)',
+  //uk: 'Українська (UK)',
+  //ca: 'Català (CA)',
   ja: '日本語 (JA)',
-  ko: '한국어 (KO)',
-  pl: 'Polski (PL)',
-  pt: 'Português (PT)',
-  ru: 'Русский (RU)',
-  tr: 'Türkçe (TR)',
-  uk: 'Українська (UK)',
-  ca: 'Català (CA)',
 };
 
 export const SettingsScreen: React.FC = observer(() => {
@@ -157,7 +158,7 @@ export const SettingsScreen: React.FC = observer(() => {
         <ScrollView contentContainerStyle={styles.container}>
           {/* Model Initialization Settings */}
           <Card elevation={0} style={styles.card}>
-            <Card.Title title="Model Initialization Settings" />
+            <Card.Title title={l10n.settings.modelInitializationSettings} />
             <Card.Content>
               {/* Metal Settings (iOS only) */}
               {Platform.OS === 'ios' && (
@@ -166,14 +167,14 @@ export const SettingsScreen: React.FC = observer(() => {
                     <View style={styles.switchContainer}>
                       <View style={styles.textContainer}>
                         <Text variant="titleMedium" style={styles.textLabel}>
-                          {l10n.metal}
+                          {l10n.settings.metal}
                         </Text>
                         <Text
                           variant="labelSmall"
                           style={styles.textDescription}>
                           {isIOS18OrHigher
-                            ? l10n.metalDescription
-                            : 'Metal acceleration requires iOS 18 or higher. Please upgrade your device to use this feature.'}
+                            ? l10n.settings.metalDescription
+                            : l10n.settings.metalRequiresNewerIOS}
                         </Text>
                       </View>
                       <Switch
@@ -201,7 +202,7 @@ export const SettingsScreen: React.FC = observer(() => {
                       minimumTrackTintColor={theme.colors.primary}
                     />
                     <Text variant="labelSmall" style={styles.textDescription}>
-                      {l10n.layersOnGPU.replace(
+                      {l10n.settings.layersOnGPU.replace(
                         '{{gpuLayers}}',
                         modelStore.n_gpu_layers.toString(),
                       )}
@@ -214,7 +215,7 @@ export const SettingsScreen: React.FC = observer(() => {
               {/* Context Size */}
               <View style={styles.settingItemContainer}>
                 <Text variant="titleMedium" style={styles.textLabel}>
-                  {l10n.contextSize}
+                  {l10n.settings.contextSize}
                 </Text>
                 <TextInput
                   ref={inputRef}
@@ -226,27 +227,27 @@ export const SettingsScreen: React.FC = observer(() => {
                   keyboardType="numeric"
                   value={contextSize}
                   onChangeText={handleContextSizeChange}
-                  placeholder={l10n.contextSizePlaceholder.replace(
+                  placeholder={l10n.settings.contextSizePlaceholder.replace(
                     '{{minContextSize}}',
                     modelStore.MIN_CONTEXT_SIZE.toString(),
                   )}
                 />
                 {!isValidInput && (
                   <Text style={styles.errorText}>
-                    {l10n.invalidContextSizeError.replace(
+                    {l10n.settings.invalidContextSizeError.replace(
                       '{{minContextSize}}',
                       modelStore.MIN_CONTEXT_SIZE.toString(),
                     )}
                   </Text>
                 )}
                 <Text variant="labelSmall" style={styles.textDescription}>
-                  {l10n.modelReloadNotice}
+                  {l10n.settings.modelReloadNotice}
                 </Text>
               </View>
 
               {/* Advanced Settings */}
               <List.Accordion
-                title="Advanced Settings"
+                title={l10n.settings.advancedSettings}
                 titleStyle={styles.accordionTitle}
                 style={styles.advancedAccordion}
                 expanded={showAdvancedSettings}
@@ -255,7 +256,7 @@ export const SettingsScreen: React.FC = observer(() => {
                   {/* Batch Size Slider */}
                   <View style={styles.settingItemContainer}>
                     <Text variant="titleMedium" style={styles.textLabel}>
-                      Batch Size
+                      {l10n.settings.batchSize}
                     </Text>
                     <Slider
                       testID="batch-size-slider"
@@ -271,11 +272,14 @@ export const SettingsScreen: React.FC = observer(() => {
                       minimumTrackTintColor={theme.colors.primary}
                     />
                     <Text variant="labelSmall" style={styles.textDescription}>
-                      {`Batch size: ${modelStore.n_batch}${
-                        modelStore.n_batch > modelStore.n_context
-                          ? ` (effective: ${modelStore.n_context})`
-                          : ''
-                      }`}
+                      {l10n.settings.batchSizeDescription
+                        .replace('{{batchSize}}', modelStore.n_batch.toString())
+                        .replace(
+                          '{{effectiveBatch}}',
+                          modelStore.n_batch > modelStore.n_context
+                            ? ` (${l10n.settings.effectiveLabel}: ${modelStore.n_context})`
+                            : '',
+                        )}
                     </Text>
                   </View>
                   <Divider />
@@ -283,7 +287,7 @@ export const SettingsScreen: React.FC = observer(() => {
                   {/* Physical Batch Size Slider */}
                   <View style={styles.settingItemContainer}>
                     <Text variant="titleMedium" style={styles.textLabel}>
-                      Physical Batch Size
+                      {l10n.settings.physicalBatchSize}
                     </Text>
                     <Slider
                       testID="ubatch-size-slider"
@@ -299,15 +303,21 @@ export const SettingsScreen: React.FC = observer(() => {
                       minimumTrackTintColor={theme.colors.primary}
                     />
                     <Text variant="labelSmall" style={styles.textDescription}>
-                      {`Physical batch size: ${modelStore.n_ubatch}${
-                        modelStore.n_ubatch >
-                        Math.min(modelStore.n_batch, modelStore.n_context)
-                          ? ` (effective: ${Math.min(
-                              modelStore.n_batch,
-                              modelStore.n_context,
-                            )})`
-                          : ''
-                      }`}
+                      {l10n.settings.physicalBatchSizeDescription
+                        .replace(
+                          '{{physicalBatchSize}}',
+                          modelStore.n_ubatch.toString(),
+                        )
+                        .replace(
+                          '{{effectivePhysicalBatch}}',
+                          modelStore.n_ubatch >
+                            Math.min(modelStore.n_batch, modelStore.n_context)
+                            ? ` (${l10n.settings.effectiveLabel}: ${Math.min(
+                                modelStore.n_batch,
+                                modelStore.n_context,
+                              )})`
+                            : '',
+                        )}
                     </Text>
                   </View>
                   <Divider />
@@ -315,7 +325,7 @@ export const SettingsScreen: React.FC = observer(() => {
                   {/* Thread Count Slider */}
                   <View style={styles.settingItemContainer}>
                     <Text variant="titleMedium" style={styles.textLabel}>
-                      CPU Threads
+                      {l10n.settings.cpuThreads}
                     </Text>
                     <Slider
                       testID="thread-count-slider"
@@ -331,7 +341,12 @@ export const SettingsScreen: React.FC = observer(() => {
                       minimumTrackTintColor={theme.colors.primary}
                     />
                     <Text variant="labelSmall" style={styles.textDescription}>
-                      {`Using ${modelStore.n_threads} of ${modelStore.max_threads} available threads`}
+                      {l10n.settings.cpuThreadsDescription
+                        .replace('{{threads}}', modelStore.n_threads.toString())
+                        .replace(
+                          '{{maxThreads}}',
+                          modelStore.max_threads.toString(),
+                        )}
                     </Text>
                   </View>
                   <Divider />
@@ -341,12 +356,12 @@ export const SettingsScreen: React.FC = observer(() => {
                     <View style={styles.switchContainer}>
                       <View style={styles.textContainer}>
                         <Text variant="titleMedium" style={styles.textLabel}>
-                          Flash Attention
+                          {l10n.settings.flashAttention}
                         </Text>
                         <Text
                           variant="labelSmall"
                           style={styles.textDescription}>
-                          Enable Flash Attention for faster processing
+                          {l10n.settings.flashAttentionDescription}
                         </Text>
                       </View>
                       <Switch
@@ -363,14 +378,14 @@ export const SettingsScreen: React.FC = observer(() => {
                     <View style={styles.switchContainer}>
                       <View style={styles.textContainer}>
                         <Text variant="titleMedium" style={styles.textLabel}>
-                          Key Cache Type
+                          {l10n.settings.keyCacheType}
                         </Text>
                         <Text
                           variant="labelSmall"
                           style={styles.textDescription}>
                           {modelStore.flash_attn
-                            ? 'Select the cache type for key computation'
-                            : 'Enable Flash Attention to change cache type'}
+                            ? l10n.settings.keyCacheTypeDescription
+                            : l10n.settings.keyCacheTypeDisabledDescription}
                         </Text>
                       </View>
                       <View style={styles.menuContainer}>
@@ -420,14 +435,14 @@ export const SettingsScreen: React.FC = observer(() => {
                     <View style={styles.switchContainer}>
                       <View style={styles.textContainer}>
                         <Text variant="titleMedium" style={styles.textLabel}>
-                          Value Cache Type
+                          {l10n.settings.valueCacheType}
                         </Text>
                         <Text
                           variant="labelSmall"
                           style={styles.textDescription}>
                           {modelStore.flash_attn
-                            ? 'Select the cache type for value computation'
-                            : 'Enable Flash Attention to change cache type'}
+                            ? l10n.settings.valueCacheTypeDescription
+                            : l10n.settings.valueCacheTypeDisabledDescription}
                         </Text>
                       </View>
                       <View style={styles.menuContainer}>
@@ -477,17 +492,17 @@ export const SettingsScreen: React.FC = observer(() => {
 
           {/* Model Loading Settings */}
           <Card elevation={0} style={styles.card}>
-            <Card.Title title="Model Loading Settings" />
+            <Card.Title title={l10n.settings.modelLoadingSettings} />
             <Card.Content>
               <View style={styles.settingItemContainer}>
                 {/* Auto Offload/Load */}
                 <View style={styles.switchContainer}>
                   <View style={styles.textContainer}>
                     <Text variant="titleMedium" style={styles.textLabel}>
-                      {l10n.autoOffloadLoad}
+                      {l10n.settings.autoOffloadLoad}
                     </Text>
                     <Text variant="labelSmall" style={styles.textDescription}>
-                      {l10n.autoOffloadLoadDescription}
+                      {l10n.settings.autoOffloadLoadDescription}
                     </Text>
                   </View>
                   <Switch
@@ -504,10 +519,10 @@ export const SettingsScreen: React.FC = observer(() => {
                 <View style={styles.switchContainer}>
                   <View style={styles.textContainer}>
                     <Text variant="titleMedium" style={styles.textLabel}>
-                      {l10n.autoNavigateToChat}
+                      {l10n.settings.autoNavigateToChat}
                     </Text>
                     <Text variant="labelSmall" style={styles.textDescription}>
-                      {l10n.autoNavigateToChatDescription}
+                      {l10n.settings.autoNavigateToChatDescription}
                     </Text>
                   </View>
                   <Switch
@@ -524,7 +539,7 @@ export const SettingsScreen: React.FC = observer(() => {
 
           {/* UI Settings */}
           <Card elevation={0} style={styles.card}>
-            <Card.Title title="App Settings" />
+            <Card.Title title={l10n.settings.appSettings} />
             <Card.Content>
               <View style={styles.settingItemContainer}>
                 {/* Language Selection */}
@@ -538,7 +553,7 @@ export const SettingsScreen: React.FC = observer(() => {
                         stroke={theme.colors.onSurface}
                       />
                       <Text variant="titleMedium" style={styles.textLabel}>
-                        Language
+                        {l10n.settings.language}
                       </Text>
                     </View>
                   </View>
@@ -587,7 +602,7 @@ export const SettingsScreen: React.FC = observer(() => {
                         stroke={theme.colors.onSurface}
                       />
                       <Text variant="titleMedium" style={styles.textLabel}>
-                        Dark Mode
+                        {l10n.settings.darkMode}
                       </Text>
                     </View>
                   </View>
@@ -614,13 +629,13 @@ export const SettingsScreen: React.FC = observer(() => {
                             stroke={theme.colors.onSurface}
                           />
                           <Text variant="titleMedium" style={styles.textLabel}>
-                            {l10n.displayMemoryUsage}
+                            {l10n.settings.displayMemoryUsage}
                           </Text>
                         </View>
                         <Text
                           variant="labelSmall"
                           style={styles.textDescription}>
-                          {l10n.displayMemoryUsageDescription}
+                          {l10n.settings.displayMemoryUsageDescription}
                         </Text>
                       </View>
                       <Switch
