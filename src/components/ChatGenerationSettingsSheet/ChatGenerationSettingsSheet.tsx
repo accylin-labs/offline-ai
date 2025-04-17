@@ -85,6 +85,7 @@ export const ChatGenerationSettingsSheet = ({
   isVisible: boolean;
   onClose: () => void;
 }) => {
+  const l10n = useContext(L10nContext);
   const session = chatSessionStore.sessions.find(
     item => item.id === chatSessionStore.activeSessionId,
   );
@@ -113,8 +114,6 @@ export const ChatGenerationSettingsSheet = ({
     );
     onClose();
   };
-
-  const l10n = useContext(L10nContext);
 
   const handleSaveSettings = () => {
     // Convert string values to numbers where needed
@@ -191,9 +190,8 @@ export const ChatGenerationSettingsSheet = ({
       handleSaveSettings(); // First save the current UI settings to the session
       chatSessionStore.applySessionSettingsToGlobal();
       Alert.alert(
-        l10n.components.chatGenerationSettingsSheet.success,
-        l10n.components.chatGenerationSettingsSheet
-          .settingsAppliedToAllFutureSessions,
+        l10n.components.chatGenerationSettingsSheet.applytoPresetAlert.title,
+        l10n.components.chatGenerationSettingsSheet.applytoPresetAlert.message,
         [{text: l10n.components.chatGenerationSettingsSheet.ok}],
       );
     }
@@ -238,14 +236,17 @@ export const ChatGenerationSettingsSheet = ({
           />
           <View style={styles.rightButtons}>
             {!isEditingPresetSettings && (
-              <Button mode="contained-tonal" onPress={handleApplyToPreset}>
+              <Button
+                mode="contained-tonal"
+                onPress={handleApplyToPreset}
+                style={styles.button}>
                 {l10n.components.chatGenerationSettingsSheet.saveAsPreset}
               </Button>
             )}
             <Button mode="contained" onPress={handleSaveSettings}>
               {session
-                ? l10n.components.chatGenerationSettingsSheet.saveChanges
-                : l10n.common.save}
+                ? l10n.common.save
+                : l10n.components.chatGenerationSettingsSheet.saveChanges}
             </Button>
           </View>
         </View>

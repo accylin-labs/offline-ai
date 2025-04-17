@@ -374,15 +374,16 @@ export const l10n = {
         invalidNumericValuesMessage: 'Must be a valid number',
         pleaseCorrect: 'Please correct the following:',
         ok: 'OK',
-        success: 'Success',
-        settingsAppliedToAllFutureSessions:
-          'These settings will be applied to all future sessions',
         saveChanges: 'Save Changes',
         saveAsPreset: 'Save as Preset',
         title_session: 'Chat Generation Settings (Session)',
         title_preset: 'Chat Generation Settings (Preset)',
         resetToSystemDefaults: 'Reset to System Defaults',
         resetToPreset: 'Reset to Preset',
+        applytoPresetAlert: {
+          title: 'Success',
+          message: 'These settings will be applied to all future sessions',
+        },
       },
       chatHeaderTitle: {
         defaultTitle: 'Chat',
@@ -1078,15 +1079,16 @@ export const l10n = {
         invalidNumericValuesMessage: '有効な数値を入力してください',
         pleaseCorrect: '以下を修正してください：',
         ok: 'OK',
-        success: '成功',
-        settingsAppliedToAllFutureSessions:
-          'これらの設定はすべての将来のセッションに適用されます',
         saveChanges: '変更を保存',
         saveAsPreset: 'プリセットとして保存',
         title_session: 'チャット生成設定 (セッション)',
         title_preset: 'チャット生成設定 (プリセット)',
         resetToSystemDefaults: 'システムデフォルトにリセット',
         resetToPreset: 'プリセットにリセット',
+        applytoPresetAlert: {
+          title: '成功',
+          message: 'これらの設定はすべての将来のセッションに適用されます',
+        },
       },
       chatHeaderTitle: {
         defaultTitle: 'チャット',
