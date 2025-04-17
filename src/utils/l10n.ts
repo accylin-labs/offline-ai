@@ -701,6 +701,7 @@ export const l10n = {
       },
     },
   },
+
   ja: {
     common: {
       cancel: 'キャンセル',
@@ -1396,6 +1397,676 @@ export const l10n = {
           chipset: 'チップセット',
           instructions: '命令セット',
           version: 'バージョン',
+        },
+        instructions: {
+          format:
+            'FP16: {{fp16}}, DotProd: {{dotProd}}, SVE: {{sve}}, I8MM: {{i8mm}}',
+          yes: '✓',
+          no: '✗',
+        },
+        versionFormat: '{{version}} ({{buildNumber}})',
+      },
+    },
+  },
+
+  zh: {
+    common: {
+      cancel: '取消',
+      delete: '删除',
+      dismiss: '关闭',
+      rename: '重命名',
+      reset: '重置',
+      save: '保存',
+      networkError: '网络错误。请重试。',
+      downloadETA: '预计时间',
+      calculating: '计算中...',
+      second: '秒',
+      seconds: '秒',
+      year: '年',
+      years: '年',
+      month: '月',
+      months: '月',
+      week: '周',
+      weeks: '周',
+      day: '天',
+      days: '天',
+      hour: '小时',
+      hours: '小时',
+      minute: '分钟',
+      minutes: '分钟',
+      justNow: '刚刚',
+    },
+    settings: {
+      // Model Initialization Settings
+      modelInitializationSettings: '模型初始化设置',
+      // Metal Settings
+      metal: 'Metal',
+      metalDescription: 'Apple的硬件加速API。',
+      metalRequiresNewerIOS:
+        'Metal加速需要iOS 18或更高版本。请升级设备以使用此功能。',
+      layersOnGPU: 'GPU层数：{{gpuLayers}}',
+      // Context Size
+      contextSize: '上下文大小',
+      contextSizePlaceholder: '输入上下文大小（最小{{minContextSize}}）',
+      invalidContextSizeError: '请输入有效数字（最小{{minContextSize}}）',
+      modelReloadNotice: '更改需要模型重新加载才能生效。',
+      // Advanced Settings
+      advancedSettings: '高级设置',
+      // Batch Size
+      batchSize: '批量大小',
+      batchSizeDescription: '批量大小: {{batchSize}}{{effectiveBatch}}',
+      effectiveLabel: '有效',
+      // Physical Batch Size
+      physicalBatchSize: '物理批量大小',
+      physicalBatchSizeDescription:
+        '物理批量大小: {{physicalBatchSize}}{{effectivePhysicalBatch}}',
+      // Thread Count
+      cpuThreads: 'CPU线程',
+      cpuThreadsDescription: '使用可用{{maxThreads}}线程中的{{threads}}',
+      // Flash Attention
+      flashAttention: 'Flash Attention',
+      flashAttentionDescription: '启用Flash Attention以加快处理速度',
+      // Cache Type K
+      keyCacheType: '键缓存类型',
+      keyCacheTypeDescription: '选择键计算的缓存类型',
+      keyCacheTypeDisabledDescription: '启用Flash Attention以更改缓存类型',
+      // Cache Type V
+      valueCacheType: '值缓存类型',
+      valueCacheTypeDescription: '选择值计算的缓存类型',
+      valueCacheTypeDisabledDescription: '启用Flash Attention以更改缓存类型',
+      // Model Loading Settings
+      modelLoadingSettings: '模型加载设置',
+      // Auto Offload/Load
+      autoOffloadLoad: '自动卸载/加载',
+      autoOffloadLoadDescription: '当应用程序在后台时卸载模型。',
+      // Auto Navigate to Chat
+      autoNavigateToChat: '自动导航到聊天',
+      autoNavigateToChatDescription: '加载开始时导航到聊天。',
+      // App Settings
+      appSettings: '应用程序设置',
+      // Language
+      language: '语言',
+      // Dark Mode
+      darkMode: '暗模式',
+      // Display Memory Usage
+      displayMemoryUsage: '显示内存使用情况',
+      displayMemoryUsageDescription: '在聊天页面中显示内存使用情况。',
+    },
+    memory: {
+      shortWarning: '内存警告',
+      warning:
+        '警告：模型大小可能会超过可用内存。这可能会影响设备的性能和稳定性。',
+    },
+    storage: {
+      checkFailed: '检查存储失败',
+      lowStorage: '存储不足！模型 {{modelSize}} > 可用空间 {{freeSpace}}',
+    },
+    generation: {
+      modelNotInitialized: '模型上下文未初始化',
+      failedToGenerate: '生成输出失败',
+    },
+    models: {
+      fileManagement: {
+        fileAlreadyExists: '文件已存在',
+        fileAlreadyExistsMessage: '此名称的文件已存在。您想做什么？',
+        replace: '替换',
+        keepBoth: '保留两者',
+      },
+      labels: {
+        localModel: '本地',
+        hfModel: 'HF',
+        unknownGroup: '未知',
+        availableToUse: '可使用',
+        availableToDownload: '可下载',
+        useAddButtonForMore: '使用+按钮查找更多模型',
+      },
+      buttons: {
+        addFromHuggingFace: '从Hugging Face添加',
+        addLocalModel: '添加本地模型',
+        reset: '重置',
+      },
+      modelsHeaderRight: {
+        menuTitleHf: 'Hugging Face模型',
+        menuTitleDownloaded: '已下载模型',
+        menuTitleGrouped: '按模型类型分组',
+        menuTitleReset: '重置模型列表',
+      },
+      modelsResetDialog: {
+        proceedWithReset: '继续重置',
+        confirmReset: '确认重置',
+      },
+      chatTemplate: {
+        label: '基本聊天模板:',
+      },
+      details: {
+        title: '可用 GGUF 文件',
+      },
+      modelFile: {
+        alerts: {
+          cannotRemoveTitle: '无法删除',
+          modelPreset: '此模型是预设的。',
+          downloadedFirst: '模型已下载。请先删除文件。',
+          removeTitle: '删除模型',
+          removeMessage: '您确定要从列表中删除此模型吗？',
+          removeError: '无法删除模型。',
+          alreadyDownloadedTitle: '模型已下载',
+          alreadyDownloadedMessage: '模型已下载。',
+          deleteTitle: '删除模型',
+          deleteMessage: '您确定要删除此已下载的模型吗？',
+        },
+        buttons: {
+          remove: '删除',
+        },
+        warnings: {
+          storage: {
+            message: '没有足够的存储空间。',
+            shortMessage: '存储不足',
+          },
+          memory: {
+            message: '模型大小接近或超过设备的总内存。这可能会导致意外行为。',
+          },
+          legacy: {
+            message: '旧版量化格式 - 模型可能无法运行。',
+            shortMessage: '旧版量化',
+          },
+          multiple: '{count}个警告',
+        },
+        labels: {
+          downloadSpeed: '{speed}',
+        },
+      },
+      search: {
+        noResults: '找不到模型',
+        loadingMore: '加载中...',
+        searchPlaceholder: '搜索Hugging Face模型',
+        ago: '之前',
+      },
+      modelCard: {
+        alerts: {
+          deleteTitle: '删除模型',
+          deleteMessage: '您确定要删除此已下载的模型吗？',
+          removeTitle: '删除模型',
+          removeMessage: '您确定要从列表中删除此模型吗？',
+        },
+        buttons: {
+          settings: '设置',
+          download: '下载',
+          remove: '删除',
+          load: '加载',
+          offload: '卸载',
+        },
+        labels: {
+          skills: '技能: ',
+        },
+      },
+      modelSettings: {
+        template: {
+          label: '模板:',
+          editButton: '编辑',
+          dialogTitle: '编辑聊天模板',
+          note1: '注意: 更改模板可能会更改BOS、EOS和系统提示。',
+          note2: '使用Nunjucks。留空以使用模型的模板。',
+          placeholder: '在此输入聊天模板...',
+          closeButton: '关闭',
+        },
+        stopWords: {
+          label: '停止词',
+          placeholder: '添加新停止词',
+        },
+        tokenSettings: {
+          bos: 'BOS',
+          eos: 'EOS',
+          addGenerationPrompt: '添加生成提示',
+          bosTokenPlaceholder: 'BOS令牌',
+          eosTokenPlaceholder: 'EOS令牌',
+          systemPrompt: '系统提示',
+        },
+      },
+      modelDescription: {
+        size: '大小: ',
+        parameters: '参数: ',
+        separator: ' | ',
+        notAvailable: '不可用',
+      },
+      modelCapabilities: {
+        questionAnswering: '问答',
+        summarization: '摘要',
+        reasoning: '推理',
+        roleplay: '角色扮演',
+        instructions: '遵循指示',
+        code: '代码生成',
+        math: '数学解决',
+        multilingual: '多语言支持',
+        rewriting: '重写文章',
+        creativity: '创造性写作',
+      },
+    },
+    completionParams: {
+      grammar: '应用特定的语法规则，以确保生成的文本遵循特定的结构或格式',
+      stop: '定义将停止文本生成的特定短语',
+      n_predict: '设置生成响应的长度（以令牌为单位）',
+      n_probs: '显示替代词的概率分数。',
+      top_k:
+        '通过限制单词选择到K个最可能的选项来控制创造性。较低的值会使响应更集中',
+      top_p:
+        '平衡创造性和连贯性。较高的值（接近1.0）允许更富有创造性但可能不那么集中的响应',
+      min_p:
+        '考虑令牌的最小概率。过滤掉不太可能的单词以减少不合逻辑或上下文外的响应',
+      temperature:
+        '控制创造性和可预测性。较高的值会使响应更富有创造性但焦点较少',
+      penalty_last_n: '检查重复的范围。较大的值有助于防止长期重复',
+      penalty_repeat: '抑制单词重复。较高的值会使响应使用更多样化的语言',
+      penalty_freq: '惩罚常用词。较高的值鼓励使用更广泛的词汇',
+      penalty_present: '减少主题和想法的重复。较高的值鼓励更多样化的内容',
+      mirostat:
+        '启用对响应创造性的高级控制。为了智能、实时调整随机性和连贯性，请设置为1或2（更平滑）',
+      mirostat_tau:
+        '设置Mirostat的创造性水平。较高的值允许更多样化和富有想象力的响应，而较低的值确保更集中的输出',
+      mirostat_eta: 'Mirostat调整创造性的速度。较高的值意味着调整速度更快',
+      dry_multiplier: 'DRY（不要重复自己）功能的强度。较高的值强烈防止重复',
+      dry_base: 'DRY模式中的重复基本惩罚。较高的值更积极地防止重复',
+      dry_allowed_length: 'DRY惩罚在应用之前可以重复的单词数',
+      dry_penalty_last_n: 'DRY模式中检查重复的范围',
+      dry_sequence_breakers: '重置DRY模式中重复检查器的符号',
+      ignore_eos: '即使模型想要停止也要继续生成。有助于强制更长的响应',
+      logit_bias: '调整特定单词出现在响应中的可能性',
+      seed: '设置随机数生成器的种子。有助于重现结果',
+      xtc_probability: '设置令牌通过XTC采样器删除的可能性。0是禁用',
+      xtc_threshold:
+        '设置令牌通过XTC采样器删除的最小概率阈值。（> 0.5禁用XTC）',
+      typical_p: '使用参数p启用本地典型采样。1.0是禁用',
+    },
+    about: {
+      screenTitle: '应用程序信息',
+      description:
+        '直接将语言模型带到您的智能手机的应用程序。建立在llama.cpp和llama.rn的基础上。',
+      supportProject: '支持项目',
+      supportProjectDescription:
+        '如果您喜欢使用PocketPal AI，请考虑通过以下方式支持项目：',
+      githubButton: '在GitHub上星标',
+      orText: '或',
+      orBy: '或通过',
+      sponsorButton: '成为赞助商',
+      versionCopiedTitle: '版本已复制',
+      versionCopiedDescription: '版本信息已复制到剪贴板',
+    },
+    feedback: {
+      title: '发送反馈',
+      description:
+        '您的声音很重要！告诉我们PocketPal AI如何帮助您以及我们可以做什么来使其更有用。',
+      shareThoughtsButton: '分享您的想法',
+      useCase: {
+        label: '您如何使用PocketPal AI？',
+        placeholder: '例如：摘要、角色扮演等',
+      },
+      featureRequests: {
+        label: '您想在未来看到什么功能？',
+        placeholder: '分享您的想法或功能建议',
+      },
+      generalFeedback: {
+        label: '一般反馈',
+        placeholder: '如果您有其他想法，请随时分享。',
+      },
+      usageFrequency: {
+        label: '您多久使用一次PocketPal AI？（可选）',
+        options: {
+          daily: '每天',
+          weekly: '每周',
+          monthly: '每月',
+          rarely: '几乎不使用',
+        },
+      },
+      email: {
+        label: '联系电子邮件（可选）',
+        placeholder: '您的电子邮件地址',
+      },
+      submit: '提交反馈',
+      validation: {
+        required: '请提供至少一些反馈',
+      },
+      success: '感谢您的反馈！',
+      error: {
+        general: '发送反馈时出错。请再试一次。',
+      },
+    },
+    components: {
+      attachmentButton: {
+        attachmentButtonAccessibilityLabel: '发送媒体',
+      },
+      bubble: {
+        timingsString:
+          '每个令牌{{predictedMs}}ms，每秒{{predictedPerSecond}}令牌',
+      },
+      chatEmptyPlaceholder: {
+        noModelsTitle: '没有可用的模型',
+        noModelsDescription: '要开始与PocketPal聊天，请下载模型',
+        noModelsButton: '下载模型',
+        activateModelTitle: '要开始，请激活模型',
+        activateModelDescription:
+          '选择模型并下载它。下载后，点击模型旁边的加载以开始聊天。',
+        activateModelButton: '选择模型',
+        loading: '加载中...',
+      },
+      chatInput: {
+        inputPlaceholder: '消息',
+      },
+      chatGenerationSettingsSheet: {
+        invalidValues: '无效值',
+        invalidNumericValuesMessage: '必须是有效数字',
+        pleaseCorrect: '请纠正以下内容：',
+        ok: '确定',
+        saveChanges: '保存更改',
+        saveAsPreset: '保存为预设',
+        title_session: '聊天生成设置（会话）',
+        title_preset: '聊天生成设置（预设）',
+        resetToSystemDefaults: '重置为系统默认值',
+        resetToPreset: '重置为预设',
+        applytoPresetAlert: {
+          title: '成功',
+          message: '这些设置将应用于所有未来的会话',
+        },
+      },
+      chatHeaderTitle: {
+        defaultTitle: '聊天',
+      },
+      fileMessage: {
+        fileButtonAccessibilityLabel: '文件',
+      },
+      chatPalModelPickerSheet: {
+        modelsTab: '模型',
+        palsTab: '助手',
+        noPal: '没有助手',
+        disablePal: '禁用活动助手',
+        noDescription: '没有描述',
+        assistantType: '助手',
+        roleplayType: '角色扮演',
+        confirmationTitle: '确认',
+        modelSwitchMessage:
+          '此助手具有不同的默认模型({{modelName}})。要切换到助手的默认模型吗？',
+        keepButton: '保持',
+        switchButton: '切换',
+      },
+      headerRight: {
+        deleteChatTitle: '删除聊天',
+        deleteChatMessage: '您确定要删除此聊天吗？',
+        generationSettings: '生成设置',
+        model: '模型',
+        duplicateChatHistory: '复制聊天历史',
+        makeChatTemporary: '使聊天临时',
+        exportChatSession: '导出聊天会话',
+      },
+      modelSettingsSheet: {
+        modelSettings: '模型设置',
+        saveChanges: '保存更改',
+      },
+      modelsHeaderRight: {
+        menuTitleHf: 'Hugging Face模型',
+        menuTitleDownloaded: '已下载模型',
+        menuTitleGrouped: '按模型类型分组',
+        menuTitleReset: '重置模型列表',
+      },
+      modelsResetDialog: {
+        proceedWithReset: '继续重置',
+        confirmReset: '确认重置',
+      },
+      assistantPalSheet: {
+        title: {
+          create: '创建助手帕尔',
+          edit: '编辑助手帕尔',
+        },
+        palName: '帕尔名',
+        palNamePlaceholder: '名称',
+        defaultModel: '默认模型',
+        defaultModelPlaceholder: '选择模型',
+        validation: {
+          generatingPromptRequired: '需要生成提示',
+          promptModelRequired: '需要提示生成模型',
+        },
+        create: '创建',
+      },
+      modelNotAvailable: {
+        noModelsDownloaded: '您还没有下载任何模型。请先下载模型。',
+        downloadAModel: '下载模型',
+        defaultModelNotDownloaded: '默认模型还没有下载。请先下载它。',
+        cancelDownload: '取消下载',
+        download: '下载',
+      },
+      roleplayPalSheet: {
+        title: {
+          create: '创建角色扮演帕尔',
+          edit: '编辑角色扮演帕尔',
+        },
+        palName: '帕尔名',
+        palNamePlaceholder: '名称',
+        defaultModel: '默认模型',
+        defaultModelPlaceholder: '选择模型',
+        descriptionSection: '描述',
+        world: '世界',
+        worldPlaceholder: '奇幻',
+        location: '位置',
+        locationPlaceholder: '魔法森林',
+        locationSublabel: '故事发生在哪里？',
+        aiRole: 'AI的角色',
+        aiRolePlaceholder: '埃尔达拉，一个顽皮的森林精灵',
+        aiRoleSublabel: '设置角色',
+        userRole: '用户角色',
+        userRolePlaceholder: '埃拉德爵士，勇敢的骑士',
+        userRoleSublabel: '你是谁？',
+        situation: '情况',
+        situationPlaceholder: '救援任务，解开谜团',
+        toneStyle: '音调/风格',
+        toneStylePlaceholder: '严肃',
+        validation: {
+          promptModelRequired: '需要提示生成模型',
+        },
+        create: '创建',
+      },
+      sendButton: {
+        accessibilityLabel: '发送',
+      },
+      systemPromptSection: {
+        sectionTitle: '系统提示',
+        useAIPrompt: '使用AI生成系统提示',
+        modelSelector: {
+          label: '选择生成用模型*',
+          sublabel: '推荐: Llama 3.2 3B 或 Qwen2.5 3B.',
+          placeholder: '选择模型',
+        },
+        generatingPrompt: {
+          label: '生成提示',
+          placeholder: '输入生成提示',
+        },
+        buttons: {
+          loadingModel: '加载模型中...',
+          stopGenerating: '停止生成',
+          generatePrompt: '生成系统提示',
+        },
+        systemPrompt: {
+          label: '系统提示',
+          sublabel: '自由编辑以找到最佳提示',
+          placeholder: '您是帮助助手',
+        },
+        warnings: {
+          promptChanged: '系统提示已手动更改',
+        },
+      },
+      sidebarContent: {
+        menuItems: {
+          chat: '聊天',
+          models: '模型',
+          pals: '帕尔',
+          benchmark: '基准测试',
+          settings: '设置',
+          appInfo: '应用程序信息',
+          testCompletion: '测试完成',
+        },
+        deleteChatTitle: '删除聊天',
+        deleteChatMessage: '您确定要删除此聊天吗？',
+        dateGroups: {
+          today: '今天',
+          yesterday: '昨天',
+          thisWeek: '这周',
+          lastWeek: '上周',
+          twoWeeksAgo: '2周前',
+          threeWeeksAgo: '3周前',
+          fourWeeksAgo: '4周前',
+          lastMonth: '上个月',
+          older: '以前',
+        },
+      },
+      usageStats: {
+        tooltip: {
+          title: '内存使用情况',
+          used: '使用中: ',
+          total: '总计: ',
+          usage: '使用率: ',
+        },
+        byteSizes: ['字节', 'KB', 'MB', 'GB'],
+      },
+    },
+    validation: {
+      nameRequired: '需要名称',
+      systemPromptRequired: '需要系统提示',
+      worldRequired: '需要世界设置',
+      locationRequired: '需要位置',
+      aiRoleRequired: '需要AI角色',
+      userRoleRequired: '需要用户角色',
+      situationRequired: '需要情况',
+      toneStyleRequired: '需要音调/风格',
+    },
+    screenTitles: {
+      chat: '聊天',
+      models: '模型',
+      pals: '帕尔（实验性）',
+      benchmark: '基准测试',
+      settings: '设置',
+      appInfo: '应用程序信息',
+      testCompletion: '测试完成',
+    },
+    chat: {
+      conversationReset: '对话已重置！',
+      modelNotLoaded: '模型未加载。请初始化模型。',
+      completionFailed: '生成失败: ',
+      loadingModel: '加载模型中...',
+      typeYourMessage: '输入消息',
+      load: '加载',
+      goToModels: '转到模型',
+      readyToChat: '聊天准备好了吗？加载最后使用的模型。',
+      pleaseLoadModel: '要聊天，请加载模型。',
+    },
+    benchmark: {
+      title: '基准测试',
+      modelSelector: {
+        prompt: '选择模型',
+      },
+      buttons: {
+        advancedSettings: '高级设置',
+        startTest: '开始测试',
+        runningTest: '测试运行中...',
+        clearAll: '全部清除',
+        done: '完成',
+        cancel: '取消',
+        delete: '删除',
+        share: '共享',
+        sharing: '共享中...',
+        viewRawData: '查看原始数据',
+        hideRawData: '隐藏原始数据',
+      },
+      messages: {
+        pleaseSelectModel: '请先选择并初始化模型',
+        testWarning:
+          '注意：大模型可能需要2-5分钟进行测试，一旦开始就无法中断。',
+        keepScreenOpen: '请保持此屏幕打开。',
+        initializingModel: '正在初始化模型...',
+        modelMaxValue: '(最大值: {{maxValue}})',
+      },
+      dialogs: {
+        advancedSettings: {
+          title: '高级设置',
+          testProfile: '测试配置文件',
+          customParameters: '自定义参数',
+          description: '微调基准测试参数以适应特定测试场景。',
+        },
+        deleteResult: {
+          title: '删除结果',
+          message: '您确定要删除此基准测试结果吗？',
+        },
+        clearAllResults: {
+          title: '清除所有结果',
+          message: '您确定要删除所有基准测试结果吗？',
+        },
+        shareResults: {
+          title: '共享基准测试结果',
+          sharedDataTitle: '共享数据包括：',
+          deviceAndModelInfo: '• 设备规格和模型信息',
+          performanceMetrics: '• 性能指标',
+          dontShowAgain: '不要再次显示此消息',
+        },
+      },
+      sections: {
+        testResults: '测试结果',
+      },
+      benchmarkResultCard: {
+        modelMeta: {
+          params: '参数',
+        },
+        config: {
+          title: '基准测试设置',
+          format: 'PP: {{pp}} • TG: {{tg}} • PL: {{pl}} • Rep: {{nr}}',
+        },
+        modelSettings: {
+          title: '模型设置',
+          context: '上下文: {{context}}',
+          batch: '批量: {{batch}}',
+          ubatch: 'U批量: {{ubatch}}',
+          cpuThreads: 'CPU线程: {{threads}}',
+          gpuLayers: 'GPU层数: {{layers}}',
+          flashAttentionEnabled: '启用Flash Attention',
+          flashAttentionDisabled: '禁用Flash Attention',
+          cacheTypes: '缓存类型: {{cacheK}}/{{cacheV}}',
+        },
+        results: {
+          promptProcessing: '提示处理',
+          tokenGeneration: '令牌生成',
+          totalTime: '总时间',
+          peakMemory: '峰值内存',
+          tokensPerSecond: '令牌/秒',
+        },
+        actions: {
+          deleteButton: '',
+          submittedText: '✓ 提交到',
+          leaderboardLink: 'AI手机排行榜 ↗',
+          cannotShare: '无法共享',
+          cannotShareTooltip: '本地模型结果无法共享',
+          submitButton: '提交到排行榜',
+          viewLeaderboard: '查看排行榜 ↗',
+        },
+        errors: {
+          networkRetry: '检查连接并重试',
+          appCheckRetry: '重试提交',
+          serverRetry: '稍后再试',
+          genericRetry: '重试',
+          failedToSubmit: '基准测试提交失败',
+        },
+      },
+      deviceInfoCard: {
+        title: '设备信息',
+        deviceSummary: '{{brand}} {{model}} • {{systemName}} {{systemVersion}}',
+        coreSummary: '{{cores}}核心 • {{memory}}',
+        sections: {
+          basicInfo: '基本信息',
+          cpuDetails: 'CPU详细信息',
+          appInfo: '应用程序信息',
+        },
+        fields: {
+          architecture: '架构',
+          totalMemory: '总内存',
+          deviceId: '设备ID',
+          cpuCores: 'CPU核心',
+          cpuModel: 'CPU型号',
+          chipset: '芯片组',
+          instructions: '指令集',
+          version: '版本',
         },
         instructions: {
           format:

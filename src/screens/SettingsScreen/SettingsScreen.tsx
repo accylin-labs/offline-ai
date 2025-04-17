@@ -41,6 +41,7 @@ const languageNames: Record<AvailableLanguage, string> = {
   //uk: 'Українська (UK)',
   //ca: 'Català (CA)',
   ja: '日本語 (JA)',
+  zh: '中文 (ZH)',
 };
 
 export const SettingsScreen: React.FC = observer(() => {
