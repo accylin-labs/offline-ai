@@ -11,6 +11,72 @@ import {
 import {Alert, View} from 'react-native';
 import {Button} from 'react-native-paper';
 import {L10nContext} from '../../utils';
+import {ChevronDownIcon} from '../../assets/icons';
+import {Menu} from '../Menu';
+interface ResetButtonProps {
+  session: any;
+  resetMenuVisible: boolean;
+  setResetMenuVisible: (visible: boolean) => void;
+  handleResetToDefault: () => void;
+  handleResetToPreset: () => void;
+}
+
+const ChevronDownButtonIcon = ({color}: {color: string}) => (
+  <ChevronDownIcon width={16} height={16} stroke={color} />
+);
+
+// Reset button component - conditionally renders based on session
+const ResetButton = ({
+  session,
+  resetMenuVisible,
+  setResetMenuVisible,
+  handleResetToDefault,
+  handleResetToPreset,
+}: ResetButtonProps) => {
+  const l10n = useContext(L10nContext);
+
+  if (!session) {
+    // Simple button for preset settings
+    return (
+      <Button
+        mode="text"
+        onPress={handleResetToDefault}
+        style={styles.resetButton}>
+        {l10n.components.chatGenerationSettingsSheet.resetToSystemDefaults}
+      </Button>
+    );
+  }
+
+  // Menu button for session settings
+  return (
+    <Menu
+      visible={resetMenuVisible}
+      onDismiss={() => setResetMenuVisible(false)}
+      anchor={
+        <View style={styles.resetWrapper}>
+          <Button
+            mode="text"
+            onPress={() => setResetMenuVisible(true)}
+            style={styles.resetButton}
+            contentStyle={styles.resetButtonContent}
+            icon={ChevronDownButtonIcon}>
+            {l10n.common.reset}
+          </Button>
+        </View>
+      }>
+      <Menu.Item
+        onPress={handleResetToPreset}
+        label={l10n.components.chatGenerationSettingsSheet.resetToPreset}
+      />
+      <Menu.Item
+        onPress={handleResetToDefault}
+        label={
+          l10n.components.chatGenerationSettingsSheet.resetToSystemDefaults
+        }
+      />
+    </Menu>
+  );
+};
 
 export const ChatGenerationSettingsSheet = ({
   isVisible,
@@ -26,6 +92,10 @@ export const ChatGenerationSettingsSheet = ({
   const [settings, setSettings] = useState<CompletionParams>(
     session?.completionSettings ?? chatSessionStore.newChatCompletionSettings,
   );
+
+  const [resetMenuVisible, setResetMenuVisible] = useState(false);
+
+  const isEditingPresetSettings = !session;
 
   useEffect(() => {
     setSettings(
@@ -60,12 +130,14 @@ export const ChatGenerationSettingsSheet = ({
             numValue = value;
           } else {
             // If it's neither string nor number, treat as invalid. Most probably won't happen.
-            acc.errors[key] = 'Must be a valid number';
+            acc.errors[key] =
+              l10n.components.chatGenerationSettingsSheet.invalidNumericValuesMessage;
             return acc;
           }
 
           if (Number.isNaN(numValue)) {
-            acc.errors[key] = 'Must be a valid number';
+            acc.errors[key] =
+              l10n.components.chatGenerationSettingsSheet.invalidNumericValuesMessage;
           } else {
             acc.settings[key] = numValue;
           }
@@ -113,17 +185,41 @@ export const ChatGenerationSettingsSheet = ({
     onCloseSheet();
   };
 
-  const handleResetSettings = () => {
-    setSettings(defaultCompletionSettings);
+  const handleApplyToPreset = () => {
+    if (session) {
+      // Apply current session settings to preset settings
+      handleSaveSettings(); // First save the current UI settings to the session
+      chatSessionStore.applySessionSettingsToGlobal();
+      Alert.alert(
+        l10n.components.chatGenerationSettingsSheet.success,
+        l10n.components.chatGenerationSettingsSheet
+          .settingsAppliedToAllFutureSessions,
+        [{text: l10n.components.chatGenerationSettingsSheet.ok}],
+      );
+    }
   };
 
-  const handleCancelSettings = () => {
-    onCloseSheet();
+  const handleResetToPreset = () => {
+    if (session) {
+      // For session-specific settings, reset to match Preset settings
+      setSettings({...chatSessionStore.newChatCompletionSettings});
+    }
+    setResetMenuVisible(false);
+  };
+
+  const handleResetToDefault = () => {
+    // Reset to system defaults
+    setSettings({...defaultCompletionSettings});
+    setResetMenuVisible(false);
   };
 
   return (
     <Sheet
-      title={l10n.components.chatGenerationSettingsSheet.title}
+      title={
+        session
+          ? l10n.components.chatGenerationSettingsSheet.title_session
+          : l10n.components.chatGenerationSettingsSheet.title_preset
+      }
       isVisible={isVisible}
       onClose={onCloseSheet}>
       <Sheet.ScrollView
@@ -132,17 +228,27 @@ export const ChatGenerationSettingsSheet = ({
         <CompletionSettings settings={settings} onChange={updateSettings} />
       </Sheet.ScrollView>
       <Sheet.Actions>
-        <View style={styles.secondaryButtons}>
-          <Button mode="text" onPress={handleResetSettings}>
-            {l10n.common.reset}
-          </Button>
-          <Button mode="text" onPress={handleCancelSettings}>
-            {l10n.common.cancel}
-          </Button>
+        <View style={styles.actionsContainer}>
+          <ResetButton
+            session={session}
+            resetMenuVisible={resetMenuVisible}
+            setResetMenuVisible={setResetMenuVisible}
+            handleResetToDefault={handleResetToDefault}
+            handleResetToPreset={handleResetToPreset}
+          />
+          <View style={styles.rightButtons}>
+            {!isEditingPresetSettings && (
+              <Button mode="contained-tonal" onPress={handleApplyToPreset}>
+                {l10n.components.chatGenerationSettingsSheet.saveAsPreset}
+              </Button>
+            )}
+            <Button mode="contained" onPress={handleSaveSettings}>
+              {session
+                ? l10n.components.chatGenerationSettingsSheet.saveChanges
+                : l10n.common.save}
+            </Button>
+          </View>
         </View>
-        <Button mode="contained" onPress={handleSaveSettings}>
-          {l10n.components.chatGenerationSettingsSheet.saveChanges}
-        </Button>
       </Sheet.Actions>
     </Sheet>
   );
