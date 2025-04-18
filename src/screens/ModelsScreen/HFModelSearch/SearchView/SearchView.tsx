@@ -75,12 +75,7 @@ export const SearchView = observer(
               color={theme.colors.onSurfaceVariant}
             />
             <Text variant="labelSmall" style={styles.statText}>
-              {timeAgo(
-                item.lastModified,
-                '',
-                ' ' + l10n.models.search.ago,
-                l10n,
-              )}
+              {timeAgo(item.lastModified, l10n, 'short')}
             </Text>
           </View>
           <View style={styles.statItem}>

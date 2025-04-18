@@ -179,7 +179,10 @@ export const l10n = {
         noResults: 'No models found',
         loadingMore: 'Loading more...',
         searchPlaceholder: 'Search Hugging Face models',
-        ago: 'ago',
+        modelUpdatedLong: 'Updated {{time}} ago',
+        modelUpdatedShort: '{{time}} ago',
+        modelUpdatedJustNowLong: 'Updated just now',
+        modelUpdatedJustNowShort: 'just now',
       },
       modelCard: {
         alerts: {
@@ -886,7 +889,10 @@ export const l10n = {
         noResults: 'モデルが見つかりません',
         loadingMore: '読み込み中...',
         searchPlaceholder: 'Hugging Faceモデルを検索',
-        ago: '前',
+        modelUpdatedLong: '{{time}}前に更新',
+        modelUpdatedShort: '{{time}}前',
+        modelUpdatedJustNowLong: 'たった今更新',
+        modelUpdatedJustNowShort: 'たった今',
       },
       modelCard: {
         alerts: {
@@ -1579,7 +1585,10 @@ export const l10n = {
         noResults: '找不到模型',
         loadingMore: '加载中...',
         searchPlaceholder: '搜索Hugging Face模型',
-        ago: '之前',
+        modelUpdatedLong: '{{time}}前更新',
+        modelUpdatedShort: '{{time}}前',
+        modelUpdatedJustNowLong: '刚刚更新',
+        modelUpdatedJustNowShort: '刚刚',
       },
       modelCard: {
         alerts: {

@@ -41,7 +41,7 @@ export const DetailsView = ({hfModel}: DetailsViewProps) => {
       </Tooltip>
       <View style={styles.modelStats}>
         <Chip icon="clock" compact style={styles.stat}>
-          {timeAgo(hfModel.lastModified, '', '', l10n)}
+          {timeAgo(hfModel.lastModified, l10n, 'long')}
         </Chip>
         <Chip icon="download" compact style={styles.stat}>
           {formatNumber(hfModel.downloads, 0)}
