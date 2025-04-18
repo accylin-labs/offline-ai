@@ -363,7 +363,7 @@ export const BenchmarkScreen: React.FC = observer(() => {
             {metadata.descriptionKey}
             {name === 'pp' && modelStore.activeContextSettings && (
               <Text style={styles.maxValueHint}>
-                ' '
+                {' '}
                 {l10n.benchmark.messages.modelMaxValue.replace(
                   '{{maxValue}}',
                   getMaxPPValue().toString(),
