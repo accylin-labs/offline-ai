@@ -22,7 +22,7 @@ describe('DetailsView', () => {
 
     // Check stats are displayed with correct formatting
     expect(
-      getByText(timeAgo(mockHFModel1.lastModified, '', '', l10n.en)),
+      getByText(timeAgo(mockHFModel1.lastModified, l10n.en, 'long')),
     ).toBeDefined();
     expect(getByText(formatNumber(mockHFModel1.downloads, 0))).toBeDefined();
     expect(getByText(formatNumber(mockHFModel1.likes, 0))).toBeDefined();
