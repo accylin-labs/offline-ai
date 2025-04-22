@@ -11,7 +11,7 @@ import {
 
 import {Model} from '../../utils/types';
 import {formatBytes, hasEnoughSpace} from '../../utils';
-import {uiStore} from '../../store';
+import {hfStore, uiStore} from '../../store';
 
 const {DownloadModule} = NativeModules;
 const TAG = 'DownloadManager';
@@ -130,7 +130,7 @@ export class DownloadManager {
 
       this.eventEmitter.addListener('onDownloadFailed', event => {
         console.error(
-          `${TAG}: Download failed for ID: ${event.downloadId}`,
+          `${TAG}: (js) Download failed for ID: ${event.downloadId}`,
           event.error,
         );
         // Find the job by download ID
@@ -409,6 +409,7 @@ export class DownloadManager {
         networkType: 'ANY',
         priority: 1,
         progressInterval: 1000,
+        ...(hfStore.hfToken ? {authToken: hfStore.hfToken} : {}), // Only include when token exists
       });
 
       // Store the download ID

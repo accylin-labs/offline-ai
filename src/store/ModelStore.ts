@@ -1,4 +1,10 @@
-import {AppState, AppStateStatus, Platform, NativeModules} from 'react-native';
+import {
+  AppState,
+  AppStateStatus,
+  Platform,
+  NativeModules,
+  Alert,
+} from 'react-native';
 
 import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
@@ -30,6 +36,8 @@ import {
   ModelFile,
   ModelOrigin,
 } from '../utils/types';
+
+import {ErrorState, createErrorState} from '../utils/errors';
 
 class ModelStore {
   models: Model[] = [];
@@ -75,6 +83,8 @@ class ModelStore {
   inferencing: boolean = false;
   isStreaming: boolean = false;
 
+  downloadError: ErrorState | null = null;
+
   constructor() {
     makeAutoObservable(this, {activeModel: computed});
     this.initializeThreadCount();
@@ -108,9 +118,7 @@ class ModelStore {
         if (model) {
           runInAction(() => {
             model.progress = progress.progress;
-            model.downloadSpeed = `${progress.speed} ${
-              this.getL10n().common.downloadETA
-            }: ${progress.eta}`;
+            model.downloadSpeed = `${progress.speed} ${uiStore.l10n.common.downloadETA}: ${progress.eta}`;
           });
         }
       },
@@ -123,7 +131,8 @@ class ModelStore {
           });
         }
       },
-      onError: modelId => {
+      onError: (modelId, error) => {
+        console.error('Download error for model', modelId, error);
         const model = this.models.find(m => m.id === modelId);
         if (model) {
           runInAction(() => {
@@ -131,6 +140,14 @@ class ModelStore {
             model.isDownloaded = false;
           });
         }
+
+        const errorState = createErrorState(error, 'download', 'huggingface', {
+          modelId,
+        });
+
+        runInAction(() => {
+          this.downloadError = errorState;
+        });
       },
     });
   }
@@ -695,9 +712,17 @@ class ModelStore {
     try {
       const newModel = await this.addHFModel(hfModel, modelFile);
       await this.checkSpaceAndDownload(newModel.id);
+      // The error handling is now done in the downloadManager callbacks
     } catch (error) {
-      console.error('Failed to download HF model:', error);
-      throw error;
+      // Only handle errors related to the initial setup before the download starts
+      console.error('Failed to set up HF model download:', error);
+      Alert.alert(
+        uiStore.l10n.errors.downloadSetupFailedTitle,
+        uiStore.l10n.errors.downloadSetupFailedMessage.replace(
+          '{message}',
+          (error as Error).message,
+        ),
+      );
     }
   };
 
@@ -1005,16 +1030,33 @@ class ModelStore {
     return this.availableModels.some(m => m.id === modelId);
   };
 
-  /**
-   * Gets localized strings based on the current language from uiStore
-   */
-  getL10n() {
-    const language = uiStore.language;
-    // Import the l10n object from utils
-    const {l10n} = require('../utils/l10n');
-    // Return the localized strings for the current language
-    return l10n[language];
-  }
+  // /**
+  //  * Gets localized strings based on the current language from uiStore
+  //  */
+  // getL10n() {
+  //   const language = uiStore.language;
+  //   // Import the l10n object from utils
+  //   const {l10n} = require('../utils/l10n');
+  //   // Return the localized strings for the current language
+  //   return l10n[language];
+  // }
+
+  clearDownloadError = () => {
+    this.downloadError = null;
+  };
+
+  retryDownload = () => {
+    const modelId = this.downloadError?.metadata?.modelId;
+    this.clearDownloadError();
+
+    if (modelId) {
+      // Find the model and retry download
+      const model = this.models.find(m => m.id === modelId);
+      if (model) {
+        this.checkSpaceAndDownload(model.id);
+      }
+    }
+  };
 }
 
 export const modelStore = new ModelStore();

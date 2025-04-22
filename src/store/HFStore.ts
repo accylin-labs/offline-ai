@@ -1,10 +1,13 @@
 import {makeAutoObservable, runInAction} from 'mobx';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {makePersistable} from 'mobx-persist-store';
 
 import {fetchGGUFSpecs, fetchModelFilesDetails, fetchModels} from '../api/hf';
 
 import {urls} from '../config';
 
 import {hasEnoughSpace, hfAsModel} from '../utils';
+import {ErrorState, createErrorState} from '../utils/errors';
 
 import {HuggingFaceModel} from '../utils/types';
 
@@ -14,19 +17,58 @@ const RE_GGUF_SHARD_FILE =
 class HFStore {
   models: HuggingFaceModel[] = [];
   isLoading = false;
-  error = '';
+  error: ErrorState | null = null;
   nextPageLink: string | null = null;
   searchQuery = '';
   queryFilter = 'gguf,conversational';
   queryFull = true;
   queryConfig = true;
+  hfToken: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
+    makePersistable(this, {
+      name: 'HFStore',
+      properties: ['hfToken'], // TODO: Add Token need to be stored in keychain or secure storage
+      storage: AsyncStorage,
+    });
+  }
+
+  get isTokenPresent(): boolean {
+    return !!this.hfToken && this.hfToken.trim().length > 0;
+  }
+
+  async setToken(token: string) {
+    try {
+      console.log('Setting HF token:', token);
+      runInAction(() => {
+        this.hfToken = token;
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to save HF token:', error);
+      return false;
+    }
+  }
+
+  async clearToken() {
+    try {
+      runInAction(() => {
+        this.hfToken = null;
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to clear HF token:', error);
+      return false;
+    }
   }
 
   setSearchQuery(query: string) {
     this.searchQuery = query;
+  }
+
+  clearError() {
+    this.error = null;
   }
 
   // Fetch the GGUF specs for a specific model,
@@ -42,6 +84,9 @@ class HFStore {
       }
     } catch (error) {
       console.error('Failed to fetch GGUF specs:', error);
+      runInAction(() => {
+        this.error = createErrorState(error, 'modelDetails', 'huggingface');
+      });
     }
   }
 
@@ -94,6 +139,9 @@ class HFStore {
       });
     } catch (error) {
       console.error('Error fetching model file sizes:', error);
+      runInAction(() => {
+        this.error = createErrorState(error, 'modelDetails', 'huggingface');
+      });
     }
   }
 
@@ -107,6 +155,9 @@ class HFStore {
       await this.fetchModelFileDetails(modelId);
     } catch (error) {
       console.error('Error fetching model data:', error);
+      runInAction(() => {
+        this.error = createErrorState(error, 'modelDetails', 'huggingface');
+      });
     }
   }
 
@@ -152,7 +203,7 @@ class HFStore {
   // Fetch the models from the Hugging Face API
   async fetchModels() {
     this.isLoading = true;
-    this.error = '';
+    this.error = null;
 
     try {
       const {models, nextLink} = await fetchModels({
@@ -173,7 +224,7 @@ class HFStore {
       });
     } catch (error) {
       runInAction(() => {
-        this.error = 'Failed to load models';
+        this.error = createErrorState(error, 'search', 'huggingface');
       });
     } finally {
       runInAction(() => {
@@ -189,7 +240,7 @@ class HFStore {
     }
 
     this.isLoading = true;
-    this.error = '';
+    this.error = null;
 
     try {
       const {models, nextLink} = await fetchModels({
@@ -204,7 +255,7 @@ class HFStore {
       });
     } catch (error) {
       runInAction(() => {
-        this.error = 'Failed to load more models';
+        this.error = createErrorState(error, 'search', 'huggingface');
       });
     } finally {
       runInAction(() => {

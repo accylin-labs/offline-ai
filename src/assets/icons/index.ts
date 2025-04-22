@@ -1,6 +1,7 @@
 export {default as AlertIcon} from './alert.svg';
 export {default as BenchmarkIcon} from './benchmark.svg';
 export {default as ChatIcon} from './chat.svg';
+export {default as CheckCircleIcon} from './check-circle.svg';
 export {default as ChevronDownIcon} from './chevron-down.svg';
 export {default as ChevronRightIcon} from './chevron-right.svg';
 export {default as ChevronUpIcon} from './chevron-up.svg';

@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Keyboard, Platform, TouchableOpacity, View} from 'react-native';
 
 import {observer} from 'mobx-react';
-import {Text} from 'react-native-paper';
+import {Text, Chip} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
@@ -98,10 +98,57 @@ export const SearchView = observer(
               {formatNumber(item.likes)}
             </Text>
           </View>
+          {Boolean(item.gated) && (
+            <Chip compact mode="outlined" textStyle={styles.gatedChipText}>
+              <Icon name="lock" size={12} color={theme.colors.primary} />{' '}
+              {l10n.models.hfToken.gatedModelIndicator}
+            </Chip>
+          )}
         </View>
         <Divider style={styles.divider} />
       </TouchableOpacity>
     );
+
+    // Renders the appropriate empty state based on loading, error or no results
+    const renderEmptyState = observer(() => {
+      if (hfStore.isLoading) {
+        console.log('renderEmptyState Loading');
+        return null;
+      }
+
+      if (hfStore.error) {
+        // Show a simpler error message since the snackbar will show details
+        console.log('renderEmptyState Error:', hfStore.error);
+        return (
+          <View style={styles.emptyStateContainer}>
+            <Icon
+              name="alert-circle-outline"
+              size={24}
+              color={theme.colors.onSurfaceVariant}
+            />
+            <Text style={styles.noResultsText}>
+              {l10n.models.search.errorOccurred}
+            </Text>
+            <Text style={styles.errorText}>{hfStore.error.message}</Text>
+            {hfStore.error.code === 'authentication' && (
+              <Text style={styles.errorHintText}>
+                {l10n.models.hfToken.searchErrorHint}
+              </Text>
+            )}
+          </View>
+        );
+      }
+
+      if (searchQuery.length > 0) {
+        return (
+          <Text style={styles.noResultsText}>
+            {l10n.models.search.noResults}
+          </Text>
+        );
+      }
+
+      return null;
+    });
 
     return (
       <BottomSheetView style={styles.contentContainer} testID={testID}>
@@ -120,20 +167,14 @@ export const SearchView = observer(
           maintainVisibleContentPosition={{
             minIndexForVisible: 0,
           }}
-          ListEmptyComponent={
-            !hfStore.isLoading && searchQuery.length > 0 ? (
-              <Text style={styles.noResultsText}>
-                {l10n.models.search.noResults}
-              </Text>
-            ) : null
-          }
-          ListFooterComponent={() =>
+          ListEmptyComponent={renderEmptyState}
+          ListFooterComponent={observer(() =>
             hfStore.isLoading ? (
               <Text style={styles.loadingMoreText}>
                 {l10n.models.search.loadingMore}
               </Text>
-            ) : null
-          }
+            ) : null,
+          )}
         />
         <Searchbar
           value={searchQuery}

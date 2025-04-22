@@ -9,6 +9,8 @@ import {
   ModelFileDetails,
 } from '../utils/types';
 
+import {hfStore} from '../store';
+
 /**
  * Get information from all models in the Hub.
  * The response is paginated, use the Link header to get the next pages.
@@ -46,6 +48,13 @@ export async function fetchModels({
   nextPageUrl?: string;
 }): Promise<HuggingFaceModelsResponse> {
   try {
+    const token = hfStore.hfToken;
+    const headers: Record<string, string> = {};
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const response = await axios.get(nextPageUrl || urls.modelsList(), {
       params: {
         search,
@@ -57,6 +66,7 @@ export async function fetchModels({
         full,
         config,
       },
+      headers,
     });
 
     const linkHeader = response.headers.link;
@@ -88,9 +98,15 @@ export const fetchModelFilesDetails = async (
   modelId: string,
 ): Promise<ModelFileDetails[]> => {
   const url = `${urls.modelTree(modelId)}?recursive=true`;
+  const token = hfStore.hfToken;
 
   try {
-    const response = await fetch(url);
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {headers});
 
     if (!response.ok) {
       throw new Error(`Error fetching model files: ${response.statusText}`);
@@ -111,9 +127,15 @@ export const fetchModelFilesDetails = async (
  */
 export const fetchGGUFSpecs = async (modelId: string): Promise<GGUFSpecs> => {
   const url = `${urls.modelSpecs(modelId)}?expand[]=gguf`;
+  const token = hfStore.hfToken;
 
   try {
-    const response = await fetch(url);
+    const headers: Record<string, string> = {};
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {headers});
 
     if (!response.ok) {
       throw new Error(`Error fetching GGUF specs: ${response.statusText}`);
