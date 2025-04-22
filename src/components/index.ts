@@ -15,6 +15,7 @@ export * from './ErrorSnackbar';
 export * from './FileMessage';
 export * from './HeaderRight';
 export * from './HeaderLeft';
+export * from './HFTokenSheet';
 export * from './ImageMessage';
 export * from './KeyboardAccessoryView';
 export * from './LoadingBubble';

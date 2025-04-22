@@ -1,6 +1,7 @@
 import {makeAutoObservable, runInAction} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {makePersistable} from 'mobx-persist-store';
+import * as Keychain from 'react-native-keychain';
 
 import {fetchGGUFSpecs, fetchModelFilesDetails, fetchModels} from '../api/hf';
 
@@ -13,6 +14,9 @@ import {HuggingFaceModel} from '../utils/types';
 
 const RE_GGUF_SHARD_FILE =
   /^(?<prefix>.*?)-(?<shard>\d{5})-of-(?<total>\d{5})\.gguf$/;
+
+// Service name for keychain storage
+const HF_TOKEN_SERVICE = 'hf_token_service';
 
 class HFStore {
   models: HuggingFaceModel[] = [];
@@ -29,12 +33,31 @@ class HFStore {
   constructor() {
     makeAutoObservable(this);
 
-    // TODO: Add Token need to be stored in keychain or secure storage
     makePersistable(this, {
       name: 'HFStore',
-      properties: ['hfToken', 'useHfToken'],
+      properties: ['useHfToken'],
       storage: AsyncStorage,
     });
+
+    // Load token from secure storage on initialization
+    this.loadTokenFromSecureStorage();
+  }
+
+  // Load token from secure storage
+  private async loadTokenFromSecureStorage() {
+    try {
+      const credentials = await Keychain.getGenericPassword({
+        service: HF_TOKEN_SERVICE,
+      });
+
+      if (credentials) {
+        runInAction(() => {
+          this.hfToken = credentials.password;
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load token from secure storage:', error);
+    }
   }
 
   get isTokenPresent(): boolean {
@@ -53,7 +76,11 @@ class HFStore {
 
   async setToken(token: string) {
     try {
-      console.log('Setting HF token:', token);
+      // Save token in secure storage
+      await Keychain.setGenericPassword('hf_token', token, {
+        service: HF_TOKEN_SERVICE,
+      });
+
       runInAction(() => {
         this.hfToken = token;
       });
@@ -66,6 +93,11 @@ class HFStore {
 
   async clearToken() {
     try {
+      // Remove token from secure storage
+      await Keychain.resetGenericPassword({
+        service: HF_TOKEN_SERVICE,
+      });
+
       runInAction(() => {
         this.hfToken = null;
       });
@@ -240,8 +272,12 @@ class HFStore {
         this.nextPageLink = nextLink;
       });
     } catch (error) {
-      this.models = [];
-      this.nextPageLink = null;
+      runInAction(() => {
+        this.isLoading = false;
+        this.nextPageLink = null;
+        this.models = [];
+      });
+      // this need to be in a separate runInAction for the ui to render properly.
       runInAction(() => {
         this.error = createErrorState(error, 'search', 'huggingface');
       });

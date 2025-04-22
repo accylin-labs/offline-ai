@@ -117,8 +117,6 @@ export const SearchView = observer(
       }
 
       if (hfStore.error) {
-        // Show a simpler error message since the snackbar will show details
-        console.log('renderEmptyState Error:', hfStore.error);
         return (
           <View style={styles.emptyStateContainer}>
             <Icon
@@ -176,9 +174,13 @@ export const SearchView = observer(
             hfStore.fetchMoreModels();
           }}
           onEndReachedThreshold={0.3}
-          maintainVisibleContentPosition={{
-            minIndexForVisible: 0,
-          }}
+          maintainVisibleContentPosition={
+            hfStore.models.length > 0
+              ? {
+                  minIndexForVisible: 0,
+                }
+              : null
+          }
           ListEmptyComponent={renderEmptyState}
           ListFooterComponent={observer(() =>
             hfStore.isLoading ? (

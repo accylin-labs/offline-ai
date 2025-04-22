@@ -13,6 +13,8 @@ export {default as DotsVerticalIcon} from './dots-vertical.svg';
 export {default as DuplicateIcon} from './duplicate.svg';
 export {default as EditBoxIcon} from './edit-box.svg';
 export {default as EditIcon} from './edit.svg';
+export {default as EyeIcon} from './eye.svg';
+export {default as EyeOffIcon} from './eye-off.svg';
 export {default as GithubIcon} from './github-outline.svg';
 export {default as GlobeIcon} from './globe.svg';
 export {default as GridIcon} from './grid.svg';

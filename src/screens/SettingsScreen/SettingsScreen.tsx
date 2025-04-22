@@ -15,8 +15,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {Switch, Text, Card, Button, Icon, List} from 'react-native-paper';
 
 import {GlobeIcon, MoonIcon, CpuChipIcon} from '../../assets/icons';
-import {TextInput, Menu, Divider} from '../../components';
-import {HFTokenSheet} from '../ModelsScreen/HFModelSearch/HFTokenSheet';
+import {TextInput, Menu, Divider, HFTokenSheet} from '../../components';
 
 import {useTheme} from '../../hooks';
 

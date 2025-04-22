@@ -1,14 +1,20 @@
 import React, {useState, useContext, useEffect} from 'react';
-import {View, Linking, Platform} from 'react-native';
-import {Text, Button, TextInput, Snackbar} from 'react-native-paper';
+import {View, Linking} from 'react-native';
+import {
+  Text,
+  Button,
+  Snackbar,
+  TextInput as PaperTextInput,
+} from 'react-native-paper';
 import {observer} from 'mobx-react';
 
-import {Sheet} from '../../../../components';
-import {useTheme} from '../../../../hooks';
-import {hfStore} from '../../../../store';
-import {L10nContext} from '../../../../utils';
+import {Sheet, TextInput} from '../';
+import {useTheme} from '../../hooks';
+import {hfStore} from '../../store';
+import {L10nContext} from '../../utils';
 
 import {createStyles} from './styles';
+import {EyeIcon, EyeOffIcon} from '../../assets/icons';
 
 interface HFTokenSheetProps {
   isVisible: boolean;
@@ -28,6 +34,7 @@ export const HFTokenSheet: React.FC<HFTokenSheetProps> = observer(
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [secureTextEntry, setSecureTextEntry] = useState(true);
 
     // Update token state when hfToken changes in store
     useEffect(() => {
@@ -96,6 +103,10 @@ export const HFTokenSheet: React.FC<HFTokenSheetProps> = observer(
       Linking.openURL('https://huggingface.co/settings/tokens');
     };
 
+    const toggleSecureEntry = () => {
+      setSecureTextEntry(!secureTextEntry);
+    };
+
     return (
       <>
         <Sheet
@@ -124,15 +135,27 @@ export const HFTokenSheet: React.FC<HFTokenSheetProps> = observer(
 
             <TextInput
               label={l10n.models.hfToken.inputLabel}
-              value={token}
+              defaultValue={token}
               onChangeText={setToken}
-              mode="outlined"
-              style={styles.input}
+              //multiline // secureTextEntry is not working with multiline
+              //numberOfLines={3}
               placeholder={l10n.models.hfToken.inputPlaceholder}
               autoCapitalize="none"
               autoCorrect={false}
               spellCheck={false}
-              secureTextEntry={Platform.OS === 'ios'} // secureTextEntry for iOS
+              secureTextEntry={secureTextEntry}
+              right={
+                <PaperTextInput.Icon
+                  icon={({color}) =>
+                    secureTextEntry ? (
+                      <EyeIcon width={24} height={24} stroke={color} />
+                    ) : (
+                      <EyeOffIcon width={24} height={24} stroke={color} />
+                    )
+                  }
+                  onPress={toggleSecureEntry}
+                />
+              }
             />
           </Sheet.ScrollView>
           <Sheet.Actions>
