@@ -24,18 +24,31 @@ class HFStore {
   queryFull = true;
   queryConfig = true;
   hfToken: string | null = null;
+  useHfToken: boolean = true; // Only applies when token is set
 
   constructor() {
     makeAutoObservable(this);
+
+    // TODO: Add Token need to be stored in keychain or secure storage
     makePersistable(this, {
       name: 'HFStore',
-      properties: ['hfToken'], // TODO: Add Token need to be stored in keychain or secure storage
+      properties: ['hfToken', 'useHfToken'],
       storage: AsyncStorage,
     });
   }
 
   get isTokenPresent(): boolean {
     return !!this.hfToken && this.hfToken.trim().length > 0;
+  }
+
+  get shouldUseToken(): boolean {
+    return this.isTokenPresent && this.useHfToken;
+  }
+
+  setUseHfToken(useToken: boolean) {
+    runInAction(() => {
+      this.useHfToken = useToken;
+    });
   }
 
   async setToken(token: string) {
@@ -75,7 +88,8 @@ class HFStore {
   // such as number of parameters, context length, chat template, etc.
   async fetchAndSetGGUFSpecs(modelId: string) {
     try {
-      const specs = await fetchGGUFSpecs(modelId);
+      const authToken = this.shouldUseToken ? this.hfToken : null;
+      const specs = await fetchGGUFSpecs(modelId, authToken);
       const model = this.models.find(m => m.id === modelId);
       if (model) {
         runInAction(() => {
@@ -122,7 +136,8 @@ class HFStore {
   async fetchModelFileDetails(modelId: string) {
     try {
       console.log('Fetching model file details for', modelId);
-      const fileDetails = await fetchModelFilesDetails(modelId);
+      const authToken = this.shouldUseToken ? this.hfToken : null;
+      const fileDetails = await fetchModelFilesDetails(modelId, authToken);
       const model = this.models.find(m => m.id === modelId);
 
       if (!model) {
@@ -206,6 +221,7 @@ class HFStore {
     this.error = null;
 
     try {
+      const authToken = this.shouldUseToken ? this.hfToken : null;
       const {models, nextLink} = await fetchModels({
         search: this.searchQuery,
         limit: 10,
@@ -214,6 +230,7 @@ class HFStore {
         filter: this.queryFilter,
         full: this.queryFull,
         config: this.queryConfig,
+        authToken: authToken,
       });
 
       const modelsWithUrl = this.processSearchResults(models);
@@ -223,6 +240,8 @@ class HFStore {
         this.nextPageLink = nextLink;
       });
     } catch (error) {
+      this.models = [];
+      this.nextPageLink = null;
       runInAction(() => {
         this.error = createErrorState(error, 'search', 'huggingface');
       });
@@ -243,8 +262,10 @@ class HFStore {
     this.error = null;
 
     try {
+      const authToken = this.shouldUseToken ? this.hfToken : null;
       const {models, nextLink} = await fetchModels({
         nextPageUrl: this.nextPageLink,
+        authToken: authToken,
       });
 
       const modelsWithUrl = this.processSearchResults(models);

@@ -96,6 +96,9 @@ export const l10n = {
       setTokenDescription:
         'Set a token to access gated models from Hugging Face.',
       setTokenButton: 'Set Token',
+      useHfTokenLabel: 'Use HF Token',
+      useHfTokenDescription:
+        'Enable to use token for API requests. Disable if token is causing authentication issues.',
     },
     memory: {
       shortWarning: 'Memory Warning',
@@ -284,6 +287,7 @@ export const l10n = {
         tokenRequired: 'This model requires a Hugging Face access token',
         searchErrorHint:
           'Your Hugging Face API token is invalid or expired. To continue searching, please either remove the token or disable token authentication in Settings.',
+        disableAndRetry: 'Disable Token & Retry',
       },
     },
     completionParams: {
@@ -893,6 +897,9 @@ export const l10n = {
       setTokenDescription:
         'Hugging Faceから制限付きモデルにアクセスするためのトークンを設定します。',
       setTokenButton: 'トークンを設定',
+      useHfTokenLabel: 'HFトークンを使用',
+      useHfTokenDescription:
+        'HFトークンを使用して制限付きモデルにアクセスします。',
     },
     memory: {
       shortWarning: 'メモリ警告',
@@ -1083,6 +1090,7 @@ export const l10n = {
         tokenRequired: 'このモデルはHugging Faceアクセストークンが必要です',
         searchErrorHint:
           'Hugging Face APIトークンが無効または期限切れです。検索を続けるには、設定でトークンを削除するか、トークン認証を無効にしてください。',
+        disableAndRetry: 'トークンを無効にして再試行',
       },
     },
     completionParams: {
@@ -1683,6 +1691,8 @@ export const l10n = {
       tokenIsSetDescription: '令牌已设置。访问受限模型时需要。',
       setTokenDescription: '设置令牌以从Hugging Face访问受限模型。',
       setTokenButton: '设置令牌',
+      useHfTokenLabel: '使用HF令牌',
+      useHfTokenDescription: '使用HF令牌访问受限模型。',
     },
     memory: {
       shortWarning: '内存警告',
@@ -1864,6 +1874,7 @@ export const l10n = {
         tokenRequired: '此模型需要 Hugging Face 访问令牌',
         searchErrorHint:
           '您的 Hugging Face API 令牌无效或已过期。要继续搜索，请在设置中删除令牌或禁用令牌验证。',
+        disableAndRetry: '禁用令牌并重试',
       },
     },
     completionParams: {

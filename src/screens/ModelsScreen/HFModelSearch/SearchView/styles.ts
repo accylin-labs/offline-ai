@@ -85,4 +85,8 @@ export const createStyles = (theme: Theme, bottomInset: number) =>
       fontStyle: 'italic',
       paddingHorizontal: 20,
     },
+    disableTokenButton: {
+      marginTop: 10,
+      alignSelf: 'center',
+    },
   });

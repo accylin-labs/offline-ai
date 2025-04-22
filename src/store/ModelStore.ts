@@ -16,7 +16,7 @@ import {CompletionParams, LlamaContext, initLlama} from '@pocketpalai/llama.rn';
 
 import {fetchModelFilesDetails} from '../api/hf';
 
-import {uiStore} from './UIStore';
+import {uiStore, hfStore} from '.';
 import {chatSessionStore} from './ChatSessionStore';
 import {deepMerge, getSHA256Hash, hfAsModel} from '../utils';
 import {defaultModels, MODEL_LIST_VERSION} from './defaultModels';
@@ -521,7 +521,8 @@ class ModelStore {
 
     try {
       const destinationPath = await this.getModelFullPath(model);
-      await downloadManager.startDownload(model, destinationPath);
+      const authToken = hfStore.shouldUseToken ? hfStore.hfToken : null;
+      await downloadManager.startDownload(model, destinationPath, authToken);
     } catch (err) {
       console.error('Failed to start download:', err);
       uiStore.showError('Failed to start download: ' + (err as Error).message);

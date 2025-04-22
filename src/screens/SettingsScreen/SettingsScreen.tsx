@@ -681,6 +681,25 @@ export const SettingsScreen: React.FC = observer(() => {
                       : l10n.settings.setTokenButton}
                   </Button>
                 </View>
+
+                {/* Use HF Token Switch */}
+                <Divider style={styles.divider} />
+                <View style={styles.switchContainer}>
+                  <View style={styles.textContainer}>
+                    <Text variant="titleMedium" style={styles.textLabel}>
+                      {l10n.settings.useHfTokenLabel}
+                    </Text>
+                    <Text variant="labelSmall" style={styles.textDescription}>
+                      {l10n.settings.useHfTokenDescription}
+                    </Text>
+                  </View>
+                  <Switch
+                    testID="use-hf-token-switch"
+                    value={hfStore.useHfToken}
+                    disabled={!hfStore.isTokenPresent}
+                    onValueChange={value => hfStore.setUseHfToken(value)}
+                  />
+                </View>
               </View>
             </Card.Content>
           </Card>

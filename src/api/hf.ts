@@ -9,8 +9,6 @@ import {
   ModelFileDetails,
 } from '../utils/types';
 
-import {hfStore} from '../store';
-
 /**
  * Get information from all models in the Hub.
  * The response is paginated, use the Link header to get the next pages.
@@ -36,6 +34,7 @@ export async function fetchModels({
   full,
   config,
   nextPageUrl,
+  authToken,
 }: {
   search?: string;
   author?: string;
@@ -46,13 +45,13 @@ export async function fetchModels({
   full?: boolean;
   config?: boolean;
   nextPageUrl?: string;
+  authToken?: string | null;
 }): Promise<HuggingFaceModelsResponse> {
   try {
-    const token = hfStore.hfToken;
     const headers: Record<string, string> = {};
 
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     }
 
     const response = await axios.get(nextPageUrl || urls.modelsList(), {
@@ -92,18 +91,19 @@ export async function fetchModels({
 /**
  * Fetches the details of the model's files. Mainly the size is used.
  * @param modelId - The ID of the model.
+ * @param authToken - Optional authentication token for accessing private models
  * @returns An array of ModelFileDetails.
  */
 export const fetchModelFilesDetails = async (
   modelId: string,
+  authToken?: string | null,
 ): Promise<ModelFileDetails[]> => {
   const url = `${urls.modelTree(modelId)}?recursive=true`;
-  const token = hfStore.hfToken;
 
   try {
     const headers: Record<string, string> = {};
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     }
 
     const response = await fetch(url, {headers});
@@ -123,16 +123,19 @@ export const fetchModelFilesDetails = async (
 /**
  * Fetches the specs of the GGUF for a specific model.
  * @param modelId - The ID of the model.
+ * @param authToken - Optional authentication token for accessing private models
  * @returns The GGUF specs.
  */
-export const fetchGGUFSpecs = async (modelId: string): Promise<GGUFSpecs> => {
+export const fetchGGUFSpecs = async (
+  modelId: string,
+  authToken?: string | null,
+): Promise<GGUFSpecs> => {
   const url = `${urls.modelSpecs(modelId)}?expand[]=gguf`;
-  const token = hfStore.hfToken;
 
   try {
     const headers: Record<string, string> = {};
-    if (token) {
-      headers.Authorization = `Bearer ${token}`;
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     }
 
     const response = await fetch(url, {headers});

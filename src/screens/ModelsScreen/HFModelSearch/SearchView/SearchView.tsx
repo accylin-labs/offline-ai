@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import {Keyboard, Platform, TouchableOpacity, View} from 'react-native';
 
 import {observer} from 'mobx-react';
-import {Text, Chip} from 'react-native-paper';
+import {Text, Chip, Button} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
@@ -134,6 +134,18 @@ export const SearchView = observer(
               <Text style={styles.errorHintText}>
                 {l10n.models.hfToken.searchErrorHint}
               </Text>
+            )}
+            {hfStore.error.code === 'authentication' && hfStore.useHfToken && (
+              <Button
+                mode="outlined"
+                style={styles.disableTokenButton}
+                onPress={() => {
+                  hfStore.setUseHfToken(false);
+                  hfStore.clearError();
+                  hfStore.fetchModels();
+                }}>
+                {l10n.models.hfToken.disableAndRetry}
+              </Button>
             )}
           </View>
         );
