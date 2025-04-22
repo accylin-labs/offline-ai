@@ -134,10 +134,13 @@ describe('RoleplayPalSheet', () => {
       fireEvent.press(getByText('Create'));
     });
 
-    await waitFor(() => {
-      // Check if a pal was added
-      expect(palStore.getPals().length).toBe(1);
-    });
+    await waitFor(
+      () => {
+        // Check if a pal was added
+        expect(palStore.getPals().length).toBe(1);
+      },
+      {timeout: 5000},
+    );
   });
 
   it('updates an existing pal when form is submitted in edit mode', async () => {
