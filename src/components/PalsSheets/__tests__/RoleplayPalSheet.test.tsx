@@ -130,7 +130,9 @@ describe('RoleplayPalSheet', () => {
     fireEvent.changeText(systemPromptInput, 'Test system prompt');
 
     // Submit the form
-    fireEvent.press(getByText('Create'));
+    await act(async () => {
+      fireEvent.press(getByText('Create'));
+    });
 
     await waitFor(() => {
       // Check if a pal was added

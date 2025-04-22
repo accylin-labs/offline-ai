@@ -102,7 +102,9 @@ describe('AssistantPalSheet', () => {
     fireEvent.changeText(systemPromptInput, 'You are a helpful assistant.');
 
     // Submit the form
-    fireEvent.press(getByText('Create'));
+    await act(async () => {
+      fireEvent.press(getByText('Create'));
+    });
 
     await waitFor(() => {
       // Check if a pal was added
