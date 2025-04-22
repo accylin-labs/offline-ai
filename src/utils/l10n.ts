@@ -474,6 +474,10 @@ export const l10n = {
           'Create a new token with "read" access',
           'Copy the token and paste it in the token field',
         ],
+        tokenDisabledTitle: 'Token is Disabled',
+        tokenDisabledMessage:
+          'You have a Hugging Face token set, but it is currently disabled. This model requires a token to download. Enable your token to continue.',
+        enableAndRetry: 'Enable and Retry',
         goToSettings: 'Go to Settings',
         tryAgain: 'Try Again',
         viewOnHuggingFace: 'View Model on HF ↗',
@@ -1276,6 +1280,10 @@ export const l10n = {
           '「読み取り」アクセス権を持つ新しいトークンを作成',
           'トークンをコピーしてトークンフィールドに貼り付ける',
         ],
+        tokenDisabledTitle: 'トークンが無効',
+        tokenDisabledMessage:
+          'Hugging Faceトークンが設定されていますが、現在無効になっています。このモデルをダウンロードするにはトークンが必要です。続行するにはトークンを有効にしてください。',
+        enableAndRetry: 'トークンを有効にして再試行',
         goToSettings: '設定へ移動',
         tryAgain: '再試行',
         viewOnHuggingFace: 'HFでモデルを表示 ↗',
@@ -2043,6 +2051,10 @@ export const l10n = {
           '创建具有"读取"权限的新令牌',
           '复制令牌并粘贴到令牌字段中',
         ],
+        tokenDisabledTitle: '令牌已禁用',
+        tokenDisabledMessage:
+          '您有一个Hugging Face令牌设置，但目前它已禁用。此模型需要令牌才能下载。请启用您的令牌以继续。',
+        enableAndRetry: '启用并重试',
         goToSettings: '前往设置',
         tryAgain: '重试',
         viewOnHuggingFace: '在HF上查看模型 ↗',

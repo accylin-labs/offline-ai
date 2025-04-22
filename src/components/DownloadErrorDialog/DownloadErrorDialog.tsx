@@ -9,6 +9,7 @@ import {L10nContext} from '../../utils';
 import {ErrorState} from '../../utils/errors';
 import {createStyles} from './styles';
 import {CheckCircleIcon} from '../../assets/icons';
+import {hfStore} from '../../store';
 
 const CheckIcon = ({color}: {color: string}) => (
   <CheckCircleIcon width={16} height={16} stroke={color} />
@@ -35,6 +36,12 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
   const l10n = React.useContext(L10nContext);
   const alerts = l10n.components.downloadErrorDialog;
 
+  // Check if this is the case where token exists but is disabled
+  const isTokenDisabledWhenAuthError =
+    error?.code === 'authentication' &&
+    hfStore.isTokenPresent &&
+    !hfStore.useHfToken;
+
   const getErrorType = ():
     | 'unauthorized'
     | 'forbidden'
@@ -60,6 +67,10 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
   const errorType = getErrorType();
 
   const getDialogTitle = () => {
+    if (isTokenDisabledWhenAuthError) {
+      return alerts.tokenDisabledTitle;
+    }
+
     switch (errorType) {
       case 'unauthorized':
         return alerts.unauthorizedTitle;
@@ -73,6 +84,10 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
   };
 
   const getDialogMessage = () => {
+    if (isTokenDisabledWhenAuthError) {
+      return alerts.tokenDisabledMessage;
+    }
+
     switch (errorType) {
       case 'unauthorized':
         return alerts.unauthorizedMessage;
@@ -89,6 +104,10 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
   };
 
   const getSteps = () => {
+    if (isTokenDisabledWhenAuthError) {
+      return [];
+    }
+
     switch (errorType) {
       case 'forbidden':
         return alerts.forbiddenSteps;
@@ -99,10 +118,17 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
     }
   };
 
+  const handleEnableToken = () => {
+    hfStore.setUseHfToken(true);
+    if (onTryAgain) {
+      onTryAgain();
+    }
+  };
+
   const getActions = () => {
     const actions: DialogAction[] = [];
 
-    if (model?.hfUrl) {
+    if (model?.hfUrl && !isTokenDisabledWhenAuthError) {
       actions.push({
         label: alerts.viewOnHuggingFace,
         onPress: () => {
@@ -112,7 +138,23 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
       });
     }
 
-    if (
+    if (isTokenDisabledWhenAuthError) {
+      actions.push({
+        label: l10n.common.dismiss,
+        onPress: () => {
+          onDismiss();
+        },
+        mode: 'text' as const,
+      });
+    }
+
+    if (isTokenDisabledWhenAuthError) {
+      actions.push({
+        label: alerts.enableAndRetry,
+        onPress: handleEnableToken,
+        mode: 'contained' as const,
+      });
+    } else if (
       ['unauthorized', 'forbidden', 'noToken'].includes(errorType) &&
       onGoToSettings
     ) {
@@ -123,7 +165,7 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
       });
     }
 
-    if (onTryAgain) {
+    if (!isTokenDisabledWhenAuthError && onTryAgain) {
       actions.push({
         label: alerts.tryAgain,
         onPress: onTryAgain,
