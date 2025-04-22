@@ -42,6 +42,11 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
     hfStore.isTokenPresent &&
     !hfStore.useHfToken;
 
+  const isTokenPresentWhenAuthError =
+    error?.code === 'authentication' &&
+    hfStore.isTokenPresent &&
+    hfStore.useHfToken;
+
   const getErrorType = ():
     | 'unauthorized'
     | 'forbidden'
@@ -71,6 +76,10 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
       return alerts.tokenDisabledTitle;
     }
 
+    if (isTokenPresentWhenAuthError) {
+      return alerts.unauthorizedTitle;
+    }
+
     switch (errorType) {
       case 'unauthorized':
         return alerts.unauthorizedTitle;
@@ -86,6 +95,10 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
   const getDialogMessage = () => {
     if (isTokenDisabledWhenAuthError) {
       return alerts.tokenDisabledMessage;
+    }
+
+    if (isTokenPresentWhenAuthError) {
+      return alerts.unauthorizedMessage;
     }
 
     switch (errorType) {
@@ -105,6 +118,10 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
 
   const getSteps = () => {
     if (isTokenDisabledWhenAuthError) {
+      return [];
+    }
+
+    if (isTokenPresentWhenAuthError) {
       return [];
     }
 
@@ -138,7 +155,7 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
       });
     }
 
-    if (isTokenDisabledWhenAuthError) {
+    if (isTokenDisabledWhenAuthError || isTokenPresentWhenAuthError) {
       actions.push({
         label: l10n.common.dismiss,
         onPress: () => {
