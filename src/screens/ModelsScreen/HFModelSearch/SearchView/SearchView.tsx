@@ -101,7 +101,7 @@ export const SearchView = observer(
           {Boolean(item.gated) && (
             <Chip compact mode="outlined" textStyle={styles.gatedChipText}>
               <Icon name="lock" size={12} color={theme.colors.primary} />{' '}
-              {l10n.models.hfToken.gatedModelIndicator}
+              {l10n.components.hfTokenSheet.gatedModelIndicator}
             </Chip>
           )}
         </View>
@@ -130,7 +130,7 @@ export const SearchView = observer(
             <Text style={styles.errorText}>{hfStore.error.message}</Text>
             {hfStore.error.code === 'authentication' && (
               <Text style={styles.errorHintText}>
-                {l10n.models.hfToken.searchErrorHint}
+                {l10n.components.hfTokenSheet.searchErrorHint}
               </Text>
             )}
             {hfStore.error.code === 'authentication' && hfStore.useHfToken && (
@@ -142,7 +142,7 @@ export const SearchView = observer(
                   hfStore.clearError();
                   hfStore.fetchModels();
                 }}>
-                {l10n.models.hfToken.disableAndRetry}
+                {l10n.components.hfTokenSheet.disableAndRetry}
               </Button>
             )}
           </View>

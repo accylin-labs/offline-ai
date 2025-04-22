@@ -8,7 +8,7 @@ import {
 } from 'react-native-paper';
 import {observer} from 'mobx-react';
 
-import {Sheet, TextInput} from '../';
+import {Sheet, TextInput} from '..';
 import {useTheme} from '../../hooks';
 import {hfStore} from '../../store';
 import {L10nContext} from '../../utils';
@@ -48,14 +48,13 @@ export const HFTokenSheet: React.FC<HFTokenSheetProps> = observer(
         return;
       }
 
-      console.log('1- Saving token:', token.trim());
       setIsSubmitting(true);
 
       try {
         const success = await hfStore.setToken(token.trim());
 
         if (success) {
-          setSuccessMessage(l10n.models.hfToken.saved);
+          setSuccessMessage(l10n.components.hfTokenSheet.saved);
           setShowSuccess(true);
 
           // Call onSave callback if provided
@@ -81,7 +80,7 @@ export const HFTokenSheet: React.FC<HFTokenSheetProps> = observer(
 
         if (success) {
           setToken('');
-          setSuccessMessage(l10n.models.hfToken.resetSuccess);
+          setSuccessMessage(l10n.components.hfTokenSheet.resetSuccess);
           setShowSuccess(true);
 
           // Call onSave callback if provided
@@ -112,40 +111,47 @@ export const HFTokenSheet: React.FC<HFTokenSheetProps> = observer(
         <Sheet
           isVisible={isVisible}
           onClose={onDismiss}
-          title={l10n.models.hfToken.title}
+          title={l10n.components.hfTokenSheet.title}
           snapPoints={['60%']}>
           <Sheet.ScrollView contentContainerStyle={styles.container}>
             <Text style={styles.description}>
-              {l10n.models.hfToken.description}
+              {l10n.components.hfTokenSheet.description}
             </Text>
 
             <View style={styles.instructionsContainer}>
               <Text style={styles.instructionsTitle}>
-                {l10n.models.hfToken.instructions}
+                {l10n.components.hfTokenSheet.instructions}
               </Text>
-              {l10n.models.hfToken.instructionsSteps.map((step, index) => (
-                <Text key={index} style={styles.instructionItem}>
-                  {index + 1}. {step}
-                </Text>
-              ))}
-              <Text onPress={handleTokenWebsite} style={styles.linkButton}>
-                {l10n.models.hfToken.getTokenLink}
+              {l10n.components.hfTokenSheet.instructionsSteps.map(
+                (step, index) => (
+                  <Text key={index} style={styles.instructionItem}>
+                    {index + 1}. {step}
+                  </Text>
+                ),
+              )}
+              <Text
+                testID="hf-token-get-token-link"
+                onPress={handleTokenWebsite}
+                style={styles.linkButton}>
+                {l10n.components.hfTokenSheet.getTokenLink}
               </Text>
             </View>
 
             <TextInput
-              label={l10n.models.hfToken.inputLabel}
+              testID="hf-token-input"
+              label={l10n.components.hfTokenSheet.inputLabel}
               defaultValue={token}
               onChangeText={setToken}
               //multiline // secureTextEntry is not working with multiline
               //numberOfLines={3}
-              placeholder={l10n.models.hfToken.inputPlaceholder}
+              placeholder={l10n.components.hfTokenSheet.inputPlaceholder}
               autoCapitalize="none"
               autoCorrect={false}
               spellCheck={false}
               secureTextEntry={secureTextEntry}
               right={
                 <PaperTextInput.Icon
+                  testID="hf-token-input-icon"
                   icon={({color}) =>
                     secureTextEntry ? (
                       <EyeIcon width={24} height={24} stroke={color} />
@@ -162,21 +168,23 @@ export const HFTokenSheet: React.FC<HFTokenSheetProps> = observer(
             <View style={styles.buttonsContainer}>
               {hfStore.isTokenPresent && (
                 <Button
+                  testID="hf-token-reset-button"
                   mode="text"
                   onPress={handleResetToken}
                   loading={isResetting}
                   disabled={isSubmitting || isResetting}
                   style={styles.resetButton}>
-                  {l10n.models.hfToken.reset}
+                  {l10n.components.hfTokenSheet.reset}
                 </Button>
               )}
               <Button
+                testID="hf-token-save-button"
                 mode="contained"
                 onPress={handleSaveToken}
                 loading={isSubmitting}
                 disabled={isSubmitting || isResetting || !token.trim()}
                 style={styles.saveButton}>
-                {l10n.models.hfToken.save}
+                {l10n.components.hfTokenSheet.save}
               </Button>
             </View>
           </Sheet.Actions>
@@ -198,7 +206,7 @@ export const HFTokenSheet: React.FC<HFTokenSheetProps> = observer(
             label: l10n.common.dismiss,
             onPress: () => setShowError(false),
           }}>
-          {l10n.models.hfToken.error.saving}
+          {l10n.components.hfTokenSheet.error.saving}
         </Snackbar>
       </>
     );

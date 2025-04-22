@@ -111,6 +111,7 @@ export const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({
         action={getAction()}>
         <View style={styles.content}>
           <Icon
+            testID={`icon-${getIcon()}`}
             name={getIcon()}
             size={20}
             color={theme.colors.error}
