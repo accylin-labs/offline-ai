@@ -1,6 +1,8 @@
 # PocketPal AI 📱🚀
 
-PocketPal AI is a pocket-sized AI assistant powered by small language models (SLMs) that run directly on your phone. Designed for both iOS and Android, PocketPal AI lets you interact with various SLMs without the need for an internet connection.
+PocketPal AI is a pocket-sized AI assistant powered by small language models (SLMs) that run directly on your phone. Designed for both iOS and Android, PocketPal AI lets you interact with various SLMs without the need for an internet connection. Your privacy is fully protected as all processing happens entirely on-device — your conversations, prompts, and data never leave your phone or get stored on external servers.
+
+> **Note on Privacy**: The only data that may leave your device is what you explicitly choose to share: benchmark results (if you opt to contribute to the leaderboard) and any feedback you voluntarily submit through the app.
 
 ## Table of Contents
 
@@ -14,12 +16,13 @@ PocketPal AI is a pocket-sized AI assistant powered by small language models (SL
   - [Usage](#usage)
     - [Downloading a Model](#downloading-a-model)
     - [Loading a Model](#loading-a-model)
-    - [Advanced Settings](#advanced-settings)
     - [Chatting with the model](#chatting-with-the-model)
     - [Copying Text](#copying-text)
-    - [Using Pals](#using-pals)
     - [Message Editing](#message-editing)
+    - [Using Pals](#using-pals)
     - [Benchmarking](#benchmarking)
+    - [Setup Hugging Face Access Token](#setup-hugging-face-access-token)
+    - [Send Feedback](#send-feedback)
   - [Development Setup](#development-setup)
     - [Prerequisites](#prerequisites)
     - [Getting Started](#getting-started)
@@ -71,17 +74,21 @@ Get PocketPal AI on Google Play:
 
 ## Usage
 
-For a detailed guide on how to use PocketPal AI, check out the [Getting Started Guide](docs/getting_started.md).
-
 ### Downloading a Model
 
 1. Open the app and tap the **Menu** icon (☰).
 2. Navigate to the **Models** page.
 3. Choose a model from the list and tap **Download**.
+4. Or tap the + button to add models from Hugging Face or locally downloaded ones.
+5. If you select "Add from Hugging Face", you can search GGUF models directly on HF and select any quantization that fits your device (memory and storage).
+6. You can then download it immediately or bookmark it for later.
+
+<img src="assets/images and logos/Download_models.png" alt="Download Models Screenshot" width="100%">
 
 ### Loading a Model
 
-- After downloading, tap **Load** next to the model to bring it into memory.
+- After downloading, tap **Load** next to the model to load it to memory.
+- You can also load a model directly within the chat page using the chevron icon on the left side of the chat input.
 
 ### Chatting with the model 
 
@@ -89,6 +96,9 @@ For a detailed guide on how to use PocketPal AI, check out the [Getting Started 
 2. Navigate to the **Chat** page from the menu.
 3. Start conversing with your AI assistant!
 4. The screen will stay awake during inference and deactivate when idle.
+5. You can select and load models using the chevron icon on the left side of the chat input.
+
+<img src="assets/images and logos/Chat.png" alt="Chat Screenshot" width="83%">
 
 ### Copying Text
 
@@ -112,12 +122,51 @@ For a detailed guide on how to use PocketPal AI, check out the [Getting Started 
    - **Roleplay Pal**: Similar to Assistant Pal plus additional settings for location, AI's role, and other contextual parameters.
 3. Select a Pal using the Pal picker in the chat page to quickly switch between different personas.
 
+<img src="assets/images and logos/Pals.png" alt="Assistant Pal Screenshot" width="100%">
+*An example of creating a cocktail recipe assistant*
+
+<img src="assets/images and logos/Roleplay.png" alt="Roleplay Pal Screenshot" width="33%">
+*Setting up a roleplay pal with custom parameters*
+
+<img src="assets/images and logos/Pals-AI_generates_system_prompt.png" alt="AI-Generated System Prompt" width="16%">
+*Using AI to generate system prompts for your pals*
+
 ### Benchmarking
 
 1. Navigate to the Benchmarking page.
 2. Run performance tests on your models to compare speed and efficiency.
 3. View detailed metrics like tokens per second and memory usage.
 4. Share your benchmark results and compare with other devices on the [PocketPal AI Phone Leaderboard](https://huggingface.co/spaces/a-ghorbani/ai-phone-leaderboard).
+
+<img src="assets/images and logos/Benchmark.png" alt="Benchmark Screenshot" width="100%">
+
+### Setup Hugging Face Access Token
+
+Access gated models from Hugging Face by setting up your authentication token:
+
+1. First, get an access token from your Hugging Face account:
+   - Refer to the [HF Security Tokens documentation](https://huggingface.co/docs/hub/en/security-tokens)
+
+   <img src="assets/images and logos/Get_token_from_HF.png" alt="Get Token from Hugging Face" width="1000%">
+
+2. In PocketPal AI:
+   - Navigate to the Settings page
+   - Tap on "Set Token"
+   - Paste your personal access token in the text input
+   - Save
+
+   <img src="assets/images and logos/Token_in_pocketpal.png" alt="Token Setup in PocketPal" width="66%">
+
+### Send Feedback
+
+Share your thoughts directly from the app:
+
+1. Navigate to the App Info page
+2. Tap on "Sharing your thoughts" 
+3. Type in whatever you'd like to share, from feature requests to suggestions
+4. Hit "Submit Feedback"
+
+<img src="assets/images and logos/Send_Feedback.png" alt="Send Feedback Screenshot" width="50%">
 
 ## Development Setup
 
@@ -253,7 +302,6 @@ We welcome all contributions! Please read our [Contributing Guidelines](CONTRIBU
 - **More Languages**: Add support for additional languages through localization.
 - **Enhanced Error Handling**: Improve error handling and recovery mechanisms.
 
-
 Feel free to open issues to suggest features or report bugs.
 
 ## License
@@ -275,7 +323,7 @@ PocketPal AI is built using the amazing work from:
 - **[React Native Paper](https://callstack.github.io/react-native-paper/)**: Material Design components for the UI.
 - **[React Navigation](https://reactnavigation.org/)**: Routing and navigation for the app's screens.
 - **[Gorhom Bottom Sheet](https://github.com/gorhom/react-native-bottom-sheet)**: Powers the smooth bottom sheet interactions throughout the app.
-- **[@dr.pogodin/react-native-fs](https://github.com/itinance/react-native-fs)**: File system access that enables model download and management.
+- **[@dr.pogodin/react-native-fs](https://github.com/birdofpreyru/react-native-fs)**: File system access that enables model download and management.
 
 And many other open source libraries that make this project possible!
 
