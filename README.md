@@ -122,14 +122,20 @@ Get PocketPal AI on Google Play:
    - **Roleplay Pal**: Similar to Assistant Pal plus additional settings for location, AI's role, and other contextual parameters.
 3. Select a Pal using the Pal picker in the chat page to quickly switch between different personas.
 
-<img src="assets/images and logos/Pals.png" alt="Assistant Pal Screenshot" width="100%">
-*An example of creating a cocktail recipe assistant*
+<div style="margin-top: 30px; margin-bottom: 30px;">
+  <img src="assets/images and logos/Pals.png" alt="Assistant Pal Screenshot" width="100%">
+  <p><em>An example of creating a cocktail recipe assistant</em></p>
+</div>
 
-<img src="assets/images and logos/Roleplay.png" alt="Roleplay Pal Screenshot" width="33%">
-*Setting up a roleplay pal with custom parameters*
+<div style="margin-top: 30px; margin-bottom: 30px;">
+  <img src="assets/images and logos/Roleplay.png" alt="Roleplay Pal Screenshot" width="33%">
+  <p><em>Setting up a roleplay pal with custom parameters</em></p>
+</div>
 
-<img src="assets/images and logos/Pals-AI_generates_system_prompt.png" alt="AI-Generated System Prompt" width="16%">
-*Using AI to generate system prompts for your pals*
+<div style="margin-top: 30px; margin-bottom: 30px;">
+  <img src="assets/images and logos/Pals-AI_generates_system_prompt.png" alt="AI-Generated System Prompt" width="16%">
+  <p><em>Using AI to generate system prompts for your pals</em></p>
+</div>
 
 ### Benchmarking
 
