@@ -1094,7 +1094,7 @@ export const l10n = {
         resetToPreset: 'プリセットにリセット',
         applytoPresetAlert: {
           title: '成功',
-          message: 'これらの設定はすべての将来のセッションに適用されます',
+          message: 'これらの設定は今後すべてのセッションに適用されます',
         },
       },
       chatHeaderTitle: {
@@ -1254,7 +1254,7 @@ export const l10n = {
           total: '合計: ',
           usage: '使用率: ',
         },
-        byteSizes: ['バイト', 'KB', 'MB', 'GB'],
+        byteSizes: ['B', 'KB', 'MB', 'GB'],
       },
     },
     validation: {
@@ -1304,8 +1304,8 @@ export const l10n = {
         delete: '削除',
         share: '共有',
         sharing: '共有中...',
-        viewRawData: '生データを表示',
-        hideRawData: '生データを隠す',
+        viewRawData: 'Rawデータを表示',
+        hideRawData: 'Rawデータを隠す',
       },
       messages: {
         pleaseSelectModel: '最初にモデルを選択して初期化してください',
