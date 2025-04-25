@@ -713,7 +713,8 @@ export const l10n = {
       rename: '名前変更',
       reset: 'リセット',
       save: '保存',
-      networkError: 'ネットワークエラーが発生しました。もう一度お試しください。',
+      networkError:
+        'ネットワークエラーが発生しました。もう一度お試しください。',
       downloadETA: '残り',
       minutes: '分',
       second: '秒',
@@ -793,8 +794,7 @@ export const l10n = {
       darkMode: 'ダークモード',
       // Display Memory Usage
       displayMemoryUsage: 'メモリ使用量を表示',
-      displayMemoryUsageDescription:
-        'チャット画面にメモリ使用量を表示します。',
+      displayMemoryUsageDescription: 'チャット画面にメモリ使用量を表示します。',
     },
     memory: {
       shortWarning: 'メモリ警告',
@@ -857,7 +857,8 @@ export const l10n = {
           removeMessage: 'このモデルをリストから削除してもよろしいですか？',
           removeError: 'モデルの削除に失敗しました。',
           alreadyDownloadedTitle: '既にダウンロード済み',
-          alreadyDownloadedMessage: 'このモデルは既にダウンロードされています。',
+          alreadyDownloadedMessage:
+            'このモデルは既にダウンロードされています。',
           deleteTitle: 'モデルを削除',
           deleteMessage:
             'このダウンロード済みモデルを削除してもよろしいですか？',
@@ -989,7 +990,8 @@ export const l10n = {
         "DRY（Don't Repeat Yourself）機能の強さです。値が高いほど繰り返しを強く防ぎます",
       dry_base:
         'DRYモードでの繰り返しに対する基本ペナルティです。高い値は繰り返しをより防ぎます',
-      dry_allowed_length: 'DRYペナルティが適用される前に繰り返し可能な単語数です',
+      dry_allowed_length:
+        'DRYペナルティが適用される前に繰り返し可能な単語数です',
       dry_penalty_last_n: 'DRYモードで繰り返しをチェックする範囲です',
       dry_sequence_breakers:
         'DRYモードで繰り返しチェックをリセットする記号です',
@@ -1040,8 +1042,8 @@ export const l10n = {
         label: 'どのくらいの頻度で利用されていますか？（任意）',
         options: {
           daily: '毎日',
-          weekly: '週に数回',
-          monthly: '月に数回',
+          weekly: '週に1回以上',
+          monthly: '月に1回以上',
           rarely: 'ほとんど使わない',
         },
       },
@@ -1147,7 +1149,7 @@ export const l10n = {
         },
         palName: 'アシスタント名',
         palNamePlaceholder: '名前',
-        defaultModel: '使用モデル',
+        defaultModel: 'デフォルトモデル',
         defaultModelPlaceholder: 'モデルを選択',
         validation: {
           generatingPromptRequired: '生成プロンプトが必要です',
@@ -1171,7 +1173,7 @@ export const l10n = {
         },
         palName: '名前',
         palNamePlaceholder: '名前',
-        defaultModel: '使用モデル',
+        defaultModel: 'デフォルトモデル',
         defaultModelPlaceholder: 'モデルを選択',
         descriptionSection: '説明',
         world: '世界観',
@@ -1285,8 +1287,7 @@ export const l10n = {
       typeYourMessage: 'メッセージを入力',
       load: '読み込む',
       goToModels: 'モデルへ移動',
-      readyToChat:
-        'チャットを始めましょう。前回使用したモデルを読み込みます。',
+      readyToChat: 'チャットを始めましょう。前回使用したモデルを読み込みます。',
       pleaseLoadModel: 'チャットを開始するにはモデルを読み込んでください。',
     },
     benchmark: {
