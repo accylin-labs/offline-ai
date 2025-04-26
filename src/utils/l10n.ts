@@ -837,7 +837,7 @@ export const l10n = {
       metal: 'Metal',
       metalDescription: 'Appleのハードウェア加速API',
       metalRequiresNewerIOS:
-      'Metal加速機能にはiOS 18以上が必要です。この機能を利用するにはデバイスを更新してください。',
+        'Metal加速機能にはiOS 18以上が必要です。この機能を利用するにはデバイスを更新してください。',
       layersOnGPU: 'GPUレイヤー：{{gpuLayers}}',
       // Context Size
       contextSize: 'コンテキストサイズ',
