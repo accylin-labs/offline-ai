@@ -42,7 +42,21 @@ export const createStyles = (theme: Theme) => {
       }),
     },
     collapsedContainer: {
-      height: 48,
+      height: 40, // Reduced height for more compact appearance
+      width: '70%', // Take up less horizontal space
+      alignSelf: 'flex-start', // Align to the left
+      opacity: 0.85, // Slightly reduced opacity
+      justifyContent: 'center', // Center content vertically
+      // Reduced shadow/elevation for collapsed state
+      ...Platform.select({
+        ios: {
+          shadowOpacity: 0.2, // Reduced shadow
+          shadowRadius: 6, // Smaller shadow radius
+        },
+        android: {
+          elevation: 1, // Reduced elevation
+        },
+      }),
     },
     partialContainer: {
       height: 150,
@@ -59,6 +73,11 @@ export const createStyles = (theme: Theme) => {
       borderBottomWidth: 0, // Removed separator line
       backgroundColor: 'transparent', // Transparent background to match content area
     },
+    collapsedHeaderContainer: {
+      paddingHorizontal: 12, // Smaller padding for collapsed state
+      paddingVertical: 6, // Smaller padding for collapsed state
+      alignItems: 'center', // Ensure vertical centering
+    },
     headerText: {
       color: textColor, // Theme-specific text color
       fontWeight: '600', // Bolder text
@@ -68,6 +87,7 @@ export const createStyles = (theme: Theme) => {
       textShadowColor: glowColor, // Text glow
       textShadowOffset: {width: 0, height: 0},
       textShadowRadius: isDarkMode ? 3 : 0, // Only add glow in dark mode
+      marginStart: 2, // No margin for better alignment
     },
     chevronContainer: {
       width: 28,

@@ -65,8 +65,19 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
       }),
     ]).start();
 
-    // Configure layout animation
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    // Configure layout animation with more spring-like behavior
+    LayoutAnimation.configureNext({
+      duration: 300,
+      create: {
+        type: LayoutAnimation.Types.spring,
+        property: LayoutAnimation.Properties.scaleXY,
+        springDamping: 0.7,
+      },
+      update: {
+        type: LayoutAnimation.Types.spring,
+        springDamping: 0.7,
+      },
+    });
 
     // Update state
     switch (bubbleState) {
@@ -167,11 +178,17 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
         <View style={styles.glassBorder} />
 
         {/* Header */}
-        <View style={styles.headerContainer}>
+        <View
+          style={[
+            styles.headerContainer,
+            bubbleState === BubbleState.COLLAPSED &&
+              styles.collapsedHeaderContainer,
+          ]}>
           <Text style={styles.headerText}>Reasoning</Text>
           <Animated.View
             style={[
               styles.chevronContainer,
+              bubbleState === BubbleState.COLLAPSED && {width: 24, height: 24}, // Smaller chevron in collapsed state
               {
                 transform: [
                   {rotate: chevronRotationDeg},
@@ -181,7 +198,7 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
             ]}>
             <Icon
               name="chevron-down"
-              size={18}
+              size={bubbleState === BubbleState.COLLAPSED ? 16 : 18} // Smaller icon in collapsed state
               color={theme.dark ? '#4a8cc7' : '#0a5999'} // Theme-specific color
             />
           </Animated.View>
