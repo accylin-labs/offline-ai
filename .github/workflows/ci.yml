@@ -132,6 +132,12 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+      
+      - name: Install CocoaPods dependencies
+        run: |
+          cd ios
+          pod install
+          cd ..
 
       - name: Build iOS
         run: yarn ios:build
