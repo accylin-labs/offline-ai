@@ -31,6 +31,28 @@ export const createTagsStyles = (theme: Theme) => ({
     fontSize: 14,
     // overflow: 'scroll', // Ensure scrolling for long code blocks
   },
+  // Styles for thinking tags
+  thinking: {
+    color: theme.dark ? '#4a8cc7' : '#0a5999', // Match the ThinkingBubble text color
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  },
+  think: {
+    color: theme.dark ? '#4a8cc7' : '#0a5999',
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  },
+  thought: {
+    color: theme.dark ? '#4a8cc7' : '#0a5999',
+    fontSize: 14,
+    lineHeight: 20,
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  },
 });
 
 export const createStyles = (theme: Theme) =>

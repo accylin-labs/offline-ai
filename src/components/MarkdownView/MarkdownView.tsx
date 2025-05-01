@@ -26,35 +26,9 @@ interface MarkdownViewProps {
   selectable?: boolean;
 }
 
-// Extract the content from the thinking tags
-const extractContent = (props: any): string => {
-  try {
-    if (
-      props.tnode &&
-      props.tnode.children &&
-      props.tnode.children.length > 0
-    ) {
-      // Try to extract text content from children nodes
-      return props.tnode.children
-        .map((child: any) => {
-          if (child.type === 'text') {
-            return child.data;
-          }
-          return '';
-        })
-        .join('');
-    }
-  } catch (error) {
-    console.error('Error extracting thinking content:', error);
-  }
-  return '';
-};
-
 const ThinkingRenderer = ({TDefaultRenderer, ...props}: any) => {
-  const content = extractContent(props);
-
   return (
-    <ThinkingBubble text={content}>
+    <ThinkingBubble>
       <TDefaultRenderer {...props} />
     </ThinkingBubble>
   );

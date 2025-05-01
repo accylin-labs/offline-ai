@@ -1,7 +1,6 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   Animated,
   Easing,
@@ -10,17 +9,12 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
+import {Text} from 'react-native-paper';
+
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-// Try to import BlurView if available
-let BlurView: any = null;
-try {
-  BlurView = require('@react-native-community/blur').BlurView;
-} catch (e) {
-  // BlurView is not available, we'll use a fallback
-}
+import {BlurView} from '@react-native-community/blur';
 
 // Enable LayoutAnimation for Android
 if (
@@ -30,7 +24,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-// Define the three states
+// Define the states
 enum BubbleState {
   COLLAPSED = 'collapsed',
   PARTIAL = 'partial',
@@ -38,14 +32,10 @@ enum BubbleState {
 }
 
 interface ThinkingBubbleProps {
-  text: string;
   children?: React.ReactNode;
 }
 
-export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({
-  text,
-  children,
-}) => {
+export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
   const theme = useTheme();
   const styles = createStyles(theme);
 
@@ -56,29 +46,7 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({
 
   // Animation values
   const chevronRotation = useRef(new Animated.Value(0)).current;
-  const shimmerPosition = useRef(new Animated.Value(-300)).current;
   const contentOpacity = useRef(new Animated.Value(1)).current;
-
-  // Animate shimmer effect - elegant border shimmer (8 seconds loop)
-  useEffect(() => {
-    // Reset position before starting animation
-    shimmerPosition.setValue(-300);
-
-    const shimmerAnimation = Animated.loop(
-      Animated.timing(shimmerPosition, {
-        toValue: 300,
-        duration: 8000, // Even slower for more elegance (8 seconds)
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    );
-
-    shimmerAnimation.start();
-
-    return () => {
-      shimmerAnimation.stop();
-    };
-  }, [shimmerPosition]);
 
   // Handle state transitions
   const toggleState = () => {
@@ -168,6 +136,8 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({
     ]).start();
   };
 
+  // No shimmer animation
+
   return (
     <TouchableOpacity
       activeOpacity={0.9}
@@ -179,32 +149,19 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({
         {/* Secondary glow effect for depth */}
         <View style={styles.secondaryGlow} />
 
-        {/* Blur effect if available */}
-        {BlurView ? (
-          <BlurView
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-            }}
-            blurType="light"
-            blurAmount={55} // Increased blur amount
-            reducedTransparencyFallbackColor="rgba(10, 10, 20, 0.8)"
-          />
-        ) : (
-          <View style={styles.blurOverlay} />
-        )}
+        {/* Blur effect - theme specific */}
+        <BlurView
+          style={styles.absoluteFill}
+          blurType={theme.dark ? 'dark' : 'light'}
+          blurAmount={32}
+          reducedTransparencyFallbackColor="rgba(10, 10, 20, 0.8)"
+        />
 
         {/* Inner glow effect */}
         <View style={styles.innerGlow} />
 
-        {/* Thin border with shimmering glow effect - only on the border */}
-        <View style={styles.shimmerContainer}>
-          {/* Thin border that will have the glow effect */}
-          <View style={styles.borderGlow} />
-        </View>
+        {/* Simple border without shimmer */}
+        <View style={styles.borderGlow} />
 
         {/* Glass border effect - under the shimmer */}
         <View style={styles.glassBorder} />
@@ -225,7 +182,7 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({
             <Icon
               name="chevron-down"
               size={18}
-              color={theme.dark ? '#6abaff' : '#0a5999'} // Theme-specific color
+              color={theme.dark ? '#4a8cc7' : '#0a5999'} // Theme-specific color
             />
           </Animated.View>
         </View>
@@ -237,14 +194,10 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({
               <ScrollView
                 style={styles.contentContainer}
                 showsVerticalScrollIndicator={false}>
-                <Text style={styles.contentText}>{text}</Text>
                 {children}
               </ScrollView>
             ) : (
-              <View style={styles.contentContainer}>
-                <Text style={styles.contentText}>{text}</Text>
-                {children}
-              </View>
+              <View style={styles.contentContainer}>{children}</View>
             )}
           </Animated.View>
         )}
