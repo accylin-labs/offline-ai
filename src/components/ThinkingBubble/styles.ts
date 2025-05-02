@@ -2,19 +2,16 @@ import {StyleSheet, Platform} from 'react-native';
 import {Theme} from '../../utils/types';
 
 export const createStyles = (theme: Theme) => {
-  // Create a sophisticated holographic color palette with specific colors
-  // Dark mode colors (as specified)
+  // Dark mode colors
   const darkModeBackground = '#142e4d'; // Deep blue background for dark mode
   const darkModeText = '#6abaff'; // More subtle blue text for dark mode
 
-  // Light mode colors (complementary to dark mode)
+  // Light mode colors
   const lightModeBackground = '#f0f5fa'; // Light blue-gray background
   const lightModeText = '#0a5999'; // Darker blue text for contrast
 
-  // Determine if we're in dark mode
-  const isDarkMode = theme.colors.background === '#000000' || theme.dark;
+  const isDarkMode = theme.dark;
 
-  // Set colors based on theme
   const bubbleBackground = isDarkMode
     ? darkModeBackground
     : lightModeBackground;
@@ -26,7 +23,7 @@ export const createStyles = (theme: Theme) => {
       marginVertical: 16, // Increased margin for better elevation appearance
       borderRadius: 20,
       overflow: 'hidden',
-      backgroundColor: bubbleBackground, // Use our theme-specific background color
+      backgroundColor: bubbleBackground,
       borderWidth: 0, // No border - we'll use the glowing border instead
       // Enhanced elevation and glow effects
       ...Platform.select({
@@ -42,11 +39,11 @@ export const createStyles = (theme: Theme) => {
       }),
     },
     collapsedContainer: {
-      height: 40, // Reduced height for more compact appearance
-      width: '70%', // Take up less horizontal space
-      alignSelf: 'flex-start', // Align to the left
-      opacity: 0.85, // Slightly reduced opacity
-      justifyContent: 'center', // Center content vertically
+      height: 30, // Reduced height for more compact appearance
+      width: 140,
+      alignSelf: 'flex-start',
+      opacity: 0.65, // Slightly reduced opacity
+      justifyContent: 'center',
       // Reduced shadow/elevation for collapsed state
       ...Platform.select({
         ios: {
@@ -69,25 +66,25 @@ export const createStyles = (theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 16,
-      paddingVertical: 8, // Reduced vertical padding
-      borderBottomWidth: 0, // Removed separator line
-      backgroundColor: 'transparent', // Transparent background to match content area
+      paddingVertical: 8,
+      borderBottomWidth: 0,
+      backgroundColor: 'transparent',
     },
     collapsedHeaderContainer: {
-      paddingHorizontal: 12, // Smaller padding for collapsed state
+      paddingHorizontal: 14,
       paddingVertical: 6, // Smaller padding for collapsed state
       alignItems: 'center', // Ensure vertical centering
     },
     headerText: {
       color: textColor, // Theme-specific text color
-      fontWeight: '600', // Bolder text
-      fontSize: 14,
+      //fontWeight: '600', // Bolder text
+      //fontSize: 14,
       letterSpacing: 0.5,
-      opacity: 1, // Fully visible text
-      textShadowColor: glowColor, // Text glow
-      textShadowOffset: {width: 0, height: 0},
-      textShadowRadius: isDarkMode ? 3 : 0, // Only add glow in dark mode
-      marginStart: 2, // No margin for better alignment
+      //opacity: 1, // Fully visible text
+      //textShadowColor: glowColor, // Text glow
+      //textShadowOffset: {width: 0, height: 0},
+      //textShadowRadius: isDarkMode ? 3 : 0, // Only add glow in dark mode
+      //marginStart: 0, // No margin for better alignment
     },
     chevronContainer: {
       width: 28,
@@ -97,17 +94,21 @@ export const createStyles = (theme: Theme) => {
       borderRadius: 14,
       backgroundColor: isDarkMode
         ? 'rgba(74, 140, 199, 0.15)'
-        : 'rgba(10, 89, 153, 0.1)', // Theme-specific background
+        : 'rgba(10, 89, 153, 0.1)',
       borderWidth: 1,
       borderColor: isDarkMode
         ? 'rgba(74, 140, 199, 0.3)'
-        : 'rgba(10, 89, 153, 0.2)', // Theme-specific border
+        : 'rgba(10, 89, 153, 0.2)',
+    },
+    collapsedChevronContainer: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
     },
     contentContainer: {
       paddingHorizontal: 16,
-      paddingTop: 6, // Reduced top padding to bring content closer to title
       paddingBottom: 16,
-      backgroundColor: 'transparent', // No background - let the container background show
+      backgroundColor: 'transparent',
     },
     borderGlow: {
       position: 'absolute',
@@ -119,8 +120,8 @@ export const createStyles = (theme: Theme) => {
       borderWidth: 1, // Thin border
       borderColor: isDarkMode
         ? 'rgba(74, 140, 199, 0.6)'
-        : 'rgba(10, 89, 153, 0.4)', // Theme-specific border
-      backgroundColor: 'transparent', // Transparent background
+        : 'rgba(10, 89, 153, 0.4)',
+      backgroundColor: 'transparent',
     },
     // Very subtle glass effect - almost invisible
     glassBorder: {
@@ -130,11 +131,11 @@ export const createStyles = (theme: Theme) => {
       right: 0,
       bottom: 0,
       borderRadius: 20,
-      borderWidth: 0.5, // Very thin inner border
+      borderWidth: 0.5,
       borderColor: isDarkMode
         ? 'rgba(74, 140, 199, 0.1)'
-        : 'rgba(10, 89, 153, 0.1)', // Very subtle theme-specific border
-      opacity: 0.3, // Very subtle opacity
+        : 'rgba(10, 89, 153, 0.1)',
+      opacity: 0.3,
     },
     // Inner glow effect - very subtle
     innerGlow: {
@@ -144,7 +145,7 @@ export const createStyles = (theme: Theme) => {
       right: 1,
       bottom: 1,
       borderRadius: 19,
-      borderWidth: 0, // No border
+      borderWidth: 0,
       // Only add inner shadow in dark mode
       ...Platform.select({
         ios: {
@@ -175,7 +176,7 @@ export const createStyles = (theme: Theme) => {
       bottom: -3,
       borderRadius: 23,
       borderWidth: 1,
-      borderColor: isDarkMode ? '#3a7ac5' : '#84b6e0', // Secondary glow color based on theme
+      borderColor: isDarkMode ? '#3a7ac5' : '#84b6e0',
       opacity: 0.2,
     },
   });

@@ -24,7 +24,6 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-// Define the states
 enum BubbleState {
   COLLAPSED = 'collapsed',
   PARTIAL = 'partial',
@@ -39,45 +38,53 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
   const theme = useTheme();
   const styles = createStyles(theme);
 
-  // State management
   const [bubbleState, setBubbleState] = useState<BubbleState>(
     BubbleState.PARTIAL,
   );
 
-  // Animation values
   const chevronRotation = useRef(new Animated.Value(0)).current;
-  const contentOpacity = useRef(new Animated.Value(1)).current;
 
-  // Handle state transitions
   const toggleState = () => {
-    // Animate content opacity
-    Animated.sequence([
-      Animated.timing(contentOpacity, {
-        toValue: 0,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(contentOpacity, {
-        toValue: 1,
-        duration: 150,
-        delay: 100,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    const isCollapsingTransition =
+      bubbleState === BubbleState.EXPANDED ||
+      bubbleState === BubbleState.PARTIAL;
 
-    // Configure layout animation with more spring-like behavior
-    LayoutAnimation.configureNext({
-      duration: 300,
-      create: {
-        type: LayoutAnimation.Types.spring,
-        property: LayoutAnimation.Properties.scaleXY,
-        springDamping: 0.7,
-      },
-      update: {
-        type: LayoutAnimation.Types.spring,
-        springDamping: 0.7,
-      },
-    });
+    if (isCollapsingTransition) {
+      // When collapsing, use a spring animation with bounce
+      LayoutAnimation.configureNext({
+        duration: 450, // Longer duration
+        create: {
+          type: LayoutAnimation.Types.spring,
+          property: LayoutAnimation.Properties.opacity,
+          springDamping: 0.7, // Less damping for more bounce
+        },
+        update: {
+          type: LayoutAnimation.Types.spring, // Bring back the spring for collapse
+          springDamping: 0.7, // Less damping for more bounce
+          initialVelocity: 0.5, // Higher initial velocity for more spring effect
+        },
+        delete: {
+          type: LayoutAnimation.Types.spring,
+          property: LayoutAnimation.Properties.opacity,
+          springDamping: 0.7,
+        },
+      });
+    } else {
+      // When expanding, use a slower, more gradual animation
+      LayoutAnimation.configureNext({
+        duration: 500, // Much longer duration for smoother expansion
+        create: {
+          type: LayoutAnimation.Types.easeInEaseOut,
+          property: LayoutAnimation.Properties.opacity,
+          //delay: 100, // Delay creation slightly
+        },
+        update: {
+          type: LayoutAnimation.Types.spring,
+          springDamping: 0.85, // Higher damping for less bounce
+          initialVelocity: 0.3, // Lower initial velocity for gentler start
+        },
+      });
+    }
 
     // Update state
     switch (bubbleState) {
@@ -96,23 +103,36 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
     }
   };
 
-  // Animate chevron rotation
+  // Animate chevron rotation with spring effect for collapsing
   const animateChevron = (toValue: number) => {
-    Animated.timing(chevronRotation, {
-      toValue,
-      duration: 300,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
+    // Determine if we're rotating to collapsed state (0 degrees)
+    const isCollapsingRotation = toValue === 0;
+
+    if (isCollapsingRotation) {
+      // Use spring animation for collapsing to match the layout spring
+      Animated.spring(chevronRotation, {
+        toValue,
+        friction: 8, // Lower friction for more bounce
+        tension: 40, // Lower tension for more natural spring
+        useNativeDriver: true,
+      }).start();
+    } else {
+      // Use timing for expanding for more control
+      Animated.timing(chevronRotation, {
+        toValue,
+        duration: 600, // Match the layout animation duration
+        easing: Easing.bezier(0.2, 0, 0.2, 1), // Material standard for expand
+        useNativeDriver: true,
+      }).start();
+    }
   };
 
-  // Calculate chevron rotation for each state
+  // Chevron rotation for each state
   const chevronRotationDeg = chevronRotation.interpolate({
     inputRange: [0, 90, 180],
     outputRange: ['0deg', '90deg', '180deg'],
   });
 
-  // Determine container style based on state
   const containerStyle = [
     styles.container,
     bubbleState === BubbleState.COLLAPSED && styles.collapsedContainer,
@@ -120,10 +140,8 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
     bubbleState === BubbleState.EXPANDED && styles.expandedContainer,
   ];
 
-  // Determine if content should be scrollable
   const isScrollable = bubbleState === BubbleState.PARTIAL;
 
-  // Determine if content should be visible
   const isContentVisible = bubbleState !== BubbleState.COLLAPSED;
 
   // Scale animation for chevron on tap
@@ -131,23 +149,45 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
 
   // Animate chevron scale on state change
   const animateChevronScale = () => {
-    Animated.sequence([
-      Animated.timing(chevronScale, {
-        toValue: 1.2,
-        duration: 150,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(chevronScale, {
-        toValue: 1,
-        duration: 150,
-        easing: Easing.inOut(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
+    // Determine if we're transitioning to collapsed state
+    const isCollapsingTransition =
+      bubbleState === BubbleState.EXPANDED ||
+      bubbleState === BubbleState.PARTIAL;
 
-  // No shimmer animation
+    if (isCollapsingTransition) {
+      // More spring-like scale effect when collapsing
+      Animated.sequence([
+        Animated.timing(chevronScale, {
+          toValue: 1.2, // Moderate scale
+          duration: 200, // Slightly faster for more responsive feel
+          easing: Easing.out(Easing.cubic), // Cubic easing for quick expansion
+          useNativeDriver: true,
+        }),
+        Animated.spring(chevronScale, {
+          toValue: 1,
+          friction: 7, // Lower friction for more bounce
+          tension: 40, // Lower tension for more natural spring
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      // Very subtle scale effect when expanding
+      Animated.sequence([
+        Animated.timing(chevronScale, {
+          toValue: 1.1, // Smaller scale change
+          duration: 250, // Longer duration
+          easing: Easing.bezier(0.4, 0, 0.2, 1), // Material standard
+          useNativeDriver: true,
+        }),
+        Animated.timing(chevronScale, {
+          toValue: 1,
+          duration: 350, // Much longer duration for smoother return
+          easing: Easing.bezier(0, 0, 0.2, 1), // Material standard
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  };
 
   return (
     <TouchableOpacity
@@ -184,11 +224,14 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
             bubbleState === BubbleState.COLLAPSED &&
               styles.collapsedHeaderContainer,
           ]}>
-          <Text style={styles.headerText}>Reasoning</Text>
+          <Text variant="titleSmall" style={styles.headerText}>
+            Reasoning
+          </Text>
           <Animated.View
             style={[
               styles.chevronContainer,
-              bubbleState === BubbleState.COLLAPSED && {width: 24, height: 24}, // Smaller chevron in collapsed state
+              bubbleState === BubbleState.COLLAPSED &&
+                styles.collapsedChevronContainer, // Smaller chevron in collapsed state
               {
                 transform: [
                   {rotate: chevronRotationDeg},
@@ -205,19 +248,16 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
         </View>
 
         {/* Content */}
-        {isContentVisible && (
-          <Animated.View style={{opacity: contentOpacity}}>
-            {isScrollable ? (
-              <ScrollView
-                style={styles.contentContainer}
-                showsVerticalScrollIndicator={false}>
-                {children}
-              </ScrollView>
-            ) : (
-              <View style={styles.contentContainer}>{children}</View>
-            )}
-          </Animated.View>
-        )}
+        {isContentVisible &&
+          (isScrollable ? (
+            <ScrollView
+              style={styles.contentContainer}
+              showsVerticalScrollIndicator={false}>
+              {children}
+            </ScrollView>
+          ) : (
+            <View style={styles.contentContainer}>{children}</View>
+          ))}
       </View>
     </TouchableOpacity>
   );
