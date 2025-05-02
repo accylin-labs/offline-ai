@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -43,6 +43,9 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
   );
 
   const chevronRotation = useRef(new Animated.Value(0)).current;
+
+  // Reference to the ScrollView for auto-scrolling
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const toggleState = () => {
     const isCollapsingTransition =
@@ -146,6 +149,17 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
 
   // Scale animation for chevron on tap
   const chevronScale = useRef(new Animated.Value(1)).current;
+
+  // Auto-scroll to the bottom when content changes
+  useEffect(() => {
+    // Only auto-scroll if we're in the partial state (scrollable)
+    if (isScrollable && scrollViewRef.current) {
+      // Use setTimeout to ensure the content has been rendered
+      setTimeout(() => {
+        scrollViewRef.current?.scrollToEnd({animated: true});
+      }, 100);
+    }
+  }, [children, isScrollable]); // Re-run when children or scrollable state changes
 
   // Animate chevron scale on state change
   const animateChevronScale = () => {
@@ -251,8 +265,12 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
         {isContentVisible &&
           (isScrollable ? (
             <ScrollView
+              ref={scrollViewRef}
               style={styles.contentContainer}
-              showsVerticalScrollIndicator={false}>
+              showsVerticalScrollIndicator={false}
+              onContentSizeChange={() =>
+                scrollViewRef.current?.scrollToEnd({animated: true})
+              }>
               {children}
             </ScrollView>
           ) : (
