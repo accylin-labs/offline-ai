@@ -44,6 +44,9 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
     BubbleState.PARTIAL,
   );
 
+  // Track animation state to optimize rendering
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const chevronRotation = useRef(new Animated.Value(0)).current;
 
   // Reference to the ScrollView for auto-scrolling
@@ -54,41 +57,62 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
       bubbleState === BubbleState.EXPANDED ||
       bubbleState === BubbleState.PARTIAL;
 
+    // Set animation flag to optimize rendering during transitions
+    setIsAnimating(true);
+
     if (isCollapsingTransition) {
       // When collapsing, use a spring animation with bounce
-      LayoutAnimation.configureNext({
-        duration: 450, // Longer duration
-        create: {
-          type: LayoutAnimation.Types.spring,
-          property: LayoutAnimation.Properties.opacity,
-          springDamping: 0.7, // Less damping for more bounce
+      LayoutAnimation.configureNext(
+        {
+          duration: 450, // Longer duration
+          create: {
+            type: LayoutAnimation.Types.spring,
+            property: LayoutAnimation.Properties.opacity,
+            springDamping: 0.7, // Less damping for more bounce
+          },
+          update: {
+            type: LayoutAnimation.Types.spring, // Bring back the spring for collapse
+            springDamping: 0.7, // Less damping for more bounce
+            initialVelocity: 0.5, // Higher initial velocity for more spring effect
+          },
+          delete: {
+            type: LayoutAnimation.Types.spring,
+            property: LayoutAnimation.Properties.opacity,
+            springDamping: 0.7,
+          },
         },
-        update: {
-          type: LayoutAnimation.Types.spring, // Bring back the spring for collapse
-          springDamping: 0.7, // Less damping for more bounce
-          initialVelocity: 0.5, // Higher initial velocity for more spring effect
+        () => {
+          // Force a layout update after animation completes
+          requestAnimationFrame(() => {
+            // Mark animation as complete
+            setIsAnimating(false);
+          });
         },
-        delete: {
-          type: LayoutAnimation.Types.spring,
-          property: LayoutAnimation.Properties.opacity,
-          springDamping: 0.7,
-        },
-      });
+      );
     } else {
       // When expanding, use a slower, more gradual animation
-      LayoutAnimation.configureNext({
-        duration: 500, // Much longer duration for smoother expansion
-        create: {
-          type: LayoutAnimation.Types.easeInEaseOut,
-          property: LayoutAnimation.Properties.opacity,
-          //delay: 100, // Delay creation slightly
+      LayoutAnimation.configureNext(
+        {
+          duration: 500, // Much longer duration for smoother expansion
+          create: {
+            type: LayoutAnimation.Types.easeInEaseOut,
+            property: LayoutAnimation.Properties.opacity,
+            //delay: 100, // Delay creation slightly
+          },
+          update: {
+            type: LayoutAnimation.Types.spring,
+            springDamping: 0.85, // Higher damping for less bounce
+            initialVelocity: 0.3, // Lower initial velocity for gentler start
+          },
         },
-        update: {
-          type: LayoutAnimation.Types.spring,
-          springDamping: 0.85, // Higher damping for less bounce
-          initialVelocity: 0.3, // Lower initial velocity for gentler start
+        // Add completion callback
+        () => {
+          requestAnimationFrame(() => {
+            // Mark animation as complete
+            setIsAnimating(false);
+          });
         },
-      });
+      );
     }
 
     // Update state
@@ -142,7 +166,7 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
     styles.container,
     bubbleState === BubbleState.COLLAPSED && styles.collapsedContainer,
     bubbleState === BubbleState.PARTIAL && styles.partialContainer,
-    bubbleState === BubbleState.EXPANDED && styles.expandedContainer,
+    bubbleState === BubbleState.EXPANDED && {},
   ];
 
   const isScrollable = bubbleState === BubbleState.PARTIAL;
@@ -213,9 +237,6 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
         animateChevronScale();
       }}>
       <View style={containerStyle}>
-        {/* Secondary glow effect for depth */}
-        <View style={styles.secondaryGlow} />
-
         {/* Blur effect - theme specific */}
         <BlurView
           style={styles.absoluteFill}
@@ -223,15 +244,6 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
           blurAmount={32}
           reducedTransparencyFallbackColor="rgba(10, 10, 20, 0.8)"
         />
-
-        {/* Inner glow effect */}
-        <View style={styles.innerGlow} />
-
-        {/* Simple border without shimmer */}
-        <View style={styles.borderGlow} />
-
-        {/* Glass border effect - under the shimmer */}
-        <View style={styles.glassBorder} />
 
         {/* Header */}
         <View
@@ -264,23 +276,11 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
         </View>
 
         {/* Content */}
-        {isContentVisible &&
-          (isScrollable ? (
-            <MaskedView
-              style={styles.maskedContentContainer}
-              maskElement={
-                <View style={styles.maskElementContainer}>
-                  {/* This gradient is used as a mask - transparent areas will be see-through */}
-                  <LinearGradient
-                    style={styles.maskGradient}
-                    colors={['transparent', 'black']}
-                    pointerEvents="none"
-                  />
-                  {/* Solid black below the gradient ensures the rest of the content is fully visible */}
-                  <View style={styles.maskSolid} />
-                </View>
-              }>
-              {/* The actual content that will be masked */}
+        {isContentVisible && (
+          <>
+            {/* When animating from collapsed to partial, use a simpler view for better performance */}
+            {isScrollable && isAnimating ? (
+              // Simple ScrollView without MaskedView during animation for better performance
               <ScrollView
                 ref={scrollViewRef}
                 style={styles.contentContainer}
@@ -290,10 +290,38 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
                 }>
                 {children}
               </ScrollView>
-            </MaskedView>
-          ) : (
-            <View style={styles.contentContainer}>{children}</View>
-          ))}
+            ) : isScrollable ? (
+              // Use MaskedView only when not animating from collapsed to partial
+              <MaskedView
+                style={styles.maskedContentContainer}
+                maskElement={
+                  <View style={styles.maskElementContainer}>
+                    {/* This gradient is used as a mask - transparent areas will be see-through */}
+                    <LinearGradient
+                      style={styles.maskGradient}
+                      colors={['transparent', 'black']}
+                      pointerEvents="none"
+                    />
+                    {/* Solid black below the gradient ensures the rest of the content is fully visible */}
+                    <View style={styles.maskSolid} />
+                  </View>
+                }>
+                {/* The actual content that will be masked */}
+                <ScrollView
+                  ref={scrollViewRef}
+                  style={styles.contentContainer}
+                  showsVerticalScrollIndicator={false}
+                  onContentSizeChange={() =>
+                    scrollViewRef.current?.scrollToEnd({animated: true})
+                  }>
+                  {children}
+                </ScrollView>
+              </MaskedView>
+            ) : (
+              <View style={styles.contentContainer}>{children}</View>
+            )}
+          </>
+        )}
       </View>
     </TouchableOpacity>
   );
