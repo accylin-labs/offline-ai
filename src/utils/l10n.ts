@@ -372,6 +372,9 @@ export const l10n = {
         timingsString:
           '{{predictedMs}}ms per token, {{predictedPerSecond}} tokens per second',
       },
+      thinkingBubble: {
+        reasoning: 'Reasoning',
+      },
       chatEmptyPlaceholder: {
         noModelsTitle: 'No Models Available',
         noModelsDescription:
@@ -1179,6 +1182,9 @@ export const l10n = {
         timingsString:
           'トークンあたり{{predictedMs}}ms、1秒あたり{{predictedPerSecond}}トークン',
       },
+      thinkingBubble: {
+        reasoning: '考える',
+      },
       chatEmptyPlaceholder: {
         noModelsTitle: '利用可能なモデルがありません',
         noModelsDescription:
@@ -1950,6 +1956,9 @@ export const l10n = {
       bubble: {
         timingsString:
           '每个令牌{{predictedMs}}ms，每秒{{predictedPerSecond}}令牌',
+      },
+      thinkingBubble: {
+        reasoning: '思考',
       },
       chatEmptyPlaceholder: {
         noModelsTitle: '没有可用的模型',

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useContext} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -9,13 +9,16 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
+
 import {Text} from 'react-native-paper';
+import LinearGradient from 'react-native-linear-gradient';
+import MaskedView from '@react-native-masked-view/masked-view';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {useTheme} from '../../hooks';
+import {L10nContext} from '../../utils';
+
 import {createStyles} from './styles';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaskedView from '@react-native-masked-view/masked-view';
-import LinearGradient from 'react-native-linear-gradient';
 
 // Enable LayoutAnimation for Android
 if (
@@ -37,6 +40,7 @@ interface ThinkingBubbleProps {
 
 export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
   const theme = useTheme();
+  const l10n = useContext(L10nContext);
   const styles = createStyles(theme);
 
   const [bubbleState, setBubbleState] = useState<BubbleState>(
@@ -247,7 +251,7 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
               styles.collapsedHeaderContainer,
           ]}>
           <Text variant="titleSmall" style={styles.headerText}>
-            Reasoning
+            {l10n.components.thinkingBubble.reasoning}
           </Text>
           <Animated.View
             style={[
