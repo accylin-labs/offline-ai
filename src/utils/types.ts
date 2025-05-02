@@ -219,6 +219,14 @@ export interface SemanticColors {
   userAvatarImageBackground: string;
   userAvatarNameColors: string[];
   searchBarBackground: string;
+
+  // Thinking bubble specific
+  thinkingBubbleBackground: string;
+  thinkingBubbleText: string;
+  thinkingBubbleBorder: string;
+  thinkingBubbleShadow: string;
+  thinkingBubbleChevronBackground: string;
+  thinkingBubbleChevronBorder: string;
 }
 
 export interface ThemeBorders {

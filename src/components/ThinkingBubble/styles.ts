@@ -2,24 +2,10 @@ import {StyleSheet, Platform} from 'react-native';
 import {Theme} from '../../utils/types';
 
 export const createStyles = (theme: Theme) => {
-  // Dark mode colors
-  const darkModeBackground = '#142e4d'; // Deep blue background for dark mode
-  const darkModeText = '#6abaff'; // More subtle blue text for dark mode
-
-  // Light mode colors
-  const lightModeBackground = '#f0f5fa'; // Light blue-gray background
-  const lightModeText = '#0a5999'; // Darker blue text for contrast
-
-  const isDarkMode = theme.dark;
-
-  const bubbleBackground = isDarkMode
-    ? darkModeBackground
-    : lightModeBackground;
-  const bubbleBorderColor = isDarkMode
-    ? 'rgba(74, 140, 199, 0.6)'
-    : 'rgba(10, 89, 153, 0.4)';
-  const textColor = isDarkMode ? darkModeText : lightModeText;
-  const shadowColor = isDarkMode ? '#4a9fff' : '#0a5999'; // Glow color that matches the theme
+  const bubbleBackground = theme.colors.thinkingBubbleBackground;
+  const bubbleBorderColor = theme.colors.thinkingBubbleBorder;
+  const textColor = theme.colors.thinkingBubbleText;
+  const shadowColor = theme.colors.thinkingBubbleShadow;
 
   return StyleSheet.create({
     shadowContainer: {
@@ -96,13 +82,9 @@ export const createStyles = (theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: 14,
-      backgroundColor: isDarkMode
-        ? 'rgba(74, 140, 199, 0.15)'
-        : 'rgba(10, 89, 153, 0.1)',
+      backgroundColor: theme.colors.thinkingBubbleChevronBackground,
       borderWidth: 1,
-      borderColor: isDarkMode
-        ? 'rgba(74, 140, 199, 0.3)'
-        : 'rgba(10, 89, 153, 0.2)',
+      borderColor: theme.colors.thinkingBubbleChevronBorder,
     },
     collapsedChevronContainer: {
       width: 20,

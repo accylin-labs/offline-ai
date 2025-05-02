@@ -33,21 +33,21 @@ export const createTagsStyles = (theme: Theme) => ({
   },
   // Styles for thinking tags
   thinking: {
-    color: theme.dark ? '#4a8cc7' : '#0a5999', // Match the ThinkingBubble text color
+    color: theme.colors.thinkingBubbleText,
     fontSize: 14,
     lineHeight: 20,
     fontFamily:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   },
   think: {
-    color: theme.dark ? '#4a8cc7' : '#0a5999',
+    color: theme.colors.thinkingBubbleText,
     fontSize: 14,
     lineHeight: 20,
     fontFamily:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
   },
   thought: {
-    color: theme.dark ? '#4a8cc7' : '#0a5999',
+    color: theme.colors.thinkingBubbleText,
     fontSize: 14,
     lineHeight: 20,
     fontFamily:

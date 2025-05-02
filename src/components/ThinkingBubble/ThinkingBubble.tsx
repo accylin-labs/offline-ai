@@ -264,7 +264,7 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
             <Icon
               name="chevron-down"
               size={bubbleState === BubbleState.COLLAPSED ? 16 : 18}
-              color={theme.dark ? '#4a8cc7' : '#0a5999'}
+              color={theme.colors.thinkingBubbleText}
             />
           </Animated.View>
         </View>
