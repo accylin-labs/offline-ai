@@ -14,7 +14,6 @@ import {Text} from 'react-native-paper';
 import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {BlurView} from '@react-native-community/blur';
 import MaskedView from '@react-native-masked-view/masked-view';
 import LinearGradient from 'react-native-linear-gradient';
 
@@ -205,8 +204,8 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
         }),
         Animated.spring(chevronScale, {
           toValue: 1,
-          friction: 7, // Lower friction for more bounce
-          tension: 40, // Lower tension for more natural spring
+          friction: 7,
+          tension: 40,
           useNativeDriver: true,
         }),
       ]).start();
@@ -214,37 +213,32 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
       // Very subtle scale effect when expanding
       Animated.sequence([
         Animated.timing(chevronScale, {
-          toValue: 1.1, // Smaller scale change
-          duration: 250, // Longer duration
-          easing: Easing.bezier(0.4, 0, 0.2, 1), // Material standard
+          toValue: 1.1,
+          duration: 250,
+          easing: Easing.bezier(0.4, 0, 0.2, 1),
           useNativeDriver: true,
         }),
         Animated.timing(chevronScale, {
           toValue: 1,
-          duration: 350, // Much longer duration for smoother return
-          easing: Easing.bezier(0, 0, 0.2, 1), // Material standard
+          duration: 350,
+          easing: Easing.bezier(0, 0, 0.2, 1),
           useNativeDriver: true,
         }),
       ]).start();
     }
   };
 
+  const handlePress = () => {
+    toggleState();
+    animateChevronScale();
+  };
+
   return (
     <TouchableOpacity
+      style={bubbleState !== BubbleState.COLLAPSED && styles.shadowContainer}
       activeOpacity={0.9}
-      onPress={() => {
-        toggleState();
-        animateChevronScale();
-      }}>
+      onPress={handlePress}>
       <View style={containerStyle}>
-        {/* Blur effect - theme specific */}
-        <BlurView
-          style={styles.absoluteFill}
-          blurType={theme.dark ? 'dark' : 'light'}
-          blurAmount={32}
-          reducedTransparencyFallbackColor="rgba(10, 10, 20, 0.8)"
-        />
-
         {/* Header */}
         <View
           style={[
@@ -269,8 +263,8 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
             ]}>
             <Icon
               name="chevron-down"
-              size={bubbleState === BubbleState.COLLAPSED ? 16 : 18} // Smaller icon in collapsed state
-              color={theme.dark ? '#4a8cc7' : '#0a5999'} // Theme-specific color
+              size={bubbleState === BubbleState.COLLAPSED ? 16 : 18}
+              color={theme.dark ? '#4a8cc7' : '#0a5999'}
             />
           </Animated.View>
         </View>

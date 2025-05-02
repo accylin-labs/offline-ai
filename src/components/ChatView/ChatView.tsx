@@ -211,7 +211,6 @@ export const ChatView = observer(
     const [stackEntry, setStackEntry] = React.useState<StatusBarProps>({});
 
     const [showScrollButton, setShowScrollButton] = React.useState(false);
-    const [isUserScrolling, setIsUserScrolling] = React.useState(false);
 
     React.useEffect(() => {
       if (activePal) {
@@ -228,7 +227,7 @@ export const ChatView = observer(
 
     const handleScroll = React.useCallback(event => {
       const {contentOffset} = event.nativeEvent;
-      const isAtTop = contentOffset.y <= 0;
+      const isAtTop = contentOffset.y <= 80;
       setShowScrollButton(!isAtTop);
     }, []);
 
@@ -237,11 +236,6 @@ export const ChatView = observer(
         animated: true,
         offset: 0,
       });
-      setIsUserScrolling(false);
-    }, []);
-
-    const handleScrollBeginDrag = React.useCallback(() => {
-      setIsUserScrolling(true);
     }, []);
 
     const wrappedOnSendPress = React.useCallback(
@@ -251,7 +245,6 @@ export const ChatView = observer(
         }
         onSendPress(message);
         setInputText('');
-        setIsUserScrolling(false);
       },
       [onSendPress],
     );
@@ -634,14 +627,10 @@ export const ChatView = observer(
             onEndReached={handleEndReached}
             ref={list}
             renderItem={renderMessage}
-            onScrollBeginDrag={handleScrollBeginDrag}
-            maintainVisibleContentPosition={
-              !isUserScrolling
-                ? undefined
-                : {
-                    minIndexForVisible: 1,
-                  }
-            }
+            maintainVisibleContentPosition={{
+              autoscrollToTopThreshold: 20,
+              minIndexForVisible: isStreaming ? 1 : 0,
+            }}
           />
           {showScrollButton && (
             <Animated.View style={{transform: [{translateY}]}}>
@@ -675,8 +664,7 @@ export const ChatView = observer(
         keyExtractor,
         handleEndReached,
         renderMessage,
-        handleScrollBeginDrag,
-        isUserScrolling,
+        isStreaming,
         showScrollButton,
         translateY,
         bottomComponentHeight,

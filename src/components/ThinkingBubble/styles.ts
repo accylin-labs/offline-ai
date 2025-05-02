@@ -22,6 +22,19 @@ export const createStyles = (theme: Theme) => {
   const shadowColor = isDarkMode ? '#4a9fff' : '#0a5999'; // Glow color that matches the theme
 
   return StyleSheet.create({
+    shadowContainer: {
+      ...Platform.select({
+        ios: {
+          shadowColor: shadowColor,
+          shadowOffset: {width: 0, height: 2},
+          shadowOpacity: 0.4,
+          shadowRadius: 12,
+        },
+        android: {
+          // No need here, shadows come from elevation in the inner container
+        },
+      }),
+    },
     container: {
       marginVertical: 16, // Increased margin for better elevation appearance
       borderRadius: 20,
@@ -29,13 +42,10 @@ export const createStyles = (theme: Theme) => {
       backgroundColor: bubbleBackground,
       borderWidth: 1,
       borderColor: bubbleBorderColor,
-      // Enhanced elevation and glow effects
+      // Platform-specific styles to ensure consistent layout behavior
       ...Platform.select({
         ios: {
-          shadowColor: shadowColor,
-          shadowOffset: {width: 0, height: 2}, // Slight offset for better elevation
-          shadowOpacity: 0.4, // Slightly reduced opacity for more subtle effect
-          shadowRadius: 12, // Diffuse glow
+          // No need here, shadows come from parrent container - overflow: 'hidden', will hide the shadow
         },
         android: {
           elevation: 8, // Moderate elevation
