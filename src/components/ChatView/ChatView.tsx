@@ -702,7 +702,7 @@ export const ChatView = observer(
 
     const inputBackgroundColor = activePal?.color?.[1]
       ? activePal.color?.[1]
-      : theme.colors.primary;
+      : theme.colors.secondaryContainer;
     return (
       <UserContext.Provider value={user}>
         <View style={styles.container} onLayout={onLayout}>
