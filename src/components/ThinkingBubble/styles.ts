@@ -109,6 +109,7 @@ export const createStyles = (theme: Theme) => {
       paddingHorizontal: 16,
       paddingBottom: 16,
       backgroundColor: 'transparent',
+      borderRadius: 0, // No border radius to avoid affecting the main border
     },
     borderGlow: {
       position: 'absolute',
@@ -166,6 +167,23 @@ export const createStyles = (theme: Theme) => {
       left: 0,
       right: 0,
       bottom: 0,
+    },
+    maskedContentContainer: {
+      flex: 1,
+      position: 'relative',
+      overflow: 'hidden',
+      borderRadius: 0,
+    },
+    maskElementContainer: {
+      flex: 1,
+    },
+    maskGradient: {
+      height: 30,
+      width: '100%',
+    },
+    maskSolid: {
+      flex: 1,
+      backgroundColor: 'black',
     },
     // Secondary glow effect for depth
     secondaryGlow: {

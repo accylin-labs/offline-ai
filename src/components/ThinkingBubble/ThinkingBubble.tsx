@@ -15,6 +15,8 @@ import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {BlurView} from '@react-native-community/blur';
+import MaskedView from '@react-native-masked-view/masked-view';
+import LinearGradient from 'react-native-linear-gradient';
 
 // Enable LayoutAnimation for Android
 if (
@@ -264,15 +266,31 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
         {/* Content */}
         {isContentVisible &&
           (isScrollable ? (
-            <ScrollView
-              ref={scrollViewRef}
-              style={styles.contentContainer}
-              showsVerticalScrollIndicator={false}
-              onContentSizeChange={() =>
-                scrollViewRef.current?.scrollToEnd({animated: true})
+            <MaskedView
+              style={styles.maskedContentContainer}
+              maskElement={
+                <View style={styles.maskElementContainer}>
+                  {/* This gradient is used as a mask - transparent areas will be see-through */}
+                  <LinearGradient
+                    style={styles.maskGradient}
+                    colors={['transparent', 'black']}
+                    pointerEvents="none"
+                  />
+                  {/* Solid black below the gradient ensures the rest of the content is fully visible */}
+                  <View style={styles.maskSolid} />
+                </View>
               }>
-              {children}
-            </ScrollView>
+              {/* The actual content that will be masked */}
+              <ScrollView
+                ref={scrollViewRef}
+                style={styles.contentContainer}
+                showsVerticalScrollIndicator={false}
+                onContentSizeChange={() =>
+                  scrollViewRef.current?.scrollToEnd({animated: true})
+                }>
+                {children}
+              </ScrollView>
+            </MaskedView>
           ) : (
             <View style={styles.contentContainer}>{children}</View>
           ))}
