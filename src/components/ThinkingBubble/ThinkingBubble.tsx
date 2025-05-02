@@ -13,7 +13,7 @@ import {
 import {Text} from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ChevronDownIcon} from '../../assets/icons';
 
 import {useTheme} from '../../hooks';
 import {L10nContext} from '../../utils';
@@ -265,10 +265,10 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
                 ],
               },
             ]}>
-            <Icon
-              name="chevron-down"
-              size={bubbleState === BubbleState.COLLAPSED ? 16 : 18}
-              color={theme.colors.thinkingBubbleText}
+            <ChevronDownIcon
+              width={bubbleState === BubbleState.COLLAPSED ? 16 : 18}
+              height={bubbleState === BubbleState.COLLAPSED ? 16 : 18}
+              stroke={theme.colors.thinkingBubbleText}
             />
           </Animated.View>
         </View>
