@@ -1,10 +1,11 @@
-import {CompletionParams, LlamaContext} from '@pocketpalai/llama.rn';
+import {LlamaContext} from '@pocketpalai/llama.rn';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import {makeAutoObservable, runInAction} from 'mobx';
 import {format, isToday, isYesterday} from 'date-fns';
 
 import {assistant, defaultCompletionParams} from '../utils/chat';
 import {MessageType} from '../utils/types';
+import {CompletionParams} from '../utils/completionTypes';
 
 const NEW_SESSION_TITLE = 'New Session';
 const TITLE_LIMIT = 40;

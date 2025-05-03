@@ -2,10 +2,8 @@ import React, {useState} from 'react';
 import {View, ScrollView} from 'react-native';
 
 import {observer} from 'mobx-react';
-import {
-  CompletionParams,
-  JinjaFormattedChatResult,
-} from '@pocketpalai/llama.rn';
+import {JinjaFormattedChatResult} from '@pocketpalai/llama.rn';
+import {CompletionParams} from '../../utils/completionTypes';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {

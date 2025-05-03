@@ -1,9 +1,6 @@
 import {applyTemplate, Templates} from 'chat-formatter';
-import {
-  CompletionParams,
-  JinjaFormattedChatResult,
-  LlamaContext,
-} from '@pocketpalai/llama.rn';
+import {JinjaFormattedChatResult, LlamaContext} from '@pocketpalai/llama.rn';
+import {CompletionParams} from './completionTypes';
 
 import {
   ChatMessage,
@@ -237,6 +234,9 @@ export const defaultCompletionParams: CompletionParams = {
   n_probs: 0, // If greater than 0, the response also contains the probabilities of top N tokens for each generated token given the sampling settings.
   stop: ['</s>'],
   // emit_partial_completion: true, // This is not used in the current version of llama.rn
+
+  // App-specific properties (not used by llama.rn directly)
+  include_thinking_in_context: true, // Whether to include thinking parts in the context sent to the model
 };
 
 export const stops = [
@@ -251,3 +251,37 @@ export const stops = [
   '<end_of_turn>',
   '<|endoftext|>',
 ];
+
+/**
+ * Removes thinking parts from text content.
+ * This function removes content between <think>, <thought>, or <thinking> tags and their closing tags.
+ *
+ * @param text - The text to process
+ * @returns The text with thinking parts removed
+ */
+export function removeThinkingParts(text: string): string {
+  // Check if the text contains any thinking tags
+  const hasThinkingTags =
+    text.includes('<think>') ||
+    text.includes('<thought>') ||
+    text.includes('<thinking>');
+
+  // If no thinking tags are found, return the original text
+  if (!hasThinkingTags) {
+    return text;
+  }
+
+  // Remove content between <think> and </think> tags
+  let result = text.replace(/<think>[\s\S]*?<\/think>/g, '');
+
+  // Remove content between <thought> and </thought> tags
+  result = result.replace(/<thought>[\s\S]*?<\/thought>/g, '');
+
+  // Remove content between <thinking> and </thinking> tags
+  result = result.replace(/<thinking>[\s\S]*?<\/thinking>/g, '');
+
+  // Log for debugging
+  console.log('Removed thinking parts from context');
+
+  return result;
+}

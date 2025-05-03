@@ -8,9 +8,16 @@ import {L10nContext} from '../utils';
 import {chatSessionStore, modelStore, palStore} from '../store';
 
 import {MessageType, User} from '../utils/types';
-import {applyChatTemplate, convertToChatMessages} from '../utils/chat';
+import {
+  applyChatTemplate,
+  convertToChatMessages,
+  removeThinkingParts,
+} from '../utils/chat';
 import {activateKeepAwake, deactivateKeepAwake} from '../utils/keepAwake';
-import {CompletionParams} from '@pocketpalai/llama.rn';
+import {
+  CompletionParams,
+  toApiCompletionParams,
+} from '../utils/completionTypes';
 
 export const useChatSession = (
   currentMessageInfo: React.MutableRefObject<{
@@ -154,29 +161,47 @@ export const useChatSession = (
       context,
     );
 
+    // Get the completion settings from the session
     const sessionCompletionSettings = toJS(activeSession?.completionSettings);
+
+    // If the user has disabled including thinking parts in the context, remove them
+    // Default to true if not specified
+    const includeThinkingInContext =
+      (sessionCompletionSettings as CompletionParams)
+        ?.include_thinking_in_context !== false;
+    if (!includeThinkingInContext) {
+      prompt =
+        typeof prompt === 'string' ? removeThinkingParts(prompt) : prompt;
+    }
+    console.log('prompt', prompt);
+
     const stopWords = toJS(modelStore.activeModel?.stopWords);
-    const completionParams = {
+
+    // Create completion params with app-specific properties
+    const completionParamsWithAppProps = {
       ...sessionCompletionSettings,
       prompt,
       stop: stopWords,
-    };
+    } as CompletionParams;
+
+    // Strip app-specific properties before passing to llama.rn
+    const cleanCompletionParams = toApiCompletionParams(
+      completionParamsWithAppProps,
+    );
+
     try {
-      const result = await context.completion(
-        completionParams as CompletionParams,
-        data => {
-          if (data.token && currentMessageInfo.current) {
-            if (!modelStore.isStreaming) {
-              modelStore.setIsStreaming(true);
-            }
-            tokenBufferRef.current += data.token;
-            throttledFlushTokenBuffer(
-              currentMessageInfo.current.createdAt,
-              currentMessageInfo.current.id,
-            );
+      const result = await context.completion(cleanCompletionParams, data => {
+        if (data.token && currentMessageInfo.current) {
+          if (!modelStore.isStreaming) {
+            modelStore.setIsStreaming(true);
           }
-        },
-      );
+          tokenBufferRef.current += data.token;
+          throttledFlushTokenBuffer(
+            currentMessageInfo.current.createdAt,
+            currentMessageInfo.current.id,
+          );
+        }
+      });
 
       // Flush any remaining tokens after completion
       if (

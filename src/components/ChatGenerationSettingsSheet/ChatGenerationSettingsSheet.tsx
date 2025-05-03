@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Sheet} from '../Sheet/Sheet';
 import {CompletionSettings} from '..';
-import {CompletionParams} from '@pocketpalai/llama.rn';
+import {CompletionParams} from '../../utils/completionTypes';
 import {chatSessionStore, defaultCompletionSettings} from '../../store';
 import {styles} from './styles';
 import {
