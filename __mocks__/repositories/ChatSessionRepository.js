@@ -73,6 +73,14 @@ class ChatSessionRepository {
     return; // Mock: do nothing
   }
 
+  async deleteMessage(id) {
+    return; // Mock: do nothing
+  }
+
+  async setSessionActivePal(sessionId, palId) {
+    return; // Mock: do nothing
+  }
+
   // Update session completion settings
   async updateSessionCompletionSettings(sessionId, settings) {
     return; // Mock: do nothing

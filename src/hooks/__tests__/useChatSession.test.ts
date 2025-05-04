@@ -106,12 +106,19 @@ describe('useChatSession', () => {
     const mockUpdateMessageToken = jest
       .fn()
       .mockImplementation(
-        async (data: any, createdAt: number, id: string, context: any) => {
+        async (
+          data: any,
+          createdAt: number,
+          id: string,
+          sessionId: string,
+          context: any,
+        ) => {
           return originalUpdateMessageToken.call(
             chatSessionStore,
             data,
             createdAt,
             id,
+            sessionId,
             context,
           );
         },

@@ -87,3 +87,14 @@ jest.mock('../src/services/downloads', () => ({
 jest.mock('uuid', () => ({
   v4: () => 'mock-uuid-12345' + Math.random(),
 }));
+
+jest.mock('../src/repositories/chatSessionRepository', () => ({
+  chatSessionRepository:
+    require('../__mocks__/repositories/ChatSessionRepository')
+      .chatSessionRepository,
+}));
+
+jest.mock('../src/utils/keepAwake', () => ({
+  activateKeepAwake: jest.fn(),
+  deactivateKeepAwake: jest.fn(),
+}));
