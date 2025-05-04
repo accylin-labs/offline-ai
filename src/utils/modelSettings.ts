@@ -1,5 +1,5 @@
-import {defaultCompletionParams} from './chat';
 import {CompletionParams} from './completionTypes';
+import {defaultCompletionParams} from './completionSettingsVersions';
 
 export const LEGACY_QUANTIZATION_WARNINGS = [
   'Q4_0_4_8',

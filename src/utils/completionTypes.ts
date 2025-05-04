@@ -11,6 +11,12 @@ export type ApiCompletionParams = LlamaRNCompletionParams;
  */
 export type AppOnlyCompletionParams = {
   /**
+   * Schema version for the completion parameters.
+   * Used for migrations when the schema changes.
+   */
+  version?: number;
+
+  /**
    * Whether to include thinking parts in the context sent to the model.
    * When false, thinking parts are removed from the context to save context space.
    */
@@ -23,6 +29,7 @@ export type AppOnlyCompletionParams = {
  * sending to the llama.rn API.
  */
 const APP_ONLY_KEYS: (keyof AppOnlyCompletionParams)[] = [
+  'version',
   'include_thinking_in_context',
 ];
 

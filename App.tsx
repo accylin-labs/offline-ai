@@ -22,7 +22,12 @@ import {initLocale} from './src/utils';
 import {L10nContext} from './src/utils';
 import {ROUTES} from './src/utils/navigationConstants';
 
-import {SidebarContent, ModelsHeaderRight, HeaderLeft} from './src/components';
+import {
+  SidebarContent,
+  ModelsHeaderRight,
+  HeaderLeft,
+  AppWithMigration,
+} from './src/components';
 import {
   ChatScreen,
   ModelsScreen,
@@ -162,4 +167,13 @@ const createStyles = (theme: Theme) =>
     },
   });
 
-export default App;
+// Wrap the App component with AppWithMigration to show migration UI when needed
+const AppWithMigrationWrapper = () => {
+  return (
+    <AppWithMigration>
+      <App />
+    </AppWithMigration>
+  );
+};
+
+export default AppWithMigrationWrapper;

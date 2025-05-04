@@ -3,26 +3,29 @@ import React, {useRef, useCallback} from 'react';
 import {toJS} from 'mobx';
 import throttle from 'lodash.throttle';
 
+import {chatSessionRepository} from '../repositories/ChatSessionRepository';
+
 import {randId} from '../utils';
 import {L10nContext} from '../utils';
 import {chatSessionStore, modelStore, palStore} from '../store';
 
 import {MessageType, User} from '../utils/types';
-import {
-  applyChatTemplate,
-  convertToChatMessages,
-  removeThinkingParts,
-} from '../utils/chat';
 import {activateKeepAwake, deactivateKeepAwake} from '../utils/keepAwake';
 import {
   CompletionParams,
   toApiCompletionParams,
 } from '../utils/completionTypes';
+import {
+  applyChatTemplate,
+  convertToChatMessages,
+  removeThinkingParts,
+} from '../utils/chat';
 
 export const useChatSession = (
   currentMessageInfo: React.MutableRefObject<{
     createdAt: number;
     id: string;
+    sessionId: string;
   } | null>,
   user: User,
   assistant: User,
@@ -35,32 +38,46 @@ export const useChatSession = (
   const updateInterval = 150; // Interval for flushing token buffer (in ms)
 
   // Function to flush the token buffer and update the chat message
-  const flushTokenBuffer = useCallback((createdAt: number, id: string) => {
-    const context = modelStore.context;
-    if (tokenBufferRef.current.length > 0 && context) {
-      chatSessionStore.updateMessageToken(
-        {token: tokenBufferRef.current},
-        createdAt,
-        id,
-        context,
-      );
-      tokenBufferRef.current = ''; // Reset the token buffer
-    }
-  }, []);
+  const flushTokenBuffer = useCallback(
+    async (createdAt: number, id: string, sessionId: string) => {
+      const context = modelStore.context;
+      if (tokenBufferRef.current.length > 0 && context) {
+        try {
+          await chatSessionStore.updateMessageToken(
+            {token: tokenBufferRef.current},
+            createdAt,
+            id,
+            sessionId,
+            context,
+          );
+          tokenBufferRef.current = ''; // Reset the token buffer
+        } catch (error) {
+          console.error('Error updating message token:', error);
+          // Still reset the buffer to avoid getting stuck
+          tokenBufferRef.current = '';
+        }
+      }
+    },
+    [],
+  );
 
   // Throttled version of flushTokenBuffer to prevent excessive updates
   const throttledFlushTokenBuffer = throttle(
-    (createdAt: number, id: string) => {
-      flushTokenBuffer(createdAt, id);
+    (createdAt: number, id: string, sessionId: string) => {
+      // We don't await this call because throttle doesn't support async functions
+      // The function will still execute asynchronously
+      flushTokenBuffer(createdAt, id, sessionId).catch(error => {
+        console.error('Error in throttled flush token buffer:', error);
+      });
     },
     updateInterval,
   );
 
-  const addMessage = (message: MessageType.Any) => {
-    chatSessionStore.addMessageToCurrentSession(message);
+  const addMessage = async (message: MessageType.Any) => {
+    await chatSessionStore.addMessageToCurrentSession(message);
   };
 
-  const addSystemMessage = (text: string, metadata = {}) => {
+  const addSystemMessage = async (text: string, metadata = {}) => {
     const textMessage: MessageType.Text = {
       author: assistant,
       createdAt: Date.now(),
@@ -69,13 +86,13 @@ export const useChatSession = (
       type: 'text',
       metadata: {system: true, ...metadata},
     };
-    addMessage(textMessage);
+    await addMessage(textMessage);
   };
 
   const handleSendPress = async (message: MessageType.PartialText) => {
     const context = modelStore.context;
     if (!context) {
-      addSystemMessage(l10n.chat.modelNotLoaded);
+      await addSystemMessage(l10n.chat.modelNotLoaded);
       return;
     }
 
@@ -91,7 +108,7 @@ export const useChatSession = (
         copyable: true,
       },
     };
-    addMessage(textMessage);
+    await addMessage(textMessage);
     modelStore.setInferencing(true);
     modelStore.setIsStreaming(false);
     chatSessionStore.setIsGenerating(true);
@@ -103,10 +120,6 @@ export const useChatSession = (
       console.error('Failed to activate keep awake during chat:', error);
       // Continue with chat even if keep awake fails
     }
-
-    const id = randId();
-    const createdAt = Date.now();
-    currentMessageInfo.current = {createdAt, id};
 
     const activeSession = chatSessionStore.sessions.find(
       s => s.id === chatSessionStore.activeSessionId,
@@ -173,7 +186,6 @@ export const useChatSession = (
       prompt =
         typeof prompt === 'string' ? removeThinkingParts(prompt) : prompt;
     }
-    console.log('prompt', prompt);
 
     const stopWords = toJS(modelStore.activeModel?.stopWords);
 
@@ -189,6 +201,28 @@ export const useChatSession = (
       completionParamsWithAppProps,
     );
 
+    const createdAt = Date.now();
+    const newMessage = await chatSessionRepository.addMessageToSession(
+      chatSessionStore.activeSessionId!,
+      {
+        author: assistant,
+        createdAt: createdAt,
+        id: '',
+        text: '',
+        type: 'text',
+        metadata: {
+          contextId: context.id,
+          conversationId: conversationIdRef.current,
+          copyable: true,
+        },
+      },
+    );
+    currentMessageInfo.current = {
+      createdAt,
+      id: newMessage.id,
+      sessionId: chatSessionStore.activeSessionId!,
+    };
+
     try {
       const result = await context.completion(cleanCompletionParams, data => {
         if (data.token && currentMessageInfo.current) {
@@ -199,6 +233,7 @@ export const useChatSession = (
           throttledFlushTokenBuffer(
             currentMessageInfo.current.createdAt,
             currentMessageInfo.current.id,
+            currentMessageInfo.current.sessionId,
           );
         }
       });
@@ -208,13 +243,20 @@ export const useChatSession = (
         currentMessageInfo.current?.createdAt &&
         currentMessageInfo.current?.id
       ) {
-        flushTokenBuffer(
-          currentMessageInfo.current.createdAt,
-          currentMessageInfo.current.id,
-        );
+        try {
+          await flushTokenBuffer(
+            currentMessageInfo.current.createdAt,
+            currentMessageInfo.current.id,
+            currentMessageInfo.current.sessionId,
+          );
+        } catch (error) {
+          console.error('Error flushing token buffer after completion:', error);
+        }
       }
 
-      chatSessionStore.updateMessage(id, {
+      // Update only the metadata in the database
+      // The text is already being updated with each token
+      await chatSessionStore.updateMessage(currentMessageInfo.current.id, {
         metadata: {timings: result.timings, copyable: true},
       });
       modelStore.setInferencing(false);
@@ -227,9 +269,9 @@ export const useChatSession = (
       const errorMessage = (error as Error).message;
       if (errorMessage.includes('network')) {
         // TODO: This can be removed. We don't use network for chat.
-        addSystemMessage(l10n.common.networkError);
+        await addSystemMessage(l10n.common.networkError);
       } else {
-        addSystemMessage(`${l10n.chat.completionFailed}${errorMessage}`);
+        await addSystemMessage(`${l10n.chat.completionFailed}${errorMessage}`);
       }
     } finally {
       // Always try to deactivate keep awake in finally block
@@ -241,12 +283,12 @@ export const useChatSession = (
     }
   };
 
-  const handleResetConversation = () => {
+  const handleResetConversation = async () => {
     conversationIdRef.current = randId();
-    addSystemMessage(l10n.chat.conversationReset);
+    await addSystemMessage(l10n.chat.conversationReset);
   };
 
-  const handleStopPress = () => {
+  const handleStopPress = async () => {
     const context = modelStore.context;
     if (modelStore.inferencing && context) {
       context.stopCompletion();
@@ -255,10 +297,16 @@ export const useChatSession = (
       currentMessageInfo.current?.createdAt &&
       currentMessageInfo.current?.id
     ) {
-      flushTokenBuffer(
-        currentMessageInfo.current.createdAt,
-        currentMessageInfo.current.id,
-      );
+      try {
+        // Flush any remaining tokens
+        await flushTokenBuffer(
+          currentMessageInfo.current.createdAt,
+          currentMessageInfo.current.id,
+          currentMessageInfo.current.sessionId,
+        );
+      } catch (error) {
+        console.error('Error when stopping completion:', error);
+      }
     }
     modelStore.setInferencing(false);
     modelStore.setIsStreaming(false);
