@@ -241,7 +241,7 @@ export const ChatView = observer(
     const wrappedOnSendPress = React.useCallback(
       async (message: MessageType.PartialText) => {
         if (chatSessionStore.isEditMode) {
-          chatSessionStore.commitEdit();
+          await chatSessionStore.commitEdit();
         }
         onSendPress(message);
         setInputText('');

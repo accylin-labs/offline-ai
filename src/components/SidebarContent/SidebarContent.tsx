@@ -69,9 +69,9 @@ export const SidebarContent: React.FC<DrawerContentComponentProps> = observer(
             {
               text: l10n.common.delete,
               style: 'destructive',
-              onPress: () => {
+              onPress: async () => {
                 chatSessionStore.resetActiveSession();
-                chatSessionStore.deleteSession(sessionId);
+                await chatSessionStore.deleteSession(sessionId);
                 closeMenu();
               },
             },

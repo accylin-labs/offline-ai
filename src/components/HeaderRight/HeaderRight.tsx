@@ -77,9 +77,9 @@ export const HeaderRight: React.FC = observer(() => {
           {
             text: l10n.common.delete,
             style: 'destructive',
-            onPress: () => {
+            onPress: async () => {
               chatSessionStore.resetActiveSession();
-              chatSessionStore.deleteSession(session.id);
+              await chatSessionStore.deleteSession(session.id);
               closeMenu();
             },
           },
@@ -89,9 +89,9 @@ export const HeaderRight: React.FC = observer(() => {
     closeMenu();
   };
 
-  const onPressDuplicate = () => {
+  const onPressDuplicate = async () => {
     if (session?.id) {
-      chatSessionStore.duplicateSession(session.id);
+      await chatSessionStore.duplicateSession(session.id);
       closeMenu();
     }
   };

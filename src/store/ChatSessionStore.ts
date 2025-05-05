@@ -279,10 +279,11 @@ class ChatSessionStore {
       const session = this.sessions.find(s => s.id === this.activeSessionId);
       if (session) {
         // Add to database
-        await chatSessionRepository.addMessageToSession(
+        const newMessage = await chatSessionRepository.addMessageToSession(
           this.activeSessionId,
           message,
         );
+        message.id = newMessage.id;
 
         // Update local state
         await this.updateSessionTitle(session);
@@ -375,7 +376,7 @@ class ChatSessionStore {
         this.newChatPalId = undefined;
       }
 
-      this.updateSessionTitle(metaData);
+      await this.updateSessionTitle(metaData);
 
       runInAction(() => {
         this.sessions.push(metaData);
@@ -643,33 +644,13 @@ class ChatSessionStore {
    * Commits the edit by actually removing messages after the edited message
    */
   async commitEdit(): Promise<void> {
-    if (this.activeSessionId && this.editingMessageId) {
-      const session = this.sessions.find(s => s.id === this.activeSessionId);
-      if (session) {
-        const messageIndex = session.messages.findIndex(
-          msg => msg.id === this.editingMessageId,
-        );
-        if (messageIndex >= 0) {
-          // Get messages to remove
-          const messagesToRemove = session.messages.slice(0, messageIndex + 1);
-
-          // Remove from database
-          for (const msg of messagesToRemove) {
-            await chatSessionRepository.deleteMessage(msg.id);
-          }
-
-          // Update local state
-          const updatedSession = await chatSessionRepository.getSessionById(
-            this.activeSessionId,
-          );
-          runInAction(() => {
-            session.messages =
-              updatedSession?.messages?.map(msg => msg.toMessageObject()) || [];
-            this.isEditMode = false;
-            this.editingMessageId = null;
-          });
-        }
-      }
+    if (this.editingMessageId) {
+      // Remove messages after the edited message including the edited message as well.
+      await this.removeMessagesFromId(this.editingMessageId, true);
+      runInAction(() => {
+        this.isEditMode = false;
+        this.editingMessageId = null;
+      });
     }
   }
 
@@ -692,8 +673,9 @@ class ChatSessionStore {
         );
         if (messageIndex >= 0) {
           // Get messages to remove
-          const startIndex = includeMessage ? messageIndex : messageIndex + 1;
-          const messagesToRemove = session.messages.slice(0, startIndex);
+          const endIndex = includeMessage ? messageIndex + 1 : messageIndex;
+          // Slice from the start to the end index, since messages are in reverse order, ie 0 is the latest.
+          const messagesToRemove = session.messages.slice(0, endIndex);
 
           // Remove from database
           for (const msg of messagesToRemove) {

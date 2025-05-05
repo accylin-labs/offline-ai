@@ -99,7 +99,7 @@ export const useChatSession = (
     const textMessage: MessageType.Text = {
       author: user,
       createdAt: Date.now(),
-      id: randId(),
+      id: '', // Will be set by the database
       text: message.text,
       type: 'text',
       metadata: {

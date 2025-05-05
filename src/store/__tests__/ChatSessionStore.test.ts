@@ -9,7 +9,7 @@ import {mockContextModel} from '../../../jest/fixtures/models';
 import {waitFor} from '@testing-library/react-native';
 
 // Use the mock from __mocks__/repositories/ChatSessionRepository.js
-jest.mock('../../repositories/ChatSessionRepository');
+//jest.mock('../../repositories/ChatSessionRepository');
 
 // Make the repository methods mockable
 jest.spyOn(chatSessionRepository, 'getAllSessions');
@@ -193,10 +193,6 @@ describe('chatSessionStore', () => {
       };
       chatSessionStore.sessions = [mockSession];
       chatSessionStore.activeSessionId = mockSession.id;
-
-      (
-        chatSessionRepository.addMessageToSession as jest.Mock
-      ).mockResolvedValue(undefined);
 
       await chatSessionStore.addMessageToCurrentSession(mockMessage);
 
@@ -873,7 +869,7 @@ describe('chatSessionStore', () => {
 
     it('commits edit by removing messages after the edited message', async () => {
       chatSessionStore.enterEditMode(mockMessage3.id);
-      chatSessionStore.commitEdit();
+      await chatSessionStore.commitEdit();
 
       await waitFor(() => {
         expect(chatSessionStore.isEditMode).toBe(false);
