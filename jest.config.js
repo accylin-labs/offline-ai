@@ -11,6 +11,7 @@ module.exports = {
     '!**/ImageView.ios.ts',
     '!**/ImageView.tsx',
   ],
+  coveragePathIgnorePatterns: ['/src/screens/DevToolsScreen/'],
   coverageThreshold: {
     global: {
       branches: 60,

@@ -266,6 +266,7 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
               },
             ]}>
             <ChevronDownIcon
+              testID="chevron-icon"
               width={bubbleState === BubbleState.COLLAPSED ? 16 : 18}
               height={bubbleState === BubbleState.COLLAPSED ? 16 : 18}
               stroke={theme.colors.thinkingBubbleText}
@@ -291,6 +292,7 @@ export const ThinkingBubble: React.FC<ThinkingBubbleProps> = ({children}) => {
             ) : isScrollable ? (
               // Use MaskedView only when not animating from collapsed to partial
               <MaskedView
+                testID="masked-view"
                 style={styles.maskedContentContainer}
                 maskElement={
                   <View style={styles.maskElementContainer}>
