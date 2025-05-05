@@ -17,13 +17,17 @@ import {
   EditIcon,
   GridIcon,
   SettingsIcon,
-  // ShareIcon,
+  ShareIcon,
   TrashIcon,
 } from '../../assets/icons';
 import {Menu} from '../Menu';
 import {L10nContext} from '../../utils';
 import {ChatGenerationSettingsSheet} from '..';
 import {Model} from '../../utils/types';
+import {
+  exportChatSession,
+  exportAllChatSessions,
+} from '../../utils/exportUtils';
 
 export const HeaderRight: React.FC = observer(() => {
   const theme = useTheme();
@@ -94,6 +98,28 @@ export const HeaderRight: React.FC = observer(() => {
     closeMenu();
   };
 
+  const onPressExportCurrentSession = async () => {
+    if (session?.id) {
+      try {
+        await exportChatSession(session.id);
+      } catch (error) {
+        console.error('Error exporting current session:', error);
+        Alert.alert('Export Error', 'Failed to export the current session.');
+      }
+    }
+    closeMenu();
+  };
+
+  const onPressExportAllSessions = async () => {
+    try {
+      await exportAllChatSessions();
+    } catch (error) {
+      console.error('Error exporting all sessions:', error);
+      Alert.alert('Export Error', 'Failed to export all sessions.');
+    }
+    closeMenu();
+  };
+
   return (
     <View style={styles.headerRightContainer}>
       {uiStore.displayMemUsage && <UsageStats width={40} height={20} />}
@@ -146,11 +172,6 @@ export const HeaderRight: React.FC = observer(() => {
                 <DuplicateIcon stroke={theme.colors.primary} />
               )}
             />
-            {/* <Menu.Item
-              onPress={() => {}}
-              label={l10n.components.headerRight.exportChatSession}
-              leadingIcon={() => <ShareIcon stroke={theme.colors.primary} />}
-            /> */}
             <Menu.Item
               onPress={onPressRename}
               label={l10n.common.rename}
@@ -172,6 +193,23 @@ export const HeaderRight: React.FC = observer(() => {
             /> */}
           </>
         )}
+        <Menu.Item
+          submenu={[
+            <Menu.Item
+              disabled={!session?.id}
+              key="export-current"
+              onPress={onPressExportCurrentSession}
+              label={l10n.components.headerRight.exportCurrentSession}
+            />,
+            <Menu.Item
+              key="export-all"
+              onPress={onPressExportAllSessions}
+              label={l10n.components.headerRight.exportAllSessions}
+            />,
+          ]}
+          label={l10n.components.headerRight.export}
+          leadingIcon={() => <ShareIcon stroke={theme.colors.primary} />}
+        />
       </Menu>
       <ChatGenerationSettingsSheet
         isVisible={chatGenerationSettingsVisible}

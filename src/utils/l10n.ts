@@ -87,6 +87,12 @@ export const l10n = {
       // Display Memory Usage
       displayMemoryUsage: 'Display Memory Usage',
       displayMemoryUsageDescription: 'Display memory usage in the chat page.',
+      // Export Options
+      exportOptions: 'Export Options',
+      exportLegacyChats: 'Export Legacy Chat',
+      exportLegacyChatsDescription:
+        'Use this if migration failed or you need to recover old chat sessions.',
+      exportButton: 'Export',
       // API Settings
       apiSettingsTitle: 'API Settings',
       // Hugging Face Token
@@ -465,6 +471,9 @@ export const l10n = {
         model: 'Model',
         duplicateChatHistory: 'Duplicate chat history',
         makeChatTemporary: 'Make chat temporary',
+        export: 'Export',
+        exportCurrentSession: 'Export current session',
+        exportAllSessions: 'Export all sessions',
         exportChatSession: 'Export chat session',
       },
       hfTokenSheet: {
@@ -897,6 +906,12 @@ export const l10n = {
       // Display Memory Usage
       displayMemoryUsage: 'メモリ使用量を表示',
       displayMemoryUsageDescription: 'チャット画面にメモリ使用量を表示します。',
+      // Export Options
+      exportOptions: 'エクスポートオプション',
+      exportLegacyChats: '旧チャットセッションをエクスポート',
+      exportLegacyChatsDescription:
+        '移行に失敗した場合や古いチャットセッションを復元する必要がある場合に使用します。',
+      exportButton: 'エクスポート',
       // API Settings
       apiSettingsTitle: 'API設定',
       // Hugging Face Token
@@ -1277,6 +1292,9 @@ export const l10n = {
         model: 'モデル',
         duplicateChatHistory: 'チャット履歴を複製',
         makeChatTemporary: '一時的なチャットにする',
+        export: 'エクスポート',
+        exportCurrentSession: '現在のセッションをエクスポート',
+        exportAllSessions: 'すべてのセッションをエクスポート',
         exportChatSession: 'チャットをエクスポート',
       },
       hfTokenSheet: {
@@ -1702,6 +1720,12 @@ export const l10n = {
       // Display Memory Usage
       displayMemoryUsage: '显示内存使用情况',
       displayMemoryUsageDescription: '在聊天页面中显示内存使用情况。',
+      // Export Options
+      exportOptions: '导出选项',
+      exportLegacyChats: '导出旧版聊天会话',
+      exportLegacyChatsDescription:
+        '如果迁移失败或需要恢复旧聊天会话，请使用此选项。',
+      exportButton: '导出',
       // API Settings
       apiSettingsTitle: 'API设置',
       // Hugging Face Token
@@ -2051,6 +2075,9 @@ export const l10n = {
         model: '模型',
         duplicateChatHistory: '复制聊天历史',
         makeChatTemporary: '使聊天临时',
+        export: '导出',
+        exportCurrentSession: '导出当前会话',
+        exportAllSessions: '导出所有会话',
         exportChatSession: '导出聊天会话',
       },
       hfTokenSheet: {
