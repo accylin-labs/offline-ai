@@ -88,7 +88,7 @@ jest.mock('uuid', () => ({
   v4: () => 'mock-uuid-12345' + Math.random(),
 }));
 
-jest.mock('../src/repositories/chatSessionRepository', () => ({
+jest.mock('../src/repositories/ChatSessionRepository', () => ({
   chatSessionRepository:
     require('../__mocks__/repositories/ChatSessionRepository')
       .chatSessionRepository,

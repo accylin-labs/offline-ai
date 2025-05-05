@@ -1,6 +1,6 @@
 import React from 'react';
 import {Text} from 'react-native';
-import {render, fireEvent, act} from '../../../../jest/test-utils';
+import {render, fireEvent} from '../../../../jest/test-utils';
 import {ThinkingBubble} from '../ThinkingBubble';
 import {L10nContext} from '../../../utils';
 import {l10n} from '../../../utils/l10n';
@@ -150,8 +150,6 @@ describe('ThinkingBubble', () => {
     expect(getByTestId('thinking-content').props.children).toBe(longContent);
 
     // Advance timers to trigger the auto-scroll
-    act(() => {
-      jest.advanceTimersByTime(200);
-    });
+    jest.advanceTimersByTime(200);
   });
 });

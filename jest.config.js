@@ -66,11 +66,6 @@ module.exports = {
     '@nozbe/simdjson': '<rootDir>/__mocks__/external/@nozbe/simdjson.js',
     '@nozbe/sqlite': '<rootDir>/__mocks__/external/@nozbe/sqlite.js',
     '../database': '<rootDir>/__mocks__/database.js',
-    '../src/database': '<rootDir>/__mocks__/database.js',
-    '../src/repositories/ChatSessionRepository':
-      '<rootDir>/__mocks__/repositories/ChatSessionRepository.js',
-    '../src/utils/completionSettingsVersions':
-      '<rootDir>/__mocks__/utils/completionSettingsVersions.js',
     'mobx-persist-store': '<rootDir>/__mocks__/external/mobx-persist-store.js',
   },
 };
