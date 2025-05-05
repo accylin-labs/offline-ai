@@ -33,9 +33,11 @@ import {
   ModelsScreen,
   SettingsScreen,
   BenchmarkScreen,
-  TestCompletionScreen,
   AboutScreen,
   PalsScreen,
+
+  // Dev tools screen. Only available in debug mode.
+  DevToolsScreen,
 } from './src/screens';
 
 // Check if app is in debug mode
@@ -126,14 +128,14 @@ const App = observer(() => {
                       }}
                     />
 
-                    {/* Only show Test Completion screen in debug mode */}
+                    {/* Only show Dev Tools screen in debug mode */}
                     {isDebugMode && (
                       <Drawer.Screen
-                        name={ROUTES.TEST_COMPLETION}
-                        component={gestureHandlerRootHOC(TestCompletionScreen)}
+                        name={ROUTES.DEV_TOOLS}
+                        component={gestureHandlerRootHOC(DevToolsScreen)}
                         options={{
                           headerStyle: styles.headerWithoutDivider,
-                          title: currentL10n.screenTitles.testCompletion,
+                          title: 'Dev Tools',
                         }}
                       />
                     )}
