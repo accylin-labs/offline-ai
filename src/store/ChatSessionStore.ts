@@ -388,25 +388,32 @@ class ChatSessionStore {
 
   async updateMessage(
     id: string,
+    sessionId: string,
     update: Partial<MessageType.Text>,
   ): Promise<void> {
-    if (this.activeSessionId) {
-      const session = this.sessions.find(s => s.id === this.activeSessionId);
-      if (session) {
-        const index = session.messages.findIndex(msg => msg.id === id);
-        if (index >= 0 && session.messages[index].type === 'text') {
-          // Update in database
-          await chatSessionRepository.updateMessage(id, update);
+    try {
+      // Update in database
+      await chatSessionRepository.updateMessage(id, update);
 
-          // Update local state
-          runInAction(() => {
-            session.messages[index] = {
-              ...session.messages[index],
-              ...update,
-            } as MessageType.Text;
-          });
+      // Determine which session to update
+      const targetSessionId = sessionId || this.activeSessionId;
+      if (targetSessionId) {
+        const session = this.sessions.find(s => s.id === targetSessionId);
+        if (session) {
+          const index = session.messages.findIndex(msg => msg.id === id);
+          if (index >= 0 && session.messages[index].type === 'text') {
+            // Update local state - only update the specific message
+            runInAction(() => {
+              session.messages[index] = {
+                ...session.messages[index],
+                ...update,
+              } as MessageType.Text;
+            });
+          }
         }
       }
+    } catch (error) {
+      console.error('Failed to update message:', error);
     }
   }
 
@@ -414,16 +421,20 @@ class ChatSessionStore {
     if (this.activeSessionId) {
       const session = this.sessions.find(s => s.id === this.activeSessionId);
       if (session) {
-        // Update in database
-        await chatSessionRepository.updateSessionCompletionSettings(
-          this.activeSessionId,
-          settings,
-        );
+        try {
+          // Update in database
+          await chatSessionRepository.updateSessionCompletionSettings(
+            this.activeSessionId,
+            settings,
+          );
 
-        // Update local state
-        runInAction(() => {
-          session.completionSettings = settings;
-        });
+          // Update local state directly - no need to reload from database
+          runInAction(() => {
+            session.completionSettings = settings;
+          });
+        } catch (error) {
+          console.error('Failed to update session completion settings:', error);
+        }
       }
     }
   }
@@ -640,7 +651,7 @@ class ChatSessionStore {
         );
         if (messageIndex >= 0) {
           // Get messages to remove
-          const messagesToRemove = session.messages.slice(0, messageIndex);
+          const messagesToRemove = session.messages.slice(0, messageIndex + 1);
 
           // Remove from database
           for (const msg of messagesToRemove) {
@@ -648,8 +659,12 @@ class ChatSessionStore {
           }
 
           // Update local state
+          const updatedSession = await chatSessionRepository.getSessionById(
+            this.activeSessionId,
+          );
           runInAction(() => {
-            session.messages = session.messages.slice(messageIndex + 1);
+            session.messages =
+              updatedSession?.messages?.map(msg => msg.toMessageObject()) || [];
             this.isEditMode = false;
             this.editingMessageId = null;
           });
@@ -685,11 +700,14 @@ class ChatSessionStore {
             await chatSessionRepository.deleteMessage(msg.id);
           }
 
+          const updatedSession = await chatSessionRepository.getSessionById(
+            this.activeSessionId,
+          );
+
           // Update local state
           runInAction(() => {
-            session.messages = session.messages.slice(
-              includeMessage ? messageIndex + 1 : messageIndex,
-            );
+            session.messages =
+              updatedSession?.messages?.map(msg => msg.toMessageObject()) || [];
           });
         }
       }

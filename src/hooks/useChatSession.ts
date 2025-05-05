@@ -256,9 +256,13 @@ export const useChatSession = (
 
       // Update only the metadata in the database
       // The text is already being updated with each token
-      await chatSessionStore.updateMessage(currentMessageInfo.current.id, {
-        metadata: {timings: result.timings, copyable: true},
-      });
+      await chatSessionStore.updateMessage(
+        currentMessageInfo.current.id,
+        currentMessageInfo.current.sessionId,
+        {
+          metadata: {timings: result.timings, copyable: true},
+        },
+      );
       modelStore.setInferencing(false);
       modelStore.setIsStreaming(false);
       chatSessionStore.setIsGenerating(false);

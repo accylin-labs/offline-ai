@@ -175,12 +175,12 @@ describe('useChatSession', () => {
     const matchingCall = (
       chatSessionStore.updateMessage as jest.Mock
     ).mock.calls.find(
-      ([, {metadata}]) =>
+      ([, , {metadata}]) =>
         metadata && metadata.timings && metadata.copyable === true,
     );
 
     expect(matchingCall).toBeDefined();
-    expect(matchingCall[1].metadata).toEqual(expectedMetadata);
+    expect(matchingCall[2].metadata).toEqual(expectedMetadata);
   });
 
   it('should reset the conversation', () => {
