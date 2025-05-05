@@ -387,6 +387,32 @@ export const l10n = {
         timingsString:
           '{{predictedMs}}ms per token, {{predictedPerSecond}} tokens per second',
       },
+      exportUtils: {
+        fileSaved: 'File Saved',
+        fileSavedMessage:
+          'The file has been saved to your Downloads folder as {{filename}}',
+        share: 'Share',
+        ok: 'OK',
+        shareError: 'Share Error',
+        shareErrorMessage: 'Could not share the file. Please try again.',
+        saveError: 'Error saving to Downloads',
+        saveOptions: 'Save Options',
+        saveOptionsMessage:
+          'Unable to save directly to Downloads. Would you like to share the file instead?',
+        cancel: 'Cancel',
+        shareContentErrorMessage:
+          'Could not share the content. Please try again.',
+        exportError: 'Export Error',
+        exportErrorMessage:
+          'There was an error exporting the file. Please try again.',
+        permissionRequired: 'Storage Permission Required',
+        permissionMessage:
+          'We need permission to save your export into the Download folder.',
+        permissionDenied: 'Permission Denied',
+        permissionDeniedMessage:
+          'Without storage permission, the export feature will be disabled.',
+        continue: 'Continue',
+      },
       thinkingBubble: {
         reasoning: 'Reasoning',
       },
@@ -1216,6 +1242,33 @@ export const l10n = {
         timingsString:
           'トークンあたり{{predictedMs}}ms、1秒あたり{{predictedPerSecond}}トークン',
       },
+      exportUtils: {
+        fileSaved: 'ファイル保存完了',
+        fileSavedMessage:
+          'ファイルはダウンロードフォルダに{{filename}}として保存されました',
+        share: '共有',
+        ok: 'OK',
+        shareError: '共有エラー',
+        shareErrorMessage:
+          'ファイルを共有できませんでした。もう一度お試しください。',
+        saveError: 'ダウンロードフォルダへの保存エラー',
+        saveOptions: '保存オプション',
+        saveOptionsMessage:
+          'ダウンロードフォルダに直接保存できません。代わりにファイルを共有しますか？',
+        cancel: 'キャンセル',
+        shareContentErrorMessage:
+          'コンテンツを共有できませんでした。もう一度お試しください。',
+        exportError: 'エクスポートエラー',
+        exportErrorMessage:
+          'ファイルのエクスポート中にエラーが発生しました。もう一度お試しください。',
+        permissionRequired: 'ストレージへのアクセス許可が必要です',
+        permissionMessage:
+          'ダウンロードフォルダにファイルを保存するには許可が必要です',
+        permissionDenied: 'アクセス許可が拒否されました',
+        permissionDeniedMessage:
+          'ストレージへのアクセス許可がないため、エクスポート機能は利用できません',
+        continue: '続ける',
+      },
       thinkingBubble: {
         reasoning: '考える',
       },
@@ -2007,6 +2060,26 @@ export const l10n = {
       bubble: {
         timingsString:
           '每个令牌{{predictedMs}}ms，每秒{{predictedPerSecond}}令牌',
+      },
+      exportUtils: {
+        fileSaved: '文件已保存',
+        fileSavedMessage: '文件已保存到您的下载文件夹，文件名为{{filename}}',
+        share: '分享',
+        ok: '确定',
+        shareError: '分享错误',
+        shareErrorMessage: '无法分享文件。请重试。',
+        saveError: '保存到下载文件夹时出错',
+        saveOptions: '保存选项',
+        saveOptionsMessage: '无法直接保存到下载文件夹。您想分享文件吗？',
+        cancel: '取消',
+        shareContentErrorMessage: '无法分享内容。请重试。',
+        exportError: '导出错误',
+        exportErrorMessage: '导出文件时出错。请重试。',
+        permissionRequired: '需要存储权限',
+        permissionMessage: '需要权限才能将文件保存到下载文件夹',
+        permissionDenied: '权限被拒绝',
+        permissionDeniedMessage: '没有存储权限，导出功能将被禁用',
+        continue: '继续',
       },
       thinkingBubble: {
         reasoning: '思考',

@@ -98,3 +98,7 @@ jest.mock('../src/utils/keepAwake', () => ({
   activateKeepAwake: jest.fn(),
   deactivateKeepAwake: jest.fn(),
 }));
+
+jest.mock('react-native-share', () => ({
+  default: jest.fn(),
+}));
