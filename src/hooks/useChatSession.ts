@@ -38,17 +38,13 @@ export const useChatSession = (
     Array<{token: string; createdAt: number; id: string; sessionId: string}>
   >([]);
   const isProcessingTokens = useRef(false);
-  const isMounted = useRef(true);
+  const isMounted = useRef(true); // we use Drawer.Navigator, so the screen won't unmount. Not sure how useful this is.
   const batchTimer = useRef<NodeJS.Timeout | null>(null);
   const batchTimeout = 100; // Process batch every 100ms
 
   // Process all accumulated tokens in a batch
   const processTokenBatch = useCallback(async () => {
-    if (
-      !isMounted.current ||
-      isProcessingTokens.current ||
-      tokenQueue.current.length === 0
-    ) {
+    if (isProcessingTokens.current || tokenQueue.current.length === 0) {
       return;
     }
 
@@ -88,14 +84,20 @@ export const useChatSession = (
       isProcessingTokens.current = false;
 
       // Schedule next batch if there are new tokens
-      if (tokenQueue.current.length > 0 && isMounted.current) {
-        // Use inline function to avoid circular dependency
-        if (!batchTimer.current && isMounted.current) {
-          batchTimer.current = setTimeout(processTokenBatch, batchTimeout);
+      if (tokenQueue.current.length > 0) {
+        if (isMounted.current) {
+          // Normal case - component is mounted, schedule next batch
+          if (!batchTimer.current) {
+            batchTimer.current = setTimeout(processTokenBatch, batchTimeout);
+          }
+        } else {
+          // Component is unmounted but we still have tokens - process immediately
+          // This ensures all tokens are saved even after navigation
+          processTokenBatch();
         }
       }
     }
-  }, []);
+  }, [batchTimeout]);
 
   // Add token to queue and schedule processing
   const queueToken = useCallback(
@@ -112,17 +114,27 @@ export const useChatSession = (
   );
 
   // Cleanup on unmount
+  // In Drawer.Navigator, the screen won't unmount. Not sure how useful this is.
   React.useEffect(() => {
     isMounted.current = true;
     return () => {
-      isMounted.current = false;
-      // Clear any pending timer
-      if (batchTimer.current) {
-        clearTimeout(batchTimer.current);
-        batchTimer.current = null;
+      // Process any remaining tokens immediately instead of waiting for the timer
+      if (tokenQueue.current.length > 0 && !isProcessingTokens.current) {
+        // Force process the remaining tokens
+        processTokenBatch();
       }
+
+      // After a short delay to allow processing to complete, clean up
+      setTimeout(() => {
+        isMounted.current = false;
+        // Clear any pending timer
+        if (batchTimer.current) {
+          clearTimeout(batchTimer.current);
+          batchTimer.current = null;
+        }
+      }, 500); // Give 500ms for processing to complete
     };
-  }, []);
+  }, [processTokenBatch]);
 
   const addMessage = async (message: MessageType.Any) => {
     await chatSessionStore.addMessageToCurrentSession(message);
