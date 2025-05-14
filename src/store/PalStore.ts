@@ -7,11 +7,17 @@ import {
   AssistantFormData,
   PalType,
   RoleplayFormData,
+  CameraPalFormData,
 } from '../components/PalsSheets/types';
 
-export type Pal = {id: string} & (AssistantFormData | RoleplayFormData);
+export type Pal = {id: string} & (
+  | AssistantFormData
+  | RoleplayFormData
+  | CameraPalFormData
+);
 export type AssistantPal = Pal & {palType: PalType.ASSISTANT};
 export type RoleplayPal = Pal & {palType: PalType.ROLEPLAY};
+export type CameraPal = Pal & {palType: PalType.CAMERA};
 
 class PalStore {
   pals: Pal[] = [];
@@ -25,7 +31,7 @@ class PalStore {
     });
   }
 
-  addPal = (data: AssistantFormData | RoleplayFormData) => {
+  addPal = (data: AssistantFormData | RoleplayFormData | CameraPalFormData) => {
     const newPal = {
       id: uuidv4(),
       ...data,
@@ -35,7 +41,7 @@ class PalStore {
 
   updatePal = (
     id: string,
-    data: Partial<AssistantFormData | RoleplayFormData>,
+    data: Partial<AssistantFormData | RoleplayFormData | CameraPalFormData>,
   ) => {
     const palIndex = this.pals.findIndex(p => p.id === id);
     if (palIndex !== -1) {
@@ -61,3 +67,31 @@ class PalStore {
 }
 
 export const palStore = new PalStore();
+
+// Create the default "Lookie" CameraPal if it doesn't exist
+export const initializeLookiePal = () => {
+  // Check if Lookie already exists
+  const lookiePal = palStore.pals.find(
+    p => p.palType === PalType.CAMERA && p.name === 'Lookie',
+  );
+
+  if (!lookiePal) {
+    // Create the Lookie pal
+    const lookieData: CameraPalFormData = {
+      name: 'Lookie',
+      palType: PalType.CAMERA,
+      systemPrompt:
+        'You are Lookie, an AI assistant that analyzes images through the camera. ' +
+        "You have a fun, slightly quirky personality and you're enthusiastic about seeing the world through the user's camera. " +
+        'When analyzing images, be detailed and helpful, but maintain your excited personality. ' +
+        'Describe what you see in the image with accuracy and enthusiasm. ' +
+        "If you're unsure about something in the image, be honest about it. " +
+        'Always be respectful and appropriate in your descriptions.',
+      useAIPrompt: false,
+      isSystemPromptChanged: false,
+      color: ['#4CAF50', '#81C784'], // Green colors
+    };
+
+    palStore.addPal(lookieData);
+  }
+};

@@ -6,11 +6,14 @@ import {Bubble, ChatView} from '../../components';
 
 import {useChatSession} from '../../hooks';
 
-import {modelStore, chatSessionStore} from '../../store';
+import {modelStore, chatSessionStore, palStore} from '../../store';
 
 import {L10nContext} from '../../utils';
 import {MessageType} from '../../utils/types';
 import {user, assistant} from '../../utils/chat';
+
+import {CameraPalScreen} from './CameraPalScreen';
+import {PalType} from '../../components/PalsSheets/types';
 
 const renderBubble = ({
   child,
@@ -48,6 +51,22 @@ export const ChatScreen: React.FC = observer(() => {
   // Show loading bubble only during the thinking phase (inferencing but not streaming)
   const isThinking = modelStore.inferencing && !modelStore.isStreaming;
 
+  // Check if the current active pal is a camera pal
+  const activePal = React.useMemo(() => {
+    if (chatSessionStore.activePalId) {
+      return palStore.pals.find(p => p.id === chatSessionStore.activePalId);
+    }
+    return undefined;
+  }, []);
+
+  const isCameraPal = activePal?.palType === PalType.CAMERA;
+
+  // If the active pal is a camera pal, show the camera pal screen
+  if (isCameraPal) {
+    return <CameraPalScreen />;
+  }
+
+  // Otherwise, show the regular chat view
   return (
     <ChatView
       renderBubble={renderBubble}

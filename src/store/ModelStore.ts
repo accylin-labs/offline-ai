@@ -621,7 +621,7 @@ class ModelStore {
     }
   };
 
-  initContext = async (model: Model) => {
+  initContext = async (model: Model, mmProjPath?: string) => {
     await this.releaseContext();
     const filePath = await this.getModelFullPath(model);
     if (!filePath) {
@@ -650,6 +650,8 @@ class ModelStore {
           use_mlock: true,
           ...initSettings,
           use_progress_callback: true,
+          // Add mmproj path if provided
+          mmproj: mmProjPath,
         },
         (_progress: number) => {
           //console.log('progress: ', _progress);
@@ -657,6 +659,26 @@ class ModelStore {
       );
 
       await this.updateModelStopTokens(ctx, model);
+
+      // Initialize multimodal support if mmproj path was provided
+      if (mmProjPath) {
+        try {
+          const isEnabled = await ctx.isMultimodalEnabled();
+          if (!isEnabled) {
+            console.log('Initializing multimodal support...');
+            const success = await ctx.initMultimodal(mmProjPath);
+            if (!success) {
+              console.error('Failed to initialize multimodal support');
+            } else {
+              console.log('Multimodal support initialized successfully');
+            }
+          } else {
+            console.log('Multimodal support already enabled');
+          }
+        } catch (error) {
+          console.error('Error initializing multimodal support:', error);
+        }
+      }
 
       runInAction(() => {
         this.context = ctx;
@@ -976,6 +998,113 @@ class ModelStore {
   setIsStreaming(value: boolean) {
     this.isStreaming = value;
   }
+
+  /**
+   * Checks if the current context supports multimodal input
+   * @returns Promise<boolean> - True if multimodal is enabled, false otherwise
+   */
+  isMultimodalEnabled = async (): Promise<boolean> => {
+    if (!this.context) {
+      return false;
+    }
+
+    try {
+      return await this.context.isMultimodalEnabled();
+    } catch (error) {
+      console.error('Error checking multimodal capability:', error);
+      return false;
+    }
+  };
+
+  /**
+   * Starts a completion with an image
+   * @param params - Completion parameters including image_path
+   * @returns Promise<void>
+   */
+  startImageCompletion = async (params: {
+    prompt: string;
+    image_path: string;
+    onToken?: (token: string) => void;
+    onComplete?: (text: string) => void;
+    onError?: (error: Error) => void;
+  }): Promise<void> => {
+    if (!this.context) {
+      throw new Error('No model context available');
+    }
+
+    const isMultimodalEnabled = await this.isMultimodalEnabled();
+    if (!isMultimodalEnabled) {
+      throw new Error('Multimodal is not enabled for this model');
+    }
+
+    runInAction(() => {
+      this.inferencing = true;
+      this.isStreaming = false;
+    });
+
+    try {
+      // Prepare the image path - remove file:// prefix if present
+      const imagePath = params.image_path.startsWith('file://')
+        ? Platform.OS === 'ios'
+          ? params.image_path.substring(7) // iOS: remove 'file://'
+          : params.image_path // Android: keep as is
+        : params.image_path;
+
+      // Create a system message
+      const systemMessage = {
+        role: 'system',
+        content:
+          "You are Lookie, an AI assistant that analyzes images through the camera. You have a fun, slightly quirky personality and you're enthusiastic about seeing the world through the user's camera. When analyzing images, be detailed and helpful, but maintain your excited personality.",
+      };
+
+      // Create a user message with the image
+      const userMessage = {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: params.prompt,
+          },
+          {
+            type: 'image_url',
+            image_url: {url: imagePath},
+          },
+        ],
+      };
+
+      // Start the completion
+      runInAction(() => {
+        this.isStreaming = true;
+      });
+
+      const result = await this.context.completion(
+        {
+          messages: [systemMessage, userMessage],
+          n_predict: 2048,
+          image_path: imagePath,
+          temperature: 0.7,
+          top_p: 0.9,
+        },
+        data => {
+          if (data.token) {
+            params.onToken?.(data.token);
+          }
+        },
+      );
+
+      params.onComplete?.(result.text);
+    } catch (error) {
+      console.error('Error in image completion:', error);
+      params.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+      );
+    } finally {
+      runInAction(() => {
+        this.inferencing = false;
+        this.isStreaming = false;
+      });
+    }
+  };
 
   /**
    * Fetches and updates model file details from HuggingFace.

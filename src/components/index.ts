@@ -2,6 +2,8 @@ export * from './AttachmentButton';
 export * from './Avatar';
 export * from './BottomSheetSearchbar';
 export * from './Bubble';
+export * from './CameraView';
+export * from './CameraChatInput';
 export * from './ChatGenerationSettingsSheet';
 export * from './ChatInput';
 export * from './ChatView';

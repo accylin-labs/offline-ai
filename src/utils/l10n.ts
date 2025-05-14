@@ -27,6 +27,8 @@ export const l10n = {
       minute: 'min',
       minutes: 'min',
       justNow: 'just now',
+      ok: 'OK',
+      close: 'Close',
     },
     settings: {
       // Model Initialization Settings
@@ -681,6 +683,18 @@ export const l10n = {
       situationRequired: 'Situation is required',
       toneStyleRequired: 'Tone/Style is required',
     },
+    camera: {
+      permissionTitle: 'Camera Permission Required',
+      permissionMessage: 'PocketPal needs camera access to analyze images',
+      requestingPermission: 'Requesting camera permission...',
+      noDevice: 'No camera device found',
+      errorTitle: 'Camera Error',
+      errorMessage: 'An error occurred while taking the photo',
+      flip: 'Flip',
+      analyzing: 'Analyzing image...',
+      startCamera: 'Start Camera',
+      stopCamera: 'Stop Camera',
+    },
     screenTitles: {
       chat: 'Chat',
       models: 'Models',
@@ -877,6 +891,8 @@ export const l10n = {
       hours: '時間',
       minute: '分',
       justNow: 'たった今',
+      ok: 'OK',
+      close: '閉じる',
     },
     settings: {
       // Model Initialization Settings
@@ -1536,6 +1552,19 @@ export const l10n = {
       situationRequired: '状況を入力してください',
       toneStyleRequired: '雰囲気/スタイルを入力してください',
     },
+    camera: {
+      permissionTitle: 'カメラ許可が必要',
+      permissionMessage:
+        'PocketPalが画像を分析するにはカメラへのアクセスが必要です',
+      requestingPermission: 'カメラの許可をリクエスト中...',
+      noDevice: 'カメラデバイスが見つかりません',
+      errorTitle: 'カメラエラー',
+      errorMessage: '写真撮影中にエラーが発生しました',
+      flip: '反転',
+      analyzing: '画像を分析中...',
+      startCamera: 'カメラを起動',
+      stopCamera: 'カメラを停止',
+    },
     screenTitles: {
       chat: 'チャット',
       models: 'モデル',
@@ -1733,6 +1762,8 @@ export const l10n = {
       minute: '分钟',
       minutes: '分钟',
       justNow: '刚刚',
+      ok: '确定',
+      close: '关闭',
     },
     settings: {
       // Model Initialization Settings
@@ -2342,6 +2373,18 @@ export const l10n = {
       userRoleRequired: '需要用户角色',
       situationRequired: '需要情况',
       toneStyleRequired: '需要音调/风格',
+    },
+    camera: {
+      permissionTitle: '需要相机权限',
+      permissionMessage: 'PocketPal需要访问相机来分析图像',
+      requestingPermission: '请求相机权限...',
+      noDevice: '未找到相机设备',
+      errorTitle: '相机错误',
+      errorMessage: '拍照时发生错误',
+      flip: '翻转',
+      analyzing: '分析图像中...',
+      startCamera: '启动相机',
+      stopCamera: '停止相机',
     },
     screenTitles: {
       chat: '聊天',
