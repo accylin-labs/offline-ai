@@ -17,8 +17,8 @@ import {
 import {
   AssistantPalSheet,
   RoleplayPalSheet,
+  LookieSheet,
   PalType,
-  CameraPalFormData,
 } from '../../components/PalsSheets';
 import {palStore, Pal} from '../../store/PalStore';
 import {modelStore} from '../../store/ModelStore';
@@ -43,7 +43,7 @@ const PalDetails = ({pal}: {pal: Pal}) => {
     return (
       <View style={styles.infoContainer}>
         <View style={styles.infoColumn}>
-          <Text style={theme.fonts.titleMediumLight}>Camera Pal</Text>
+          <Text style={theme.fonts.titleMediumLight}>Vision</Text>
           <Text style={styles.itemDescription}>
             This is a camera-based AI assistant that analyzes images captured
             through your device's camera.
@@ -174,6 +174,7 @@ export const PalsScreen: React.FC = observer(() => {
 
   const [showAssistantSheet, setShowAssistantSheet] = useState(false);
   const [showRoleplaySheet, setShowRoleplaySheet] = useState(false);
+  const [showLookieSheet, setShowLookieSheet] = useState(false);
   const [editPal, setEditPal] = useState<Pal | undefined>();
 
   const handleCreatePal = (type: PalType) => {
@@ -183,27 +184,7 @@ export const PalsScreen: React.FC = observer(() => {
     } else if (type === PalType.ROLEPLAY) {
       setShowRoleplaySheet(true);
     } else if (type === PalType.CAMERA) {
-      // Create a new CameraPal directly
-      const cameraPalData: CameraPalFormData = {
-        name: 'Lookie',
-        palType: PalType.CAMERA,
-        systemPrompt:
-          'You are Lookie, an AI assistant that analyzes images through the camera. ' +
-          "You have a fun, slightly quirky personality and you're enthusiastic about seeing the world through the user's camera. " +
-          'When analyzing images, be detailed and helpful, but maintain your excited personality. ' +
-          'Describe what you see in the image with accuracy and enthusiasm. ' +
-          "If you're unsure about something in the image, be honest about it. " +
-          'Always be respectful and appropriate in your descriptions.',
-        useAIPrompt: false,
-        isSystemPromptChanged: false,
-        color: ['#4CAF50', '#81C784'], // Green colors
-      };
-
-      palStore.addPal(cameraPalData);
-      Alert.alert(
-        'Camera Pal Created',
-        'A new Camera Pal named "Lookie" has been created. Select it in the chat to use the camera feature.',
-      );
+      setShowLookieSheet(true);
     }
   };
 
@@ -214,17 +195,7 @@ export const PalsScreen: React.FC = observer(() => {
     } else if (pal.palType === PalType.ROLEPLAY) {
       setShowRoleplaySheet(true);
     } else if (pal.palType === PalType.CAMERA) {
-      // For Camera Pals, we'll just show a dialog with information
-      Alert.alert(
-        'Camera Pal',
-        'Camera Pals are special assistants that use your device camera to analyze images. ' +
-          'To use this Pal, select it in the chat and tap the "Start Camera" button.',
-        [
-          {
-            text: 'OK',
-          },
-        ],
-      );
+      setShowLookieSheet(true);
     }
   };
 
@@ -250,7 +221,7 @@ export const PalsScreen: React.FC = observer(() => {
         <Pressable
           style={styles.itemContainer}
           onPress={() => handleCreatePal(PalType.CAMERA)}>
-          <Text style={theme.fonts.titleMediumLight}>Camera Pal</Text>
+          <Text style={theme.fonts.titleMediumLight}>Vision</Text>
           <PlusIcon stroke={theme.colors.onSurface} />
         </Pressable>
       </View>
@@ -273,6 +244,12 @@ export const PalsScreen: React.FC = observer(() => {
         isVisible={showRoleplaySheet}
         onClose={() => setShowRoleplaySheet(false)}
         editPal={editPal?.palType === PalType.ROLEPLAY ? editPal : undefined}
+      />
+
+      <LookieSheet
+        isVisible={showLookieSheet}
+        onClose={() => setShowLookieSheet(false)}
+        editPal={editPal?.palType === PalType.CAMERA ? editPal : undefined}
       />
     </ScrollView>
   );

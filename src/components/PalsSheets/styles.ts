@@ -77,4 +77,35 @@ export const createStyles = (theme: Theme) =>
     resetButton: {
       marginLeft: 8,
     },
+    // New styles for LookieSheet
+    modelDownloadSection: {
+      gap: 16,
+      marginTop: 8,
+      marginBottom: 16,
+    },
+    modelSectionTitle: {
+      ...theme.fonts.bodyMedium,
+      color: theme.colors.onSurfaceVariant,
+      marginBottom: 8,
+    },
+    modelItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: 12,
+      backgroundColor: theme.colors.surfaceVariant,
+      borderRadius: theme.borders.default,
+    },
+    modelInfo: {
+      flex: 1,
+      marginRight: 12,
+    },
+    modelName: {
+      ...theme.fonts.titleSmall,
+      color: theme.colors.onSurface,
+    },
+    modelDescription: {
+      ...theme.fonts.bodySmall,
+      color: theme.colors.onSurfaceVariant,
+    },
   });

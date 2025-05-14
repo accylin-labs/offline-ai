@@ -44,6 +44,7 @@ export function createSchemaWithL10n(l10n: any) {
   const cameraSchema = z.object({
     ...baseFormSchema,
     palType: z.literal(PalType.CAMERA),
+    projectionModel: z.any().optional(),
   });
 
   return {
@@ -97,6 +98,7 @@ export const cameraPalFormSchema = z.object({
   promptGenerationModel: z.any().optional(),
   generatingPrompt: z.string().optional(),
   palType: z.literal(PalType.CAMERA),
+  projectionModel: z.any().optional(),
 });
 
 // Base type for common fields
@@ -132,6 +134,7 @@ export interface RoleplayFormData extends BaseFormData {
 // Camera-specific type
 export interface CameraPalFormData extends BaseFormData {
   palType: PalType.CAMERA;
+  projectionModel?: Model; // For vision models that require a projection model
 }
 
 // Union type for form data
