@@ -164,13 +164,15 @@ export const VideoPalScreen = observer(() => {
 
       setLastAnalysisTime(now);
 
+      // Get the system prompt from the active VideoPal
+      const systemPrompt = activeVideoPal?.systemPrompt || '';
+
       try {
         // Start the completion with the image using the user-editable prompt
         await modelStore.startImageCompletion({
           prompt: promptText,
           image_path: imagePath,
-          systemMessage:
-            'You are LiveLens, an AI assistant that provides real-time commentary on video streams.',
+          systemMessage: systemPrompt,
           onToken: token => {
             setResponseText(prev => prev + token);
           },
@@ -185,7 +187,7 @@ export const VideoPalScreen = observer(() => {
         console.error('Error processing image:', error);
       }
     },
-    [promptText, captureInterval, lastAnalysisTime],
+    [promptText, captureInterval, lastAnalysisTime, activeVideoPal],
   );
 
   // Render the chat view with embedded camera when active
