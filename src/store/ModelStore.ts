@@ -1050,6 +1050,7 @@ class ModelStore {
   startImageCompletion = async (params: {
     prompt: string;
     image_path: string;
+    systemMessage?: string;
     onToken?: (token: string) => void;
     onComplete?: (text: string) => void;
     onError?: (error: Error) => void;
@@ -1081,6 +1082,7 @@ class ModelStore {
       const systemMessage = {
         role: 'system',
         content:
+          params.systemMessage ||
           'You are Lookie, an AI assistant that analyzes images through the camera.',
       };
 

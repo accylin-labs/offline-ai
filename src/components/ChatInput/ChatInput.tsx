@@ -284,6 +284,9 @@ export const ChatInput = observer(
                     palType === PalType.CAMERA
                       ? l10n.camera.promptPlaceholder ||
                         'What do you want to know about this image?'
+                      : palType === PalType.VIDEO
+                      ? l10n.video.promptPlaceholder ||
+                        'What do you want to know about this video?'
                       : l10n.components.chatInput.inputPlaceholder
                   }
                   placeholderTextColor={inputTextColor}
@@ -299,7 +302,7 @@ export const ChatInput = observer(
                   onChangeText={handleChangeText}
                   value={value}
                   editable={
-                    palType === PalType.CAMERA
+                    palType === PalType.CAMERA || palType === PalType.VIDEO
                       ? !isStreaming && !isCameraActive
                       : textInputProps?.editable !== false
                   }
@@ -307,8 +310,8 @@ export const ChatInput = observer(
               </View>
 
               {/* Render different buttons based on pal type */}
-              {palType === PalType.CAMERA ? (
-                // Camera pal - show camera button or stop button
+              {palType === PalType.CAMERA || palType === PalType.VIDEO ? (
+                // Camera/Video pal - show camera button or stop button
                 !isCameraActive && !isStopVisible ? (
                   <TouchableOpacity
                     style={[
@@ -322,6 +325,9 @@ export const ChatInput = observer(
                       stroke="white"
                       strokeWidth={2}
                     />
+                    {palType === PalType.VIDEO && (
+                      <View style={styles.videoIndicator} />
+                    )}
                   </TouchableOpacity>
                 ) : (
                   <StopButton

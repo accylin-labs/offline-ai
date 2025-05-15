@@ -3,6 +3,32 @@ import {Theme} from '../../utils/types';
 
 export const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    sliderContainer: {
+      marginBottom: 16,
+      paddingHorizontal: 8,
+    },
+    sliderLabel: {
+      ...theme.fonts.bodyMedium,
+      marginBottom: 8,
+    },
+    slider: {
+      width: '100%',
+      height: 40,
+    },
+    sliderLabels: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+      marginTop: -8,
+    },
+    sliderMinLabel: {
+      ...theme.fonts.bodySmall,
+      color: theme.colors.onSurfaceVariant,
+    },
+    sliderMaxLabel: {
+      ...theme.fonts.bodySmall,
+      color: theme.colors.onSurfaceVariant,
+    },
     scrollviewContainer: {
       padding: theme.spacing.default,
     },

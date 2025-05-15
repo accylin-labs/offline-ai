@@ -18,6 +18,7 @@ import {
   AssistantPalSheet,
   RoleplayPalSheet,
   LookieSheet,
+  VideoPalSheet,
   PalType,
 } from '../../components/PalsSheets';
 import {palStore, Pal} from '../../store/PalStore';
@@ -47,6 +48,30 @@ const PalDetails = ({pal}: {pal: Pal}) => {
           <Text style={styles.itemDescription}>
             This is a camera-based AI assistant that analyzes images captured
             through your device's camera.
+          </Text>
+        </View>
+        <View style={styles.infoColumn}>
+          <Text style={theme.fonts.titleMediumLight}>System Prompt</Text>
+          <Text style={styles.itemDescription}>{pal.systemPrompt}</Text>
+        </View>
+      </View>
+    );
+  }
+
+  if (pal.palType === PalType.VIDEO) {
+    return (
+      <View style={styles.infoContainer}>
+        <View style={styles.infoColumn}>
+          <Text style={theme.fonts.titleMediumLight}>Video Analysis</Text>
+          <Text style={styles.itemDescription}>
+            This is a video-based AI assistant that provides real-time
+            commentary on video streams from your device's camera.
+          </Text>
+        </View>
+        <View style={styles.infoColumn}>
+          <Text style={theme.fonts.titleMediumLight}>Capture Interval</Text>
+          <Text style={styles.itemDescription}>
+            {(pal as any).captureInterval} ms
           </Text>
         </View>
         <View style={styles.infoColumn}>
@@ -175,6 +200,7 @@ export const PalsScreen: React.FC = observer(() => {
   const [showAssistantSheet, setShowAssistantSheet] = useState(false);
   const [showRoleplaySheet, setShowRoleplaySheet] = useState(false);
   const [showLookieSheet, setShowLookieSheet] = useState(false);
+  const [showVideoSheet, setShowVideoSheet] = useState(false);
   const [editPal, setEditPal] = useState<Pal | undefined>();
 
   const handleCreatePal = (type: PalType) => {
@@ -185,6 +211,8 @@ export const PalsScreen: React.FC = observer(() => {
       setShowRoleplaySheet(true);
     } else if (type === PalType.CAMERA) {
       setShowLookieSheet(true);
+    } else if (type === PalType.VIDEO) {
+      setShowVideoSheet(true);
     }
   };
 
@@ -196,6 +224,8 @@ export const PalsScreen: React.FC = observer(() => {
       setShowRoleplaySheet(true);
     } else if (pal.palType === PalType.CAMERA) {
       setShowLookieSheet(true);
+    } else if (pal.palType === PalType.VIDEO) {
+      setShowVideoSheet(true);
     }
   };
 
@@ -224,6 +254,12 @@ export const PalsScreen: React.FC = observer(() => {
           <Text style={theme.fonts.titleMediumLight}>Vision</Text>
           <PlusIcon stroke={theme.colors.onSurface} />
         </Pressable>
+        <Pressable
+          style={styles.itemContainer}
+          onPress={() => handleCreatePal(PalType.VIDEO)}>
+          <Text style={theme.fonts.titleMediumLight}>Video</Text>
+          <PlusIcon stroke={theme.colors.onSurface} />
+        </Pressable>
       </View>
 
       <Divider style={styles.divider} />
@@ -250,6 +286,12 @@ export const PalsScreen: React.FC = observer(() => {
         isVisible={showLookieSheet}
         onClose={() => setShowLookieSheet(false)}
         editPal={editPal?.palType === PalType.CAMERA ? editPal : undefined}
+      />
+
+      <VideoPalSheet
+        isVisible={showVideoSheet}
+        onClose={() => setShowVideoSheet(false)}
+        editPal={editPal?.palType === PalType.VIDEO ? editPal : undefined}
       />
     </ScrollView>
   );
