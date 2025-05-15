@@ -36,6 +36,7 @@ import {chatSessionStore, modelStore, palStore} from '../../store';
 
 import {MessageType, User} from '../../utils/types';
 import {calculateChatMessages, unwrap, UserContext} from '../../utils';
+import {PalType} from '../PalsSheets/types';
 
 import {
   Message,
@@ -781,8 +782,14 @@ export const ChatView = observer(
                     sendButtonVisibilityMode,
                     textInputProps: {
                       ...textInputProps,
-                      value: inputText,
-                      onChangeText: setInputText,
+                      // Only override value and onChangeText if not using promptText
+                      ...(!(
+                        inputProps?.palType === PalType.CAMERA ||
+                        inputProps?.palType === PalType.VIDEO
+                      ) && {
+                        value: inputText,
+                        onChangeText: setInputText,
+                      }),
                     },
                   }}
                 />

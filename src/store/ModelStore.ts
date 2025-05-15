@@ -10,10 +10,13 @@ import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
 import {makePersistable} from 'mobx-persist-store';
 import * as RNFS from '@dr.pogodin/react-native-fs';
-import {computed, makeAutoObservable, runInAction} from 'mobx';
+import {computed, makeAutoObservable, runInAction, toJS} from 'mobx';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {LlamaContext, initLlama} from '@pocketpalai/llama.rn';
-import {CompletionParams} from '../utils/completionTypes';
+import {
+  CompletionParams,
+  toApiCompletionParams,
+} from '../utils/completionTypes';
 
 import {fetchModelFilesDetails} from '../api/hf';
 
@@ -39,6 +42,7 @@ import {
 } from '../utils/types';
 
 import {ErrorState, createErrorState} from '../utils/errors';
+import {chatSessionRepository} from '../repositories/ChatSessionRepository';
 
 class ModelStore {
   models: Model[] = [];
@@ -652,6 +656,7 @@ class ModelStore {
         cache_type_v: this.cache_type_v,
         n_gpu_layers: this.useMetal ? this.n_gpu_layers : 0,
         no_gpu_devices: !this.useMetal,
+        mmproj_use_gpu: this.useMetal,
       };
 
       // If we have a projection model path, log it
@@ -1079,12 +1084,12 @@ class ModelStore {
         : params.image_path;
 
       // Create a system message
-      const systemMessage = {
-        role: 'system',
-        content:
-          params.systemMessage ||
-          'You are Lookie, an AI assistant that analyzes images through the camera.',
-      };
+      const systemMessage = params.systemMessage?.trim()
+        ? {
+            role: 'system',
+            content: params.systemMessage,
+          }
+        : undefined;
 
       // Create a user message with the image
       const userMessage = {
@@ -1106,18 +1111,29 @@ class ModelStore {
         this.isStreaming = true;
       });
 
-      // Create completion parameters
-      const completionParams = {
-        messages: [systemMessage, userMessage],
-        n_predict: 2048,
-        temperature: 0.7,
-        top_p: 0.9,
-      };
+      const completionParams =
+        await chatSessionRepository.getGlobalCompletionSettings();
+      const stopWords = toJS(modelStore.activeModel?.stopWords);
+
+      // Create completion params with app-specific properties
+      const messages = systemMessage
+        ? [systemMessage, userMessage]
+        : [userMessage];
+      const completionParamsWithAppProps = {
+        ...completionParams,
+        messages: messages,
+        stop: stopWords,
+      } as CompletionParams;
+
+      // Strip app-specific properties before passing to llama.rn
+      const cleanCompletionParams = toApiCompletionParams(
+        completionParamsWithAppProps,
+      );
 
       // Cast to any to allow adding image_path which is supported by the native module
       // but not included in the TypeScript type definition
       const completionParamsWithImage = {
-        ...completionParams,
+        ...cleanCompletionParams,
         image_path: imagePath,
       } as any;
 

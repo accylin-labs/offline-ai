@@ -161,7 +161,10 @@ export const ChatInput = observer(
     }, [isPickerVisible, iconRotation]);
 
     const handleChangeText = (newText: string) => {
-      if (palType === PalType.CAMERA && onPromptTextChange) {
+      if (
+        (palType === PalType.CAMERA || palType === PalType.VIDEO) &&
+        onPromptTextChange
+      ) {
         onPromptTextChange(newText);
       } else {
         setText(newText);
