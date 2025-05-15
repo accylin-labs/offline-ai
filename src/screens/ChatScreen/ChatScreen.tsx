@@ -51,14 +51,10 @@ export const ChatScreen: React.FC = observer(() => {
   // Show loading bubble only during the thinking phase (inferencing but not streaming)
   const isThinking = modelStore.inferencing && !modelStore.isStreaming;
 
-  // Check if the current active pal is a camera pal
-  const activePal = React.useMemo(() => {
-    if (chatSessionStore.activePalId) {
-      return palStore.pals.find(p => p.id === chatSessionStore.activePalId);
-    }
-    return undefined;
-  }, []);
-
+  const activePalId = chatSessionStore.activePalId;
+  const activePal = activePalId
+    ? palStore.pals.find(p => p.id === activePalId)
+    : undefined;
   const isCameraPal = activePal?.palType === PalType.CAMERA;
 
   // If the active pal is a camera pal, show the camera pal screen

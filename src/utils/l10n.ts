@@ -694,6 +694,7 @@ export const l10n = {
       analyzing: 'Analyzing image...',
       startCamera: 'Start Camera',
       stopCamera: 'Stop Camera',
+      promptPlaceholder: 'What do you want to know about this image?',
     },
     screenTitles: {
       chat: 'Chat',
@@ -1564,6 +1565,7 @@ export const l10n = {
       analyzing: '画像を分析中...',
       startCamera: 'カメラを起動',
       stopCamera: 'カメラを停止',
+      promptPlaceholder: 'この画像について何を知りたいですか？',
     },
     screenTitles: {
       chat: 'チャット',
@@ -2385,6 +2387,7 @@ export const l10n = {
       analyzing: '分析图像中...',
       startCamera: '启动相机',
       stopCamera: '停止相机',
+      promptPlaceholder: '您想了解这张图片的什么信息？',
     },
     screenTitles: {
       chat: '聊天',

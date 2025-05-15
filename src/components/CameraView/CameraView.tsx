@@ -36,18 +36,40 @@ export const CameraView = observer(({onCapture, onClose}: CameraViewProps) => {
 
   useEffect(() => {
     if (!hasPermission) {
-      requestPermission().catch(() => {
-        Alert.alert(
-          l10n.camera.permissionTitle,
-          l10n.camera.permissionMessage,
-          [
-            {
-              text: l10n.common.ok,
-              onPress: onClose,
-            },
-          ],
-        );
-      });
+      const requestCameraPermission = async () => {
+        try {
+          console.log('Requesting camera permission...');
+          const result = await requestPermission();
+          console.log('Camera permission result:', result);
+          if (!result) {
+            // Permission was denied
+            Alert.alert(
+              l10n.camera.permissionTitle,
+              l10n.camera.permissionMessage,
+              [
+                {
+                  text: l10n.common.ok,
+                  onPress: onClose,
+                },
+              ],
+            );
+          }
+        } catch (error) {
+          console.error('Error requesting camera permission:', error);
+          Alert.alert(
+            l10n.camera.permissionTitle,
+            l10n.camera.permissionMessage,
+            [
+              {
+                text: l10n.common.ok,
+                onPress: onClose,
+              },
+            ],
+          );
+        }
+      };
+
+      requestCameraPermission();
     }
   }, [hasPermission, requestPermission, onClose, l10n]);
 

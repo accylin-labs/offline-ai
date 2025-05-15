@@ -627,10 +627,19 @@ class ModelStore {
     if (!filePath) {
       throw new Error('Model path is undefined');
     }
+
+    // Check if this is a vision model based on mmProjPath
+    const isVisionModel = mmProjPath ? true : false;
+
+    console.log('Initializing model:', model.name);
+    console.log('mmProjPath :', mmProjPath);
+    console.log('Is vision model:', isVisionModel ? 'Yes' : 'No');
+
     runInAction(() => {
       this.isContextLoading = true;
       this.loadingModel = model;
     });
+
     try {
       const effectiveValues = this.getEffectiveValues();
       const initSettings = {
@@ -644,6 +653,12 @@ class ModelStore {
         n_gpu_layers: this.useMetal ? this.n_gpu_layers : 0,
         no_gpu_devices: !this.useMetal,
       };
+
+      // If we have a projection model path, log it
+      if (mmProjPath) {
+        console.log('Using projection model path:', mmProjPath);
+      }
+
       const ctx = await initLlama(
         {
           model: filePath,
@@ -663,17 +678,16 @@ class ModelStore {
       // Initialize multimodal support if mmproj path was provided
       if (mmProjPath) {
         try {
-          const isEnabled = await ctx.isMultimodalEnabled();
-          if (!isEnabled) {
-            console.log('Initializing multimodal support...');
-            const success = await ctx.initMultimodal(mmProjPath);
-            if (!success) {
-              console.error('Failed to initialize multimodal support');
-            } else {
-              console.log('Multimodal support initialized successfully');
-            }
+          console.log('Initializing multimodal support...');
+          // Always explicitly call initMultimodal even if we provided mmproj during initLlama
+          const success = await ctx.initMultimodal(mmProjPath);
+          if (!success) {
+            console.error('Failed to initialize multimodal support');
           } else {
-            console.log('Multimodal support already enabled');
+            console.log('Multimodal support initialized successfully');
+            // Verify that multimodal is now enabled
+            const isEnabled = await ctx.isMultimodalEnabled();
+            console.log('Multimodal enabled status:', isEnabled);
           }
         } catch (error) {
           console.error('Error initializing multimodal support:', error);
@@ -1005,11 +1019,23 @@ class ModelStore {
    */
   isMultimodalEnabled = async (): Promise<boolean> => {
     if (!this.context) {
+      console.log('isMultimodalEnabled: No context available');
       return false;
     }
 
     try {
-      return await this.context.isMultimodalEnabled();
+      const isEnabled = await this.context.isMultimodalEnabled();
+      console.log('isMultimodalEnabled check result:', isEnabled);
+
+      // If not enabled but we have an active model that should support multimodal,
+      // log additional information for debugging
+      if (!isEnabled && this.activeModel) {
+        console.log('Active model:', this.activeModel.name);
+        // Models don't have palType directly, but we can log other relevant info
+        console.log('Model ID:', this.activeModel.id);
+      }
+
+      return isEnabled;
     } catch (error) {
       console.error('Error checking multimodal capability:', error);
       return false;
@@ -1031,6 +1057,7 @@ class ModelStore {
     if (!this.context) {
       throw new Error('No model context available');
     }
+    console.log('startImageCompletion params: ', params);
 
     const isMultimodalEnabled = await this.isMultimodalEnabled();
     if (!isMultimodalEnabled) {
@@ -1054,7 +1081,7 @@ class ModelStore {
       const systemMessage = {
         role: 'system',
         content:
-          "You are Lookie, an AI assistant that analyzes images through the camera. You have a fun, slightly quirky personality and you're enthusiastic about seeing the world through the user's camera. When analyzing images, be detailed and helpful, but maintain your excited personality.",
+          'You are Lookie, an AI assistant that analyzes images through the camera.',
       };
 
       // Create a user message with the image
@@ -1077,14 +1104,23 @@ class ModelStore {
         this.isStreaming = true;
       });
 
+      // Create completion parameters
+      const completionParams = {
+        messages: [systemMessage, userMessage],
+        n_predict: 2048,
+        temperature: 0.7,
+        top_p: 0.9,
+      };
+
+      // Cast to any to allow adding image_path which is supported by the native module
+      // but not included in the TypeScript type definition
+      const completionParamsWithImage = {
+        ...completionParams,
+        image_path: imagePath,
+      } as any;
+
       const result = await this.context.completion(
-        {
-          messages: [systemMessage, userMessage],
-          n_predict: 2048,
-          image_path: imagePath,
-          temperature: 0.7,
-          top_p: 0.9,
-        },
+        completionParamsWithImage,
         data => {
           if (data.token) {
             params.onToken?.(data.token);

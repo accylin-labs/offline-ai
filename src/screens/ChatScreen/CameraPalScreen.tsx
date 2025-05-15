@@ -1,18 +1,21 @@
 import React, {useState, useCallback, useContext} from 'react';
-import {View, StyleSheet, Alert, Text, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, Alert} from 'react-native';
 import {observer} from 'mobx-react';
 import {ChatView, CameraView, Bubble} from '../../components';
-import {useTheme} from '../../hooks';
 import {L10nContext, UserContext} from '../../utils';
 import {modelStore} from '../../store';
 import {MessageType} from '../../utils/types';
 import {v4 as uuidv4} from 'uuid';
 import 'react-native-get-random-values';
+import {user as defaultUser} from '../../utils/chat';
+import {PalType} from '../../components/PalsSheets/types';
 
 export const CameraPalScreen = observer(() => {
-  const theme = useTheme();
   const l10n = useContext(L10nContext);
-  const user = useContext(UserContext);
+
+  const contextUser = useContext(UserContext);
+  const user = contextUser || defaultUser;
+
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [capturedImagePath, setCapturedImagePath] = useState<string | null>(
     null,
@@ -20,6 +23,9 @@ export const CameraPalScreen = observer(() => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [messages, setMessages] = useState<MessageType.Any[]>([]);
   const [responseText, setResponseText] = useState('');
+  const [promptText, setPromptText] = useState(
+    'What do you see in this image?',
+  );
 
   // We'll use a direct approach instead of a custom render function
 
@@ -113,13 +119,9 @@ export const CameraPalScreen = observer(() => {
 
         addMessage(systemMessage);
 
-        // Send the image to the model for analysis
-        const prompt =
-          'Analyze this image and describe what you see in detail.';
-
-        // Start the completion with the image
+        // Start the completion with the image using the user-editable prompt
         await modelStore.startImageCompletion({
-          prompt,
+          prompt: promptText,
           image_path: imagePath,
           onToken: token => {
             setResponseText(prev => prev + token);
@@ -180,7 +182,7 @@ export const CameraPalScreen = observer(() => {
         setIsAnalyzing(false);
       }
     },
-    [user, l10n.camera.analyzing, addMessage],
+    [user, l10n.camera.analyzing, addMessage, promptText],
   );
 
   // Custom bubble renderer to handle streaming response
@@ -207,48 +209,49 @@ export const CameraPalScreen = observer(() => {
 
   // Render the camera or chat view based on state
   return (
-    <View style={styles.container}>
-      {isCameraActive ? (
-        <CameraView onCapture={handleImageCapture} onClose={handleStopCamera} />
-      ) : (
-        <View style={styles.container}>
-          <View style={styles.chatContainer}>
-            <ChatView
-              renderBubble={renderBubble}
-              messages={messages}
-              onSendPress={() => {}}
-              onStopPress={() => modelStore.context?.stopCompletion()}
-              user={user!}
-              isStopVisible={modelStore.inferencing}
-              isThinking={modelStore.inferencing && !modelStore.isStreaming}
-              isStreaming={modelStore.isStreaming && !!responseText}
-              sendButtonVisibilityMode="editing"
-              textInputProps={{
-                editable: false,
-                placeholder: isAnalyzing
-                  ? l10n.camera.analyzing
-                  : capturedImagePath
-                  ? 'Image captured and analyzed'
-                  : 'Tap Start Camera to begin',
-              }}
-              inputProps={{}}
-            />
+    <UserContext.Provider value={user}>
+      <View style={styles.container}>
+        {isCameraActive ? (
+          <CameraView
+            onCapture={handleImageCapture}
+            onClose={handleStopCamera}
+          />
+        ) : (
+          <View style={styles.container}>
+            <View style={styles.chatContainer}>
+              <ChatView
+                renderBubble={renderBubble}
+                messages={messages}
+                onSendPress={() => {}}
+                onStopPress={() => modelStore.context?.stopCompletion()}
+                user={user}
+                isStopVisible={modelStore.inferencing}
+                isThinking={modelStore.inferencing && !modelStore.isStreaming}
+                isStreaming={modelStore.isStreaming && !!responseText}
+                sendButtonVisibilityMode="editing"
+                textInputProps={{
+                  placeholder: isAnalyzing
+                    ? l10n.camera.analyzing
+                    : capturedImagePath
+                    ? 'Image captured and analyzed'
+                    : 'Tap the camera button to begin',
+                  editable: !modelStore.isStreaming && !isCameraActive,
+                  value: promptText,
+                  onChangeText: setPromptText,
+                }}
+                inputProps={{
+                  palType: PalType.CAMERA,
+                  isCameraActive: isCameraActive,
+                  onStartCamera: handleStartCamera,
+                  promptText: promptText,
+                  onPromptTextChange: setPromptText,
+                }}
+              />
+            </View>
           </View>
-          <View style={styles.cameraButtonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.cameraButton,
-                {backgroundColor: theme.colors.primary},
-              ]}
-              onPress={handleStartCamera}>
-              <Text style={styles.cameraButtonText}>
-                {l10n.camera.startCamera}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
+    </UserContext.Provider>
   );
 });
 
@@ -258,20 +261,5 @@ const styles = StyleSheet.create({
   },
   chatContainer: {
     flex: 1,
-  },
-  cameraButtonContainer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  cameraButton: {
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  cameraButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
   },
 });

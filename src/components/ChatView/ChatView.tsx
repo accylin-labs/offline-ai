@@ -218,8 +218,55 @@ export const ChatView = observer(
           const palDefaultModel = modelStore.availableModels.find(
             m => m.id === activePal.defaultModel?.id,
           );
+
           if (palDefaultModel) {
-            modelStore.initContext(palDefaultModel);
+            // Check if this is a Camera Pal that needs a projection model
+            if (activePal.palType === 'camera') {
+              console.log(
+                'Initializing Camera Pal model with projection model',
+              );
+
+              // Find the projection model if it exists
+              const projectionModel = activePal.projectionModel
+                ? modelStore.availableModels.find(
+                    m => m.id === activePal.projectionModel?.id,
+                  )
+                : null;
+
+              if (projectionModel) {
+                console.log('Found projection model:', projectionModel.name);
+                // Get the projection model path
+                modelStore
+                  .getModelFullPath(projectionModel)
+                  .then(projectionModelPath => {
+                    console.log(
+                      'Initializing with projection model path:',
+                      projectionModelPath,
+                    );
+                    // Initialize with both the main model and projection model
+                    modelStore.initContext(
+                      palDefaultModel,
+                      projectionModelPath,
+                    );
+                  })
+                  .catch(error => {
+                    console.error(
+                      'Failed to get projection model path:',
+                      error,
+                    );
+                    // Fall back to initializing without projection model
+                    modelStore.initContext(palDefaultModel);
+                  });
+              } else {
+                console.warn(
+                  'No projection model found for Camera Pal, initializing without it',
+                );
+                modelStore.initContext(palDefaultModel);
+              }
+            } else {
+              // For non-camera pals, initialize normally
+              modelStore.initContext(palDefaultModel);
+            }
           }
         }
       }
