@@ -7,6 +7,8 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {ResponseBubble} from '../ResponseBubble';
 import {
   Camera,
   useCameraDevice,
@@ -24,6 +26,7 @@ interface EmbeddedVideoViewProps {
   onClose: () => void;
   captureInterval: number;
   onCaptureIntervalChange: (interval: number) => void;
+  responseText?: string;
 }
 
 export const EmbeddedVideoView = observer(
@@ -32,6 +35,7 @@ export const EmbeddedVideoView = observer(
     onClose,
     captureInterval,
     onCaptureIntervalChange,
+    responseText,
   }: EmbeddedVideoViewProps) => {
     const theme = useTheme();
     const styles = createStyles({theme});
@@ -165,7 +169,7 @@ export const EmbeddedVideoView = observer(
           </Text>
           {isSimulator && (
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Text style={styles.closeButtonText}>{l10n.common.close}</Text>
+              <Icon name="close" style={styles.closeButtonIcon} />
             </TouchableOpacity>
           )}
         </View>
@@ -182,19 +186,27 @@ export const EmbeddedVideoView = observer(
           photo={true}
         />
 
+        {/* Response overlay */}
+        {responseText ? (
+          <View style={styles.responseOverlayContainer}>
+            <ResponseBubble>
+              <Text style={styles.responseText}>{responseText}</Text>
+            </ResponseBubble>
+          </View>
+        ) : null}
+
         {/* Interval controls */}
         <View style={styles.intervalControlsContainer}>
-          <Text style={styles.intervalLabel}>
-            {l10n.video.captureInterval}:
-          </Text>
           <TouchableOpacity
             style={styles.intervalButton}
             onPress={decreaseInterval}>
             <Text style={styles.intervalButtonText}>-</Text>
           </TouchableOpacity>
-          <Text style={styles.intervalValue}>
-            {captureInterval} {l10n.video.captureIntervalUnit}
-          </Text>
+          <View>
+            <Text style={styles.intervalValue}>
+              {captureInterval}{l10n.video.captureIntervalUnit}
+            </Text>
+          </View>
           <TouchableOpacity
             style={styles.intervalButton}
             onPress={increaseInterval}>
@@ -205,13 +217,13 @@ export const EmbeddedVideoView = observer(
         {/* Camera controls */}
         <View style={styles.controlsContainer}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.closeButtonText}>{l10n.common.close}</Text>
+            <Icon name="close" style={styles.closeButtonIcon} />
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.flipButton}
             onPress={toggleCameraPosition}>
-            <Text style={styles.flipButtonText}>{l10n.video.flip}</Text>
+            <Icon name="camera-flip" style={styles.flipButtonIcon} />
           </TouchableOpacity>
         </View>
       </View>

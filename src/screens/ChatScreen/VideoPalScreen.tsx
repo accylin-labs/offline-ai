@@ -164,6 +164,9 @@ export const VideoPalScreen = observer(() => {
 
       setLastAnalysisTime(now);
 
+      // Clear the previous response text before starting a new analysis
+      setResponseText('');
+
       // Get the system prompt from the active VideoPal
       const systemPrompt = activeVideoPal?.systemPrompt || '';
 
@@ -176,8 +179,9 @@ export const VideoPalScreen = observer(() => {
           onToken: token => {
             setResponseText(prev => prev + token);
           },
-          onComplete: text => {
-            setResponseText(text);
+          onComplete: () => {
+            // This is called when the entire completion is done
+            // We don't need to set the text again as we've been building it token by token
           },
           onError: error => {
             console.error('Error processing image:', error);
@@ -194,50 +198,54 @@ export const VideoPalScreen = observer(() => {
   return (
     <UserContext.Provider value={user}>
       <View style={styles.container}>
-        <ChatView
-          messages={
-            responseText
-              ? [
-                  {
-                    id: 'video-analysis',
-                    text: responseText,
-                    createdAt: Date.now(),
-                    author: assistant,
-                    type: 'text',
-                  },
-                ]
-              : []
-          }
-          onSendPress={() => {}}
-          onStopPress={() => modelStore.context?.stopCompletion()}
-          user={user}
-          isStopVisible={modelStore.inferencing}
-          isThinking={modelStore.inferencing && !modelStore.isStreaming}
-          isStreaming={modelStore.isStreaming}
-          sendButtonVisibilityMode="editing"
-          textInputProps={{
-            editable: !modelStore.isStreaming && !isCameraActive,
-            value: promptText,
-            onChangeText: setPromptText,
-          }}
-          inputProps={{
-            palType: PalType.VIDEO,
-            isCameraActive: isCameraActive,
-            onStartCamera: handleStartCamera,
-            promptText: promptText,
-            onPromptTextChange: setPromptText,
-          }}
-          customContent={
-            isCameraActive ? (
-              <EmbeddedVideoView
-                onCapture={handleImageCapture}
-                onClose={handleStopCamera}
-                captureInterval={captureInterval}
-                onCaptureIntervalChange={handleCaptureIntervalChange}
-              />
-            ) : null
-          }
-        />
+        {isCameraActive ? (
+          // Full-screen camera view with response overlay
+          <View style={styles.fullScreenContainer}>
+            <EmbeddedVideoView
+              onCapture={handleImageCapture}
+              onClose={handleStopCamera}
+              captureInterval={captureInterval}
+              onCaptureIntervalChange={handleCaptureIntervalChange}
+              responseText={responseText}
+            />
+          </View>
+        ) : (
+          // Regular chat view when camera is not active
+          <ChatView
+            messages={
+              responseText
+                ? [
+                    {
+                      id: 'video-analysis',
+                      text: responseText,
+                      createdAt: Date.now(),
+                      author: assistant,
+                      type: 'text',
+                    },
+                  ]
+                : []
+            }
+            onSendPress={() => {}}
+            onStopPress={() => modelStore.context?.stopCompletion()}
+            user={user}
+            isStopVisible={modelStore.inferencing}
+            isThinking={modelStore.inferencing && !modelStore.isStreaming}
+            isStreaming={modelStore.isStreaming}
+            sendButtonVisibilityMode="editing"
+            textInputProps={{
+              editable: !modelStore.isStreaming && !isCameraActive,
+              value: promptText,
+              onChangeText: setPromptText,
+            }}
+            inputProps={{
+              palType: PalType.VIDEO,
+              isCameraActive: isCameraActive,
+              onStartCamera: handleStartCamera,
+              promptText: promptText,
+              onPromptTextChange: setPromptText,
+            }}
+          />
+        )}
       </View>
     </UserContext.Provider>
   );
@@ -246,5 +254,13 @@ export const VideoPalScreen = observer(() => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  fullScreenContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 10,
   },
 });

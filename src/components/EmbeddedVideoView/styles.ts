@@ -4,12 +4,13 @@ import {Theme} from '../../utils/types';
 export const createStyles = ({theme}: {theme: Theme}) =>
   StyleSheet.create({
     container: {
-      height: 250,
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       backgroundColor: '#000',
-      borderRadius: 12,
       overflow: 'hidden',
-      marginHorizontal: 16,
-      marginVertical: 8,
       zIndex: 1,
     },
     camera: {
@@ -17,32 +18,40 @@ export const createStyles = ({theme}: {theme: Theme}) =>
     },
     controlsContainer: {
       position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0,
+      bottom: '5%', // Lower position, below the interval controls
+      alignSelf: 'center', // Center horizontally
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       alignItems: 'center',
-      paddingHorizontal: 16,
-      paddingBottom: 16,
+      gap: 20, // Space between close and flip buttons
     },
     closeButton: {
-      padding: 8,
-      borderRadius: 8,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      borderWidth: 1,
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
-    closeButtonText: {
+    closeButtonIcon: {
       color: '#fff',
-      fontSize: 14,
+      fontSize: 20,
     },
     flipButton: {
-      padding: 8,
-      borderRadius: 8,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      borderWidth: 1,
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
-    flipButtonText: {
+    flipButtonIcon: {
       color: '#fff',
-      fontSize: 14,
+      fontSize: 20,
     },
     permissionContainer: {
       height: 250,
@@ -63,37 +72,65 @@ export const createStyles = ({theme}: {theme: Theme}) =>
     },
     intervalControlsContainer: {
       position: 'absolute',
-      top: 16,
-      left: 0,
-      right: 0,
+      bottom: '11%', // Position above the camera controls
+      alignSelf: 'center', // Center horizontally
+      width: '50%', // Take up 50% of screen width
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 16,
+      paddingVertical: 8,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      borderRadius: 25, // Make it oval-shaped
+      borderWidth: 1,
+      borderColor: 'rgba(255, 255, 255, 0.2)',
     },
     intervalLabel: {
       color: '#fff',
-      fontSize: 12,
-      marginRight: 8,
+      fontSize: 11,
+      marginRight: 4,
+      fontWeight: '500',
+      textShadowColor: 'rgba(0, 0, 0, 0.5)',
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 1,
     },
     intervalValue: {
       color: '#fff',
       fontSize: 12,
       marginHorizontal: 8,
-      minWidth: 30,
+      minWidth: 40,
       textAlign: 'center',
+      fontWeight: '600',
+      textShadowColor: 'rgba(0, 0, 0, 0.5)',
+      textShadowOffset: {width: 0, height: 1},
+      textShadowRadius: 1,
     },
     intervalButton: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
+      width: 26,
+      height: 26,
+      borderRadius: 13,
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
       justifyContent: 'center',
       alignItems: 'center',
+      borderWidth: 1,
+      borderColor: 'rgba(255, 255, 255, 0.2)',
     },
     intervalButtonText: {
       color: '#fff',
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: 'bold',
+    },
+    responseOverlayContainer: {
+      position: 'absolute',
+      bottom: 180,
+      left: 16,
+      right: 16,
+      maxHeight: '40%',
+    },
+    responseText: {
+      color: '#fff',
+      fontSize: 16,
+      lineHeight: 22,
+      fontWeight: '400',
     },
   });

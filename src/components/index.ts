@@ -33,6 +33,7 @@ export * from './ModelsHeaderRight';
 export * from './ModelsResetDialog';
 export * from './ModelSettingsSheet';
 export * from './RenameModal';
+export * from './ResponseBubble';
 export * from './Searchbar';
 export * from './SendButton';
 export * from './SidebarContent';
