@@ -7,18 +7,22 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import Color from 'tinycolor2';
 import {observer} from 'mobx-react';
 import {IconButton, Text} from 'react-native-paper';
 
+import {PalType} from '../PalsSheets/types';
+
+import {ChevronUpIcon, CameraIcon, VideoRecorderIcon} from '../../assets/icons';
+
 import {useTheme} from '../../hooks';
-import Color from 'tinycolor2';
+
 import {createStyles} from './styles';
 
 import {chatSessionStore, modelStore, palStore, uiStore} from '../../store';
 
 import {MessageType} from '../../utils/types';
 import {L10nContext, unwrap, UserContext} from '../../utils';
-import {PalType} from '../PalsSheets/types';
 
 import {
   AttachmentButton,
@@ -28,7 +32,6 @@ import {
   SendButton,
   StopButton,
 } from '..';
-import {ChevronUpIcon, CameraIcon} from '../../assets/icons';
 
 export interface ChatInputTopLevelProps {
   /** Whether attachment is uploading. Will replace attachment button with a
@@ -124,7 +127,8 @@ export const ChatInput = observer(
 
     // For camera input, use promptText if provided
     const value =
-      palType === PalType.CAMERA && promptText !== undefined
+      (palType === PalType.CAMERA || palType === PalType.VIDEO) &&
+      promptText !== undefined
         ? promptText
         : textInputProps?.value ?? text;
 
@@ -282,11 +286,9 @@ export const ChatInput = observer(
                   key={inputTextColor}
                   placeholder={
                     palType === PalType.CAMERA
-                      ? l10n.camera.promptPlaceholder ||
-                        'What do you want to know about this image?'
+                      ? l10n.camera.promptPlaceholder
                       : palType === PalType.VIDEO
-                      ? l10n.video.promptPlaceholder ||
-                        'What do you want to know about this video?'
+                      ? l10n.video.promptPlaceholder
                       : l10n.components.chatInput.inputPlaceholder
                   }
                   placeholderTextColor={inputTextColor}
@@ -319,14 +321,20 @@ export const ChatInput = observer(
                       {backgroundColor: activePal?.color?.[0]},
                     ]}
                     onPress={onStartCamera}>
-                    <CameraIcon
-                      width={20}
-                      height={20}
-                      stroke="white"
-                      strokeWidth={2}
-                    />
-                    {palType === PalType.VIDEO && (
-                      <View style={styles.videoIndicator} />
+                    {palType === PalType.VIDEO ? (
+                      <VideoRecorderIcon
+                        width={20}
+                        height={20}
+                        stroke="white"
+                        strokeWidth={2}
+                      />
+                    ) : (
+                      <CameraIcon
+                        width={20}
+                        height={20}
+                        stroke="white"
+                        strokeWidth={2}
+                      />
                     )}
                   </TouchableOpacity>
                 ) : (

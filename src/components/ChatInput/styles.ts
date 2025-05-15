@@ -115,13 +115,4 @@ export const createStyles = ({
       alignItems: 'center',
       marginBottom: 8,
     },
-    videoIndicator: {
-      position: 'absolute',
-      bottom: -2,
-      right: -2,
-      backgroundColor: 'red',
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-    },
   });

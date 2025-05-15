@@ -91,6 +91,8 @@ export interface ChatProps extends ChatTopLevelProps {
    * for example today, yesterday and before. Or you can just return the same
    * date header for any message. */
   customDateHeaderText?: (dateTime: number) => string;
+  /** Custom content to display between the header and chat list */
+  customContent?: React.ReactNode;
   /** Allows you to customize the date format. IMPORTANT: only for the date,
    * do not return time here. @see {@link ChatProps.timeFormat} to customize the time format.
    * @see {@link ChatProps.customDateHeaderText} for more customization. */
@@ -133,6 +135,7 @@ export interface ChatProps extends ChatTopLevelProps {
 /** Entry component, represents the complete chat */
 export const ChatView = observer(
   ({
+    customContent,
     customDateHeaderText,
     dateFormat,
     disableImageGallery,
@@ -747,6 +750,7 @@ export const ChatView = observer(
             style={styles.container}>
             <View style={styles.chatContainer}>
               <ChatHeader />
+              {customContent}
               {renderChatList()}
               <Animated.View
                 onLayout={onLayoutChatInput}

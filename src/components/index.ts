@@ -17,6 +17,7 @@ export * from './DatabaseMigration';
 export * from './Dialog';
 export * from './Divider';
 export * from './DownloadErrorDialog';
+export * from './EmbeddedVideoView';
 export * from './ErrorSnackbar';
 export * from './FileMessage';
 export * from './HeaderRight';
