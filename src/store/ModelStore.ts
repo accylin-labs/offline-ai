@@ -656,13 +656,7 @@ class ModelStore {
         cache_type_v: this.cache_type_v,
         n_gpu_layers: this.useMetal ? this.n_gpu_layers : 0,
         no_gpu_devices: !this.useMetal,
-        mmproj_use_gpu: this.useMetal,
       };
-
-      // If we have a projection model path, log it
-      if (mmProjPath) {
-        console.log('Using projection model path:', mmProjPath);
-      }
 
       const ctx = await initLlama(
         {
@@ -670,8 +664,6 @@ class ModelStore {
           use_mlock: true,
           ...initSettings,
           use_progress_callback: true,
-          // Add mmproj path if provided
-          mmproj: mmProjPath,
         },
         (_progress: number) => {
           //console.log('progress: ', _progress);
@@ -683,9 +675,14 @@ class ModelStore {
       // Initialize multimodal support if mmproj path was provided
       if (mmProjPath) {
         try {
-          console.log('Initializing multimodal support...');
-          // Always explicitly call initMultimodal even if we provided mmproj during initLlama
-          const success = await ctx.initMultimodal(mmProjPath);
+          console.log('Initializing multimodal support with path:', mmProjPath);
+
+          // Initialize multimodal with the new API format
+          const success = await ctx.initMultimodal({
+            path: mmProjPath,
+            use_gpu: this.useMetal,
+          });
+
           if (!success) {
             console.error('Failed to initialize multimodal support');
           } else {
@@ -720,13 +717,27 @@ class ModelStore {
     if (!this.context) {
       return Promise.resolve('No context to release');
     }
-    await this.context.release();
-    console.log('released');
-    runInAction(() => {
-      this.context = undefined;
-      this.activeContextSettings = undefined;
-      //this.activeModelId = undefined; // activeModelId is set to undefined in manualReleaseContext
-    });
+
+    try {
+      // First check if multimodal is enabled and release it if needed
+      const isMultimodalEnabled = await this.isMultimodalEnabled();
+      if (isMultimodalEnabled) {
+        console.log('Releasing multimodal context first');
+        await this.context.releaseMultimodal();
+      }
+
+      // Then release the main context
+      await this.context.release();
+      console.log('released');
+    } catch (error) {
+      console.error('Error during context release:', error);
+    } finally {
+      runInAction(() => {
+        this.context = undefined;
+        this.activeContextSettings = undefined;
+        //this.activeModelId = undefined; // activeModelId is set to undefined in manualReleaseContext
+      });
+    }
     return 'Context released successfully';
   };
 
@@ -809,7 +820,7 @@ class ModelStore {
       progress: 0,
       filename,
       fullPath: localFilePath,
-      isLocal: true,
+      isLocal: true, // Kept for backward compatibility
       origin: ModelOrigin.LOCAL,
       defaultChatTemplate: {...defaultSettings.chatTemplate},
       chatTemplate: {...defaultSettings.chatTemplate},
@@ -1130,15 +1141,14 @@ class ModelStore {
         completionParamsWithAppProps,
       );
 
-      // Cast to any to allow adding image_path which is supported by the native module
-      // but not included in the TypeScript type definition
-      const completionParamsWithImage = {
+      // Use the image_paths parameter
+      const completionParamsWithImages = {
         ...cleanCompletionParams,
-        image_path: imagePath,
-      } as any;
+        image_paths: [imagePath],
+      } as CompletionParams;
 
       const result = await this.context.completion(
-        completionParamsWithImage,
+        completionParamsWithImages,
         data => {
           if (data.token) {
             params.onToken?.(data.token);
@@ -1148,7 +1158,7 @@ class ModelStore {
 
       params.onComplete?.(result.text);
     } catch (error) {
-      console.error('Error in image completion:', error);
+      console.error('Error in multi-image completion:', error);
       params.onError?.(
         error instanceof Error ? error : new Error(String(error)),
       );
@@ -1160,6 +1170,7 @@ class ModelStore {
     }
   };
 
+  
   /**
    * Fetches and updates model file details from HuggingFace.
    * This is used when we need to get the lfs.oid for integrity checks.
