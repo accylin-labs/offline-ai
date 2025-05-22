@@ -1141,14 +1141,8 @@ class ModelStore {
         completionParamsWithAppProps,
       );
 
-      // Use the image_paths parameter
-      const completionParamsWithImages = {
-        ...cleanCompletionParams,
-        image_paths: [imagePath],
-      } as CompletionParams;
-
       const result = await this.context.completion(
-        completionParamsWithImages,
+        cleanCompletionParams,
         data => {
           if (data.token) {
             params.onToken?.(data.token);
@@ -1170,7 +1164,6 @@ class ModelStore {
     }
   };
 
-  
   /**
    * Fetches and updates model file details from HuggingFace.
    * This is used when we need to get the lfs.oid for integrity checks.

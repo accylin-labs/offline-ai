@@ -144,6 +144,7 @@ export const l10n = {
         availableToDownload: 'Available to Download',
         useAddButtonForMore: 'Use + button to find more models',
       },
+      vision: 'Vision',
       buttons: {
         addFromHuggingFace: 'Add from Hugging Face',
         addLocalModel: 'Add Local Model',
@@ -1031,6 +1032,7 @@ export const l10n = {
         availableToDownload: 'ダウンロード可能',
         useAddButtonForMore: '+ ボタンを他のモデルを探す',
       },
+      vision: 'ビジョン',
       buttons: {
         addFromHuggingFace: 'Hugging Faceから追加',
         addLocalModel: 'ローカルモデルを追加',
@@ -1908,6 +1910,7 @@ export const l10n = {
         availableToDownload: '可下载',
         useAddButtonForMore: '使用+按钮查找更多模型',
       },
+      vision: '视觉',
       buttons: {
         addFromHuggingFace: '从Hugging Face添加',
         addLocalModel: '添加本地模型',

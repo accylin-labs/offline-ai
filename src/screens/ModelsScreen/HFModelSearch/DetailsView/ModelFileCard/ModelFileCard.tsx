@@ -10,6 +10,7 @@ import {createStyles} from './styles';
 import {modelStore} from '../../../../../store';
 import {formatBytes, hfAsModel, L10nContext} from '../../../../../utils';
 import {isLegacyQuantization} from '../../../../../utils/modelSettings';
+import {isProjectionModel} from '../../../../../utils/multimodalHelpers';
 import {
   HuggingFaceModel,
   Model,
@@ -34,7 +35,7 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
     const [showWarning, setShowWarning] = useState(false);
     const theme = useTheme();
     const l10n = useContext(L10nContext);
-    const styles = createStyles(theme);
+    const styles = createStyles(theme, isProjectionModel(modelFile.rfilename));
     const HF_YELLOW = '#FFD21E';
 
     // Check if we have all the necessary data, as some are fetched async, like size.
