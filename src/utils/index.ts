@@ -13,11 +13,18 @@ import {formatBytes, formatNumber} from './formatters';
 import {getHFDefaultSettings} from './chat';
 import {getVerboseDateTimeRepresentation} from './formatters';
 import {
+  isVisionRepo,
+  getMmprojFiles,
+  isProjectionModel,
+  getRecommendedProjectionModel,
+} from './multimodalHelpers';
+import {
   HuggingFaceModel,
   MessageType,
   Model,
   ModelFile,
   ModelOrigin,
+  ModelType,
   PreviewImage,
   User,
 } from './types';
@@ -342,6 +349,45 @@ export function hfAsModel(
 ): Model {
   const defaultSettings = getHFDefaultSettings(hfModel);
 
+  // Check if this is a vision repository
+  const isVision = isVisionRepo(hfModel.siblings || []);
+
+  // Check if this is a projection model
+  const isProjModel = isProjectionModel(modelFile.rfilename);
+
+  // Check if this is a vision LLM (in a vision repo but not a projection model)
+  const isVisionLLM = isVision && !isProjModel;
+
+  // Get compatible projection models if this is a vision LLM
+  let compatibleProjectionModels: string[] = [];
+  let defaultProjectionModel: string | undefined;
+
+  if (isVisionLLM) {
+    // Get mmproj files from the repository
+    const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
+
+    // Convert to model IDs
+    compatibleProjectionModels = mmprojFiles.map(
+      file => `${hfModel.id}/${file.rfilename}`,
+    );
+
+    // Set default projection model based on quantization matching
+    if (compatibleProjectionModels.length > 0) {
+      // Get the filenames only
+      const mmprojFilenames = mmprojFiles.map(file => file.rfilename);
+
+      // Find the best matching projection model based on quantization
+      const recommendedFile = getRecommendedProjectionModel(
+        modelFile.rfilename,
+        mmprojFilenames,
+      );
+
+      if (recommendedFile) {
+        defaultProjectionModel = `${hfModel.id}/${recommendedFile}`;
+      }
+    }
+  }
+
   const _model: Model = {
     id: hfModel.id + '/' + modelFile.rfilename,
     type: extractHFModelType(hfModel.id),
@@ -365,6 +411,18 @@ export function hfAsModel(
     stopWords: defaultSettings.completionParams.stop,
     hfModelFile: modelFile,
     hfModel: hfModel,
+
+    // Set multimodal fields
+    supportsMultimodal: isVisionLLM,
+    modelType: isProjModel
+      ? ModelType.PROJECTION
+      : isVisionLLM
+      ? ModelType.VISION
+      : undefined,
+    compatibleProjectionModels: isVisionLLM
+      ? compatibleProjectionModels
+      : undefined,
+    defaultProjectionModel: isVisionLLM ? defaultProjectionModel : undefined,
   };
 
   return _model;
@@ -523,6 +581,47 @@ export const getLocalizedModelCapabilities = (
     .filter(Boolean)
     .join(', ');
 };
+
+/**
+ * Extract quantization level from filename
+ * @param filename The filename to extract quantization level from
+ * @returns The quantization level string (e.g., 'q4_0', 'q5_k_m', etc.) or null if not found
+ */
+export function extractModelPrecision(filename: string): string | null {
+  const lower = filename.toLowerCase();
+
+  // Match and return full-precision types
+  const fpMatch = lower.match(/\b(f16|bf16|f32)\b/);
+  if (fpMatch) {
+    return fpMatch[1];
+  }
+
+  // Match quantized types like iq4_k_m, q4_0_0, q5_k, etc., and normalize to just q4, q5, etc.
+  const quantMatch = lower.match(/\b[iq]?(q[1-8])(?:[_\-a-z0-9]*)?\b/);
+  if (quantMatch) {
+    return quantMatch[1];
+  }
+
+  return null;
+}
+
+const QUANT_ORDER = [
+  'q1',
+  'q2',
+  'q3',
+  'q4',
+  'q5',
+  'q6',
+  'q8',
+  'bf16',
+  'f16',
+  'f32',
+];
+
+export function getQuantRank(level: string): number {
+  const simplified = level.toLowerCase();
+  return QUANT_ORDER.indexOf(simplified);
+}
 
 export * from './formatters';
 export * from './network';

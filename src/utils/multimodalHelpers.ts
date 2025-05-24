@@ -2,7 +2,10 @@
  * Helper functions for multimodal support
  */
 
+import {extractModelPrecision, getQuantRank} from '.';
 import {ModelFile} from './types';
+
+const MMProjRegex = /[-_.]*mmproj[-_.].+\.gguf$/i;
 
 /**
  * Checks if a repository contains vision models based on the presence of mmproj files
@@ -10,7 +13,7 @@ import {ModelFile} from './types';
  * @returns boolean indicating if the repository contains vision models
  */
 export function isVisionRepo(siblings: ModelFile[]): boolean {
-  return siblings.some(f => /mmproj[-_].+\.gguf$/i.test(f.rfilename));
+  return siblings.some(f => MMProjRegex.test(f.rfilename));
 }
 
 /**
@@ -19,33 +22,16 @@ export function isVisionRepo(siblings: ModelFile[]): boolean {
  * @returns Array of mmproj filenames
  */
 export function getMmprojFiles(siblings: ModelFile[]): ModelFile[] {
-  return siblings.filter(f => /^mmproj[-_].+\.gguf$/i.test(f.rfilename));
+  return siblings.filter(f => MMProjRegex.test(f.rfilename));
 }
 
 /**
- * Checks if a model file is a vision model
- * @param filename Model filename
- * @returns boolean indicating if the model is a vision model
+ * Gets the LLM files (non-mmproj files) from a repository
+ * @param siblings Array of model files in the repository
+ * @returns Array of LLM model files
  */
-export function isVisionModel(filename: string): boolean {
-  // Common patterns for vision model filenames
-  const visionPatterns = [
-    /llava/i,
-    /vision/i,
-    /vl[-_]/i,
-    /visual/i,
-    /multimodal/i,
-    /clip/i,
-    /image/i,
-    /bakllava/i,
-    /llava-hf/i,
-    /llava-v1/i,
-    /smolvlm/i,
-    /internvl/i,
-    /qwen.*vl/i,
-  ];
-
-  return visionPatterns.some(pattern => pattern.test(filename));
+export function getLLMFiles(siblings: ModelFile[]): ModelFile[] {
+  return siblings.filter(f => !MMProjRegex.test(f.rfilename));
 }
 
 /**
@@ -54,7 +40,7 @@ export function isVisionModel(filename: string): boolean {
  * @returns boolean indicating if the model is a projection model
  */
 export function isProjectionModel(filename: string): boolean {
-  return /^mmproj[-_].+\.gguf$/i.test(filename);
+  return MMProjRegex.test(filename);
 }
 
 /**
@@ -67,42 +53,57 @@ export function getRecommendedProjectionModel(
   visionModelFilename: string,
   availableProjModels: string[],
 ): string | undefined {
-  // Extract base name to match with projection models
-  const baseName = visionModelFilename.replace(/\.gguf$/, '');
-
-  // First try to find a projection model with matching quantization
-  const quantMatch = baseName.match(/(q[0-9]+[_-][0-9k]+)/i);
-  if (quantMatch) {
-    const quantLevel = quantMatch[1].toLowerCase();
-    const matchingQuant = availableProjModels.find(p =>
-      p.toLowerCase().includes(quantLevel),
-    );
-    if (matchingQuant) {
-      return matchingQuant;
-    }
+  if (availableProjModels.length === 0) {
+    return undefined;
+  }
+  if (availableProjModels.length === 1) {
+    return availableProjModels[0];
   }
 
-  // Then try to find a projection model with matching model family
-  for (const family of ['llava', 'bakllava', 'smolvlm', 'internvl', 'qwen']) {
-    if (baseName.toLowerCase().includes(family)) {
-      const matchingFamily = availableProjModels.find(p =>
-        p.toLowerCase().includes(family),
-      );
-      if (matchingFamily) {
-        return matchingFamily;
-      }
-    }
+  // Helper function to get the highest quality projection model
+  const getHighestQualityModel = (): string => {
+    return [...availableProjModels].sort((a, b) => {
+      const rankA = getQuantRank(extractModelPrecision(a) || '');
+      const rankB = getQuantRank(extractModelPrecision(b) || '');
+      return rankB - rankA; // Sort in descending order (highest quality first)
+    })[0];
+  };
+
+  const llmQuant = extractModelPrecision(visionModelFilename);
+  if (!llmQuant) {
+    // If no quantization detected, return the highest quality projection model
+    return getHighestQualityModel();
   }
 
-  // If no specific match, return the first available projection model
-  return availableProjModels[0];
-}
+  const llmRank = getQuantRank(llmQuant);
+  if (llmRank === -1) {
+    // If quantization not recognized, return the highest quality projection model
+    return getHighestQualityModel();
+  }
 
-/**
- * Gets the LLM files (non-mmproj files) from a repository
- * @param siblings Array of model files in the repository
- * @returns Array of LLM model files
- */
-export function getLLMFiles(siblings: ModelFile[]): ModelFile[] {
-  return siblings.filter(f => !/^mmproj[-_].+\.gguf$/i.test(f.rfilename));
+  // First: exact match
+  const exactMatch = availableProjModels.find(
+    p => extractModelPrecision(p)?.toLowerCase() === llmQuant.toLowerCase(),
+  );
+  if (exactMatch) {
+    return exactMatch;
+  }
+
+  // Second: find closest higher or equal quality match
+  const sortedByProximity = [...availableProjModels].sort((a, b) => {
+    const rankA = getQuantRank(extractModelPrecision(a) || '');
+    const rankB = getQuantRank(extractModelPrecision(b) || '');
+    const diffA =
+      rankA - llmRank >= 0 ? rankA - llmRank : Number.MAX_SAFE_INTEGER;
+    const diffB =
+      rankB - llmRank >= 0 ? rankB - llmRank : Number.MAX_SAFE_INTEGER;
+    return diffA - diffB;
+  });
+
+  const closestMatch = sortedByProximity.find(
+    p => getQuantRank(extractModelPrecision(p) || '') >= llmRank,
+  );
+
+  // If no higher quality match found, return the highest quality available
+  return closestMatch ?? getHighestQualityModel();
 }

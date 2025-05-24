@@ -1,4 +1,4 @@
-import {Model, ModelOrigin} from '../utils/types';
+import {Model, ModelOrigin, ModelType} from '../utils/types';
 import {chatTemplates} from '../utils/chat';
 import {defaultCompletionParams} from '../utils/completionSettingsVersions';
 import {Platform} from 'react-native';
@@ -381,7 +381,7 @@ const crossPlatformModels: Model[] = [
     filename: 'SmolVLM2-500M-Video-Instruct-Q8_0.gguf',
     isLocal: false,
     origin: ModelOrigin.PRESET,
-    modelType: 'vision', // Specify that this is a vision model
+    modelType: ModelType.VISION, // Specify that this is a vision model
     defaultChatTemplate: chatTemplates.smolVLM,
     chatTemplate: chatTemplates.smolVLM,
     defaultCompletionSettings: {
@@ -402,6 +402,13 @@ const crossPlatformModels: Model[] = [
       size: 437000000,
       canFitInStorage: true,
     },
+    supportsMultimodal: true,
+    compatibleProjectionModels: [
+      'ggml-org/SmolVLM2-500M-Video-Instruct-GGUF/mmproj-SmolVLM2-500M-Video-Instruct-Q8_0.gguf',
+      'ggml-org/SmolVLM2-500M-Video-Instruct-GGUF/mmproj-SmolVLM2-500M-Video-Instruct-f16.gguf',
+    ],
+    defaultProjectionModel:
+      'ggml-org/SmolVLM2-500M-Video-Instruct-GGUF/mmproj-SmolVLM2-500M-Video-Instruct-Q8_0.gguf',
   },
   {
     id: 'ggml-org/SmolVLM2-500M-Video-Instruct-GGUF/mmproj-SmolVLM2-500M-Video-Instruct-Q8_0.gguf',
@@ -419,7 +426,7 @@ const crossPlatformModels: Model[] = [
     filename: 'mmproj-SmolVLM2-500M-Video-Instruct-Q8_0.gguf',
     isLocal: false,
     origin: ModelOrigin.PRESET,
-    modelType: 'projection',
+    modelType: ModelType.PROJECTION,
     defaultChatTemplate: chatTemplates.smolVLM,
     chatTemplate: chatTemplates.smolVLM,
     defaultCompletionSettings: {
