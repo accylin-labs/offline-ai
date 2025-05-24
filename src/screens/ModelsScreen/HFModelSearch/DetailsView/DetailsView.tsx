@@ -3,23 +3,21 @@ import {View} from 'react-native';
 
 import {Text, Chip, Tooltip} from 'react-native-paper';
 
+import {ModelTypeTag} from '../../../../components';
+
 import {useTheme} from '../../../../hooks';
-import {ModelTypeTag, TextDivider} from '../../../../components';
 
 import {createStyles} from './styles';
 import {ModelFileCard} from './ModelFileCard';
 
 import {HuggingFaceModel} from '../../../../utils/types';
 import {
-  isVisionRepo,
-  getMmprojFiles,
-  getLLMFiles,
-} from '../../../../utils/multimodalHelpers';
-import {
   extractHFModelTitle,
   formatNumber,
   L10nContext,
   timeAgo,
+  isVisionRepo,
+  getLLMFiles,
 } from '../../../../utils';
 
 interface DetailsViewProps {
@@ -34,10 +32,7 @@ export const DetailsView = ({hfModel}: DetailsViewProps) => {
   // Check if this is a vision repository
   const isVision = isVisionRepo(hfModel.siblings || []);
 
-  // Get mmproj files
-  const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
-
-  // Get LLM files (non-mmproj files)
+  // Get LLM files (non-mmproj files) - projection models are hidden from UI
   const llmFiles = getLLMFiles(hfModel.siblings || []);
 
   return (
@@ -85,7 +80,7 @@ export const DetailsView = ({hfModel}: DetailsViewProps) => {
         {l10n.models.details.title}
       </Text>
 
-      {/* Show LLM files first */}
+      {/* Show LLM files only - projection models are hidden per enhanced UX */}
       {llmFiles.length > 0 &&
         llmFiles.map((file, index) => (
           <ModelFileCard
@@ -95,19 +90,8 @@ export const DetailsView = ({hfModel}: DetailsViewProps) => {
           />
         ))}
 
-      {/* Then show mmproj files */}
-      {mmprojFiles.length > 0 && (
-        <>
-          <TextDivider text="Projector Files" />
-          {mmprojFiles.map((file, index) => (
-            <ModelFileCard
-              key={`mmproj-${index}`}
-              modelFile={file}
-              hfModel={hfModel}
-            />
-          ))}
-        </>
-      )}
+      {/* TODO: Currently projection models are hidden from UI,
+      we should add them to the model card like in a dropdown form.*/}
     </View>
   );
 };

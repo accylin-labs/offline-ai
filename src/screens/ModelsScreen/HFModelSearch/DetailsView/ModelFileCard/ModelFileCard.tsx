@@ -8,9 +8,15 @@ import {IconButton, Text, Tooltip, Snackbar, Portal} from 'react-native-paper';
 import {useTheme, useMemoryCheck} from '../../../../../hooks';
 import {createStyles} from './styles';
 import {modelStore} from '../../../../../store';
-import {formatBytes, hfAsModel, L10nContext} from '../../../../../utils';
+import {
+  formatBytes,
+  hfAsModel,
+  L10nContext,
+  isProjectionModel,
+  getVisionModelSizeBreakdown,
+  isVisionRepo,
+} from '../../../../../utils';
 import {isLegacyQuantization} from '../../../../../utils/modelSettings';
-import {isProjectionModel} from '../../../../../utils/multimodalHelpers';
 import {
   HuggingFaceModel,
   Model,
@@ -191,6 +197,32 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
       setShowWarning(false);
     };
 
+    // Get enhanced size display for vision models
+    const getEnhancedSizeDisplay = () => {
+      if (!modelFile.size) {
+        return '';
+      }
+
+      // Check if this is a vision model
+      const isVision = isVisionRepo(hfModel.siblings || []);
+      const isProjModel = isProjectionModel(modelFile.rfilename);
+      const isVisionLLM = isVision && !isProjModel;
+
+      if (isVisionLLM) {
+        const sizeBreakdown = getVisionModelSizeBreakdown(modelFile, hfModel);
+        if (sizeBreakdown.hasProjection) {
+          return `${formatBytes(
+            sizeBreakdown.totalSize,
+            2,
+            false,
+            true,
+          )} (includes vision support)`;
+        }
+      }
+
+      return formatBytes(modelFile.size, 2, false, true);
+    };
+
     return (
       <View style={styles.fileCardContainer}>
         <LinearGradient
@@ -217,7 +249,7 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
               <View style={styles.metadataRow}>
                 {isModelInfoReady && modelFile.size && (
                   <Text variant="labelSmall" style={styles.fileSize}>
-                    {formatBytes(modelFile.size, 2, false, true)}
+                    {getEnhancedSizeDisplay()}
                   </Text>
                 )}
                 {isModelInfoReady && warnings.length > 0 && (

@@ -370,7 +370,7 @@ const crossPlatformModels: Model[] = [
     author: 'ggml-org',
     name: 'SmolVLM2-500M-Video-Instruct (Q8_0)',
     type: 'SmolVLM',
-    capabilities: ['vision', 'image-analysis'],
+    capabilities: ['vision'],
     size: 437000000,
     params: 500000000, // 500M parameters
     isDownloaded: false,
@@ -415,7 +415,7 @@ const crossPlatformModels: Model[] = [
     author: 'ggml-org',
     name: 'mmproj-SmolVLM2-500M-Video-Instruct (Q8_0)',
     type: 'SmolVLM',
-    capabilities: ['vision', 'projection'],
+    capabilities: [],
     size: 109000000,
     params: 500000000,
     isDownloaded: false,

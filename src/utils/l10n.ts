@@ -145,6 +145,22 @@ export const l10n = {
         useAddButtonForMore: 'Use + button to find more models',
       },
       vision: 'Vision',
+      mmproj: 'Projector',
+      multimodal: {
+        settings: 'Multimodal Settings',
+        projectionModels: 'Projection Models',
+        noCompatibleModels: 'No compatible projection models found',
+        selected: 'Selected',
+        select: 'Select',
+        download: 'Download',
+        projectionNeededTitle: 'Projection Model Needed',
+        projectionNeededMessage:
+          'This model requires a projection model for multimodal capabilities.',
+        reloadModelTitle: 'Reload Model',
+        reloadModelMessage:
+          'The model needs to be reloaded to apply the new projection model. Do you want to reload now?',
+        reload: 'Reload',
+      },
       buttons: {
         addFromHuggingFace: 'Add from Hugging Face',
         addLocalModel: 'Add Local Model',
@@ -275,6 +291,7 @@ export const l10n = {
         multilingual: 'Multilingual',
         rewriting: 'Rewriting',
         creativity: 'Creative writing',
+        vision: 'Vision',
       },
     },
     completionParams: {
@@ -1033,6 +1050,22 @@ export const l10n = {
         useAddButtonForMore: '+ ボタンを他のモデルを探す',
       },
       vision: 'ビジョン',
+      mmproj: 'プロジェクター',
+      multimodal: {
+        settings: 'マルチモーダル設定',
+        projectionModels: '投影モデル',
+        noCompatibleModels: '互換性のある投影モデルが見つかりません',
+        selected: '選択済み',
+        select: '選択',
+        download: 'ダウンロード',
+        projectionNeededTitle: '投影モデルが必要です',
+        projectionNeededMessage:
+          'このモデルはマルチモーダル機能のために投影モデルが必要です。',
+        reloadModelTitle: 'モデルを再読み込み',
+        reloadModelMessage:
+          '新しい投影モデルを適用するにはモデルを再読み込みする必要があります。今すぐ再読み込みしますか？',
+        reload: '再読み込み',
+      },
       buttons: {
         addFromHuggingFace: 'Hugging Faceから追加',
         addLocalModel: 'ローカルモデルを追加',
@@ -1911,6 +1944,21 @@ export const l10n = {
         useAddButtonForMore: '使用+按钮查找更多模型',
       },
       vision: '视觉',
+      mmproj: '投影仪',
+      multimodal: {
+        settings: '多模态设置',
+        projectionModels: '投影模型',
+        noCompatibleModels: '未找到兼容的投影模型',
+        selected: '已选择',
+        select: '选择',
+        download: '下载',
+        projectionNeededTitle: '需要投影模型',
+        projectionNeededMessage: '此模型需要投影模型才能使用多模态功能。',
+        reloadModelTitle: '重新加载模型',
+        reloadModelMessage:
+          '需要重新加载模型以应用新的投影模型。您想现在重新加载吗？',
+        reload: '重新加载',
+      },
       buttons: {
         addFromHuggingFace: '从Hugging Face添加',
         addLocalModel: '添加本地模型',

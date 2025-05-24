@@ -17,12 +17,12 @@ import {createStyles} from './styles';
 import {hfStore} from '../../../../store';
 
 import {HuggingFaceModel} from '../../../../utils/types';
-import {isVisionRepo} from '../../../../utils/multimodalHelpers';
 import {
   extractHFModelTitle,
   formatNumber,
   timeAgo,
   L10nContext,
+  isVisionRepo,
 } from '../../../../utils';
 
 interface SearchViewProps {

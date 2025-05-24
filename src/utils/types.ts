@@ -299,6 +299,13 @@ export enum ModelOrigin {
   LOCAL = 'local',
   HF = 'hf',
 }
+
+export enum ModelType {
+  PROJECTION = 'projection',
+  VISION = 'vision',
+  LLM = 'llm',
+}
+
 export interface Model {
   id: string;
   author: string;
@@ -319,7 +326,13 @@ export interface Model {
    */
   isLocal: boolean; // this need to be deprecated
   origin: ModelOrigin;
-  modelType?: 'vision' | 'projection'; // Type of model for multimodal support
+  modelType?: ModelType; // Type of model for multimodal support
+
+  // Multimodal support fields
+  supportsMultimodal?: boolean; // Whether this model supports multimodal input
+  compatibleProjectionModels?: string[]; // Array of mmproj model IDs that work with this model
+  defaultProjectionModel?: string; // Default mmproj model ID to use with this model
+
   defaultChatTemplate: ChatTemplateConfig;
   chatTemplate: ChatTemplateConfig;
   defaultStopWords: CompletionParams['stop'];
@@ -355,6 +368,7 @@ export interface ModelFile {
   canFitInStorage?: boolean;
 }
 
+// Model data from HuggingFace search models
 export interface HuggingFaceModel {
   _id: string;
   id: string;

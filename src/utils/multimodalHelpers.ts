@@ -3,7 +3,7 @@
  */
 
 import {extractModelPrecision, getQuantRank} from '.';
-import {ModelFile} from './types';
+import {HuggingFaceModel, ModelFile} from './types';
 
 const MMProjRegex = /[-_.]*mmproj[-_.].+\.gguf$/i;
 
@@ -106,4 +106,61 @@ export function getRecommendedProjectionModel(
 
   // If no higher quality match found, return the highest quality available
   return closestMatch ?? getHighestQualityModel();
+}
+
+/**
+ * Filters out projection models from a list of models for display purposes
+ * @param models Array of models to filter
+ * @returns Array of models with projection models removed
+ */
+export function filterProjectionModels<T extends {modelType?: string}>(
+  models: T[],
+): T[] {
+  return models.filter(model => model.modelType !== 'projection');
+}
+
+/**
+ * Gets size breakdown for a vision model using HF siblings data
+ * This is used in HF search context where projection models aren't in modelStore yet
+ * @param modelFile The LLM model file
+ * @param hfModel The HF model containing siblings
+ * @returns Object with llmSize, projectionSize, and totalSize
+ */
+export function getVisionModelSizeBreakdown(
+  modelFile: ModelFile,
+  hfModel: HuggingFaceModel,
+): {
+  llmSize: number;
+  projectionSize: number;
+  totalSize: number;
+  hasProjection: boolean;
+} {
+  const llmSize = modelFile.size || 0;
+  let projectionSize = 0;
+  let hasProjection = false;
+
+  // Find the default projection model from siblings
+  const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
+  if (mmprojFiles.length > 0) {
+    // Get the recommended projection model
+    const recommendedProj = getRecommendedProjectionModel(
+      modelFile.rfilename,
+      mmprojFiles.map(f => f.rfilename),
+    );
+
+    if (recommendedProj) {
+      const projFile = mmprojFiles.find(f => f.rfilename === recommendedProj);
+      if (projFile && projFile.size) {
+        projectionSize = projFile.size;
+        hasProjection = true;
+      }
+    }
+  }
+
+  return {
+    llmSize,
+    projectionSize,
+    totalSize: llmSize + projectionSize,
+    hasProjection,
+  };
 }

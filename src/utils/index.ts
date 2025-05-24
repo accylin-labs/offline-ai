@@ -9,15 +9,10 @@ import Blob from 'react-native/Libraries/Blob/Blob';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 
 import {l10n} from './l10n';
-import {formatBytes, formatNumber} from './formatters';
+import {modelStore} from '../store';
 import {getHFDefaultSettings} from './chat';
+import {formatBytes, formatNumber} from './formatters';
 import {getVerboseDateTimeRepresentation} from './formatters';
-import {
-  isVisionRepo,
-  getMmprojFiles,
-  isProjectionModel,
-  getRecommendedProjectionModel,
-} from './multimodalHelpers';
 import {
   HuggingFaceModel,
   MessageType,
@@ -28,6 +23,13 @@ import {
   PreviewImage,
   User,
 } from './types';
+import {
+  isVisionRepo,
+  getMmprojFiles,
+  isProjectionModel,
+  getRecommendedProjectionModel,
+  getVisionModelSizeBreakdown,
+} from './multimodalHelpers';
 
 export const L10nContext = React.createContext<
   (typeof l10n)[keyof typeof l10n]
@@ -252,7 +254,6 @@ export function bytesToGB(bytes: number): string {
 export const getModelDescription = (
   model: Model,
   isActiveModel: boolean,
-  modelStore: any,
   l10nData = l10n.en,
 ): string => {
   // Get size and params from context if the model is active.
@@ -270,7 +271,21 @@ export const getModelDescription = (
         };
 
   const notAvailable = l10nData.models.modelDescription.notAvailable;
-  const sizeString = size > 0 ? formatBytes(size) : notAvailable;
+  let sizeString = size > 0 ? formatBytes(size) : notAvailable;
+
+  // For vision models, show combined size if projection model is available
+  if (model.supportsMultimodal && model.hfModelFile && model.hfModel) {
+    const sizeBreakdown = getVisionModelSizeBreakdown(
+      model.hfModelFile,
+      model.hfModel,
+    );
+    if (sizeBreakdown.hasProjection) {
+      sizeString = `${formatBytes(
+        sizeBreakdown.totalSize,
+      )} (includes vision support)`;
+    }
+  }
+
   const paramsString =
     params > 0 ? formatNumber(params, 2, true, false) : notAvailable;
 
@@ -279,7 +294,18 @@ export const getModelDescription = (
 
 export async function hasEnoughSpace(model: Model): Promise<boolean> {
   try {
-    const requiredSpaceBytes = model.size;
+    let requiredSpaceBytes = model.size;
+
+    // For vision models, consider the total size including projection model
+    if (model.supportsMultimodal && model.hfModelFile && model.hfModel) {
+      const sizeBreakdown = getVisionModelSizeBreakdown(
+        model.hfModelFile,
+        model.hfModel,
+      );
+      if (sizeBreakdown.hasProjection) {
+        requiredSpaceBytes = sizeBreakdown.totalSize;
+      }
+    }
 
     if (isNaN(requiredSpaceBytes) || requiredSpaceBytes <= 0) {
       console.error('Invalid model size:', model.size);
@@ -449,7 +475,6 @@ export const getSHA256Hash = async (filePath: string): Promise<string> => {
  */
 export const checkModelFileIntegrity = async (
   model: Model,
-  modelStore: any,
 ): Promise<{
   isValid: boolean;
   errorMessage: string | null;
@@ -564,14 +589,14 @@ export const safeParseJSON = (json: string) => {
  * @returns A comma-separated string of localized capabilities
  */
 export const getLocalizedModelCapabilities = (
-  model: Model,
+  capabilities: string[],
   l10nData = l10n.en,
 ): string => {
-  if (!model.capabilities?.length) {
+  if (!capabilities?.length) {
     return '';
   }
 
-  return model.capabilities
+  return capabilities
     .map(
       capability =>
         l10nData.models.modelCapabilities[
@@ -623,8 +648,9 @@ export function getQuantRank(level: string): number {
   return QUANT_ORDER.indexOf(simplified);
 }
 
-export * from './formatters';
-export * from './network';
 export * from './errors';
 export * from './fb';
+export * from './formatters';
+export * from './multimodalHelpers';
+export * from './network';
 export * from './types';
