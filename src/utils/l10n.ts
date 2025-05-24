@@ -1197,6 +1197,7 @@ export const l10n = {
         multilingual: '多言語対応',
         rewriting: '文章の書き換え',
         creativity: '創作文章',
+        vision: 'ビジョン',
       },
     },
     completionParams: {
@@ -2082,6 +2083,7 @@ export const l10n = {
         multilingual: '多语言支持',
         rewriting: '重写文章',
         creativity: '创造性写作',
+        vision: '视觉',
       },
     },
     completionParams: {
