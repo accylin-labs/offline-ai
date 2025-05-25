@@ -9,6 +9,7 @@ import {
   View,
   TouchableOpacity,
   Animated,
+  Platform,
 } from 'react-native';
 
 import dayjs from 'dayjs';
@@ -124,6 +125,10 @@ export interface ChatProps extends ChatTopLevelProps {
   /** Show user names for received messages. Useful for a group chat. Will be
    * shown only on text messages. */
   showUserNames?: boolean;
+  /** Whether to show the image upload button in the chat input */
+  showImageUpload?: boolean;
+  /** Whether to enable vision mode for the chat input */
+  isVisionEnabled?: boolean;
   /**
    * Allows you to customize the time format. IMPORTANT: only for the time,
    * do not return date here. @see {@link ChatProps.dateFormat} to customize the date format.
@@ -143,13 +148,11 @@ export const ChatView = observer(
     enableAnimation,
     flatListProps,
     inputProps,
-    isAttachmentUploading,
     isLastPage,
     isStopVisible,
     isStreaming = false,
     isThinking = false,
     messages,
-    onAttachmentPress,
     onEndReached,
     onMessageLongPress: externalOnMessageLongPress,
     onMessagePress,
@@ -164,6 +167,8 @@ export const ChatView = observer(
     sendButtonVisibilityMode = 'editing',
     showUserAvatars = false,
     showUserNames = false,
+    showImageUpload = false,
+    isVisionEnabled = false,
     textInputProps,
     timeFormat,
     usePreviewData = true,
@@ -741,7 +746,11 @@ export const ChatView = observer(
 
     const inputBackgroundColor = activePal?.color?.[1]
       ? activePal.color?.[1]
-      : theme.colors.secondaryContainer;
+      : Platform.OS === 'ios'
+      ? theme.colors.surface
+      : theme.colors.secondaryContainer; // Since on Android, we don't have shadow enabled, use secondaryContainer for better contrast
+    // Use surface for Android when new architecture is enabled
+
     return (
       <UserContext.Provider value={user}>
         <View style={styles.container} onLayout={onLayout}>
@@ -768,9 +777,7 @@ export const ChatView = observer(
                 <ChatInput
                   {...{
                     ...unwrap(inputProps),
-                    isAttachmentUploading,
                     isStreaming,
-                    onAttachmentPress,
                     onSendPress: wrappedOnSendPress,
                     onStopPress,
                     chatInputHeight,
@@ -780,6 +787,8 @@ export const ChatView = observer(
                     isStopVisible,
                     isPickerVisible,
                     sendButtonVisibilityMode,
+                    showImageUpload,
+                    isVisionEnabled,
                     textInputProps: {
                       ...textInputProps,
                       // Only override value and onChangeText if not using promptText

@@ -5,7 +5,11 @@ import {
   View,
   Animated,
   TouchableOpacity,
+  Alert,
+  ScrollView,
+  Image,
 } from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 import Color from 'tinycolor2';
 import {observer} from 'mobx-react';
@@ -13,7 +17,12 @@ import {IconButton, Text} from 'react-native-paper';
 
 import {PalType} from '../PalsSheets/types';
 
-import {ChevronUpIcon, CameraIcon, VideoRecorderIcon} from '../../assets/icons';
+import {
+  ChevronUpIcon,
+  CameraIcon,
+  VideoRecorderIcon,
+  PlusIcon,
+} from '../../assets/icons';
 
 import {useTheme} from '../../hooks';
 
@@ -22,30 +31,16 @@ import {createStyles} from './styles';
 import {chatSessionStore, modelStore, palStore, uiStore} from '../../store';
 
 import {MessageType} from '../../utils/types';
-import {L10nContext, unwrap, UserContext} from '../../utils';
+import {L10nContext, UserContext} from '../../utils';
 
-import {
-  AttachmentButton,
-  AttachmentButtonAdditionalProps,
-  CircularActivityIndicator,
-  CircularActivityIndicatorProps,
-  SendButton,
-  StopButton,
-} from '..';
+import {SendButton, StopButton, Menu} from '..';
 
 export interface ChatInputTopLevelProps {
-  /** Whether attachment is uploading. Will replace attachment button with a
-   * {@link CircularActivityIndicator}. Since we don't have libraries for
-   * managing media in dependencies we have no way of knowing if
-   * something is uploading so you need to set this manually. */
-  isAttachmentUploading?: boolean;
   /** Whether the AI is currently streaming tokens */
   isStreaming?: boolean;
-  /** @see {@link AttachmentButtonProps.onPress} */
-  onAttachmentPress?: () => void;
   /** Will be called on {@link SendButton} tap. Has {@link MessageType.PartialText} which can
    * be transformed to {@link MessageType.Text} and added to the messages list. */
-  onSendPress: (message: MessageType.PartialText) => void;
+  onSendPress: (message: MessageType.PartialText, imageUris?: string[]) => void;
   onStopPress?: () => void;
   onCancelEdit?: () => void;
   onPalBtnPress?: () => void;
@@ -64,11 +59,12 @@ export interface ChatInputTopLevelProps {
   /** For camera input, allows direct editing of the prompt text */
   promptText?: string;
   onPromptTextChange?: (text: string) => void;
+  /** Whether to show the image upload button */
+  showImageUpload?: boolean;
+  isVisionEnabled?: boolean;
 }
 
 export interface ChatInputAdditionalProps {
-  attachmentButtonProps?: AttachmentButtonAdditionalProps;
-  attachmentCircularActivityIndicatorProps?: CircularActivityIndicatorProps;
   /** Type of Pal being used, affects the input rendering */
   palType?: PalType;
   /** Camera-specific props */
@@ -77,6 +73,8 @@ export interface ChatInputAdditionalProps {
   /** For camera input, allows direct editing of the prompt text */
   promptText?: string;
   onPromptTextChange?: (text: string) => void;
+  /** Whether to show the image upload button */
+  showImageUpload?: boolean;
 }
 
 export type ChatInputProps = ChatInputTopLevelProps & ChatInputAdditionalProps;
@@ -85,11 +83,7 @@ export type ChatInputProps = ChatInputTopLevelProps & ChatInputAdditionalProps;
  * send buttons inside. By default hides send button when text input is empty. */
 export const ChatInput = observer(
   ({
-    attachmentButtonProps,
-    attachmentCircularActivityIndicatorProps,
-    isAttachmentUploading,
     isStreaming = false,
-    onAttachmentPress,
     onSendPress,
     onStopPress,
     onCancelEdit,
@@ -104,6 +98,8 @@ export const ChatInput = observer(
     onStartCamera,
     promptText,
     onPromptTextChange,
+    showImageUpload = false,
+    isVisionEnabled = false,
   }: ChatInputProps) => {
     const l10n = React.useContext(L10nContext);
     const theme = useTheme();
@@ -121,6 +117,10 @@ export const ChatInput = observer(
 
     // Use `defaultValue` if provided
     const [text, setText] = React.useState(textInputProps?.defaultValue ?? '');
+    // State for selected images
+    const [selectedImages, setSelectedImages] = React.useState<string[]>([]);
+    // State for image upload menu
+    const [showImageUploadMenu, setShowImageUploadMenu] = React.useState(false);
     const isEditMode = chatSessionStore.isEditMode;
 
     const styles = createStyles({theme, isEditMode});
@@ -175,9 +175,79 @@ export const ChatInput = observer(
     const handleSend = () => {
       const trimmedValue = value.trim();
       if (trimmedValue) {
-        onSendPress({text: trimmedValue, type: 'text'});
+        // Pass selected images only if we have any, otherwise call with just the message
+        if (selectedImages.length > 0) {
+          onSendPress({text: trimmedValue, type: 'text'}, selectedImages);
+        } else {
+          onSendPress({text: trimmedValue, type: 'text'});
+        }
         setText('');
+        // Clear selected images after sending
+        setSelectedImages([]);
       }
+    };
+
+    // Handle plus button press to show image upload menu
+    const handlePlusButtonPress = () => {
+      setShowImageUploadMenu(true);
+    };
+
+    // Handle taking a photo with the camera
+    const handleTakePhoto = async () => {
+      try {
+        const result = await launchCamera({
+          mediaType: 'photo',
+          quality: 0.8,
+        });
+
+        if (result.assets && result.assets.length > 0 && result.assets[0].uri) {
+          const newImages = [...selectedImages, result.assets[0].uri];
+          setSelectedImages(newImages);
+        }
+        setShowImageUploadMenu(false);
+      } catch (error) {
+        console.error('Error taking photo:', error);
+        Alert.alert(
+          l10n.errors.cameraErrorTitle,
+          l10n.errors.cameraErrorMessage,
+        );
+      }
+    };
+
+    // Handle selecting images from the gallery
+    const handleSelectImages = async () => {
+      try {
+        const result = await launchImageLibrary({
+          mediaType: 'photo',
+          selectionLimit: 5, // Allow multiple images
+          quality: 0.8,
+        });
+
+        if (result.assets && result.assets.length > 0) {
+          const newUris = result.assets
+            .filter(asset => asset.uri)
+            .map(asset => asset.uri as string);
+
+          if (newUris.length > 0) {
+            const newImages = [...selectedImages, ...newUris];
+            setSelectedImages(newImages);
+          }
+        }
+        setShowImageUploadMenu(false);
+      } catch (error) {
+        console.error('Error selecting images:', error);
+        Alert.alert(
+          l10n.errors.galleryErrorTitle,
+          l10n.errors.galleryErrorMessage,
+        );
+      }
+    };
+
+    // Remove an image from the selection
+    const handleRemoveImage = (index: number) => {
+      const newImages = [...selectedImages];
+      newImages.splice(index, 1);
+      setSelectedImages(newImages);
     };
 
     const handleCancel = () => {
@@ -190,6 +260,8 @@ export const ChatInput = observer(
       !isStopVisible &&
       user &&
       (sendButtonVisibilityMode === 'always' || value.trim());
+    const isSendButtonEnabled = value.trim().length > 0;
+    const sendButtonOpacity = isSendButtonEnabled ? 1 : 0.4;
 
     const rotateInterpolate = iconRotation.interpolate({
       inputRange: [0, 1],
@@ -197,11 +269,20 @@ export const ChatInput = observer(
     });
 
     const isBackgroundLight = Color(inputBackgroundColor).isLight();
-    const inputTextColor = isBackgroundLight ? '#333333' : '#DADDE6';
+    // Since the background is dynamic, we need to calculate the onSurface color manually
+    // As opposed to using theme colors.
+    const onSurfaceColor = isBackgroundLight ? '#333333' : '#DADDE6';
+    const onSurfaceColorVariant = onSurfaceColor + '88';
+    // Plus button state
+    const isPlusButtonEnabled = !isStreaming && isVisionEnabled;
+    const plusColor = isPlusButtonEnabled
+      ? onSurfaceColor
+      : onSurfaceColorVariant;
 
     return (
       <View style={styles.container}>
         <View style={styles.inputContainer}>
+          {/* Edit Bar (when in edit mode) */}
           {isEditMode && (
             <Animated.View
               style={[
@@ -222,108 +303,127 @@ export const ChatInput = observer(
               />
             </Animated.View>
           )}
-          <View style={styles.inputRow}>
-            {user &&
-              (isAttachmentUploading ? (
-                <CircularActivityIndicator
-                  {...{
-                    ...attachmentCircularActivityIndicatorProps,
-                    color: theme.colors.onSurface,
-                    style: styles.marginRight,
-                  }}
-                />
-              ) : (
-                !!onAttachmentPress && (
-                  <AttachmentButton
-                    {...unwrap(attachmentButtonProps)}
-                    onPress={onAttachmentPress}
-                  />
-                )
-              ))}
-            <View style={styles.inputWrapper}>
-              <TouchableOpacity
-                style={[
-                  styles.palBtn,
-                  {
-                    backgroundColor:
-                      uiStore.colorScheme === 'dark'
-                        ? theme.colors.inverseOnSurface
-                        : theme.colors.inverseSurface,
-                  },
-                  activePal?.color && {
-                    backgroundColor: activePal?.color?.[0],
-                  },
-                ]}
-                onPress={onPalBtnPress}>
-                <Animated.View
-                  style={{
-                    transform: [{rotate: rotateInterpolate}],
-                  }}>
-                  <ChevronUpIcon stroke={theme.colors.onSurface} />
-                </Animated.View>
-              </TouchableOpacity>
-              <View style={styles.inputInnerContainer}>
-                {activePal?.name && hasActiveModel && (
-                  <Text
-                    style={[
-                      styles.palNameWrapper,
-                      {
-                        color: activePal.color?.[0],
-                      },
-                    ]}>
-                    Pal:{' '}
-                    <Text
-                      style={[
-                        styles.palName,
-                        {
-                          color: activePal.color?.[0],
-                        },
-                      ]}>
-                      {activePal?.name}
-                    </Text>
-                  </Text>
-                )}
-                <TextInput
-                  ref={inputRef}
-                  multiline
-                  key={inputTextColor}
-                  placeholder={
-                    palType === PalType.CAMERA
-                      ? l10n.camera.promptPlaceholder
-                      : palType === PalType.VIDEO
-                      ? l10n.video.promptPlaceholder
-                      : l10n.components.chatInput.inputPlaceholder
-                  }
-                  placeholderTextColor={inputTextColor}
-                  underlineColorAndroid="transparent"
-                  {...textInputProps}
-                  style={[
-                    styles.input,
-                    textInputProps?.style,
-                    {
-                      color: inputTextColor,
-                    },
-                  ]}
-                  onChangeText={handleChangeText}
-                  value={value}
-                  editable={
-                    palType === PalType.CAMERA || palType === PalType.VIDEO
-                      ? !isStreaming && !isCameraActive
-                      : textInputProps?.editable !== false
-                  }
-                />
-              </View>
 
-              {/* Render different buttons based on pal type */}
-              {palType === PalType.CAMERA || palType === PalType.VIDEO ? (
-                // Camera/Video pal - show camera button or stop button
-                !isCameraActive && !isStopVisible ? (
+          {/* Image Preview Section */}
+          {selectedImages.length > 0 && (
+            <View style={styles.imagePreviewContainer}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.imageScrollContent}>
+                {selectedImages.map((uri, index) => (
+                  <View key={`${uri}-${index}`} style={styles.imageContainer}>
+                    <Image
+                      source={{uri}}
+                      style={styles.previewImage}
+                      accessibilityLabel={`Image preview ${index + 1} of ${
+                        selectedImages.length
+                      }`}
+                    />
+                    <IconButton
+                      icon="close-circle"
+                      size={20}
+                      iconColor={theme.colors.error}
+                      style={styles.removeImageButton}
+                      onPress={() => handleRemoveImage(index)}
+                      accessibilityLabel={`Remove image ${index + 1}`}
+                    />
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* Text Input Area (Top Row) */}
+          <View
+            style={[
+              styles.textInputArea,
+              {paddingTop: selectedImages.length > 0 ? 0 : 20},
+            ]}>
+            <TextInput
+              ref={inputRef}
+              multiline
+              key={onSurfaceColor}
+              placeholder={
+                palType === PalType.CAMERA
+                  ? l10n.camera.promptPlaceholder
+                  : palType === PalType.VIDEO
+                  ? l10n.video.promptPlaceholder
+                  : l10n.components.chatInput.inputPlaceholder
+              }
+              placeholderTextColor={onSurfaceColorVariant}
+              underlineColorAndroid="transparent"
+              {...textInputProps}
+              style={[
+                styles.input,
+                textInputProps?.style,
+                {
+                  color: onSurfaceColor,
+                },
+              ]}
+              onChangeText={handleChangeText}
+              value={value}
+              editable={
+                palType === PalType.CAMERA || palType === PalType.VIDEO
+                  ? !isStreaming && !isCameraActive
+                  : textInputProps?.editable !== false
+              }
+            />
+          </View>
+
+          {/* Control Bar (Bottom Row) */}
+          <View style={styles.controlBar}>
+            {/* Left Controls */}
+            <View style={styles.leftControls}>
+              {/* Plus Button for Image Upload (only for regular chat) */}
+              {showImageUpload &&
+                !isEditMode &&
+                !isStreaming &&
+                !isStopVisible &&
+                palType !== PalType.CAMERA &&
+                palType !== PalType.VIDEO && (
+                  <Menu
+                    visible={showImageUploadMenu}
+                    onDismiss={() => setShowImageUploadMenu(false)}
+                    anchor={
+                      <TouchableOpacity
+                        style={styles.plusButton}
+                        disabled={!isPlusButtonEnabled}
+                        onPress={
+                          isPlusButtonEnabled ? handlePlusButtonPress : () => {}
+                        }
+                        accessibilityLabel="Add image"
+                        accessibilityRole="button">
+                        <PlusIcon width={20} height={20} stroke={plusColor} />
+                      </TouchableOpacity>
+                    }>
+                    <Menu.Item
+                      label={l10n.camera?.takePhoto || 'Camera'}
+                      icon="camera"
+                      onPress={handleTakePhoto}
+                    />
+                    <Menu.Item
+                      label={l10n.common?.gallery || 'Gallery'}
+                      icon="image"
+                      onPress={handleSelectImages}
+                    />
+                  </Menu>
+                )}
+
+              {/* Camera Button for Camera/Video Pals */}
+              {(palType === PalType.CAMERA || palType === PalType.VIDEO) &&
+                !isCameraActive &&
+                !isStopVisible && (
                   <TouchableOpacity
                     style={[
-                      styles.cameraButton,
+                      styles.plusButton,
                       {backgroundColor: activePal?.color?.[0]},
                     ]}
-                    onPress={onStartCamera}>
+                    onPress={onStartCamera}
+                    accessibilityLabel={
+                      palType === PalType.VIDEO ? 'Start video' : 'Start camera'
+                    }
+                    accessibilityRole="button">
                     {palType === PalType.VIDEO ? (
                       <VideoRecorderIcon
                         width={20}
@@ -340,31 +440,80 @@ export const ChatInput = observer(
                       />
                     )}
                   </TouchableOpacity>
-                ) : (
-                  <StopButton
-                    key={inputTextColor}
-                    color={inputTextColor}
-                    onPress={onStopPress}
-                  />
-                )
+                )}
+
+              {/* Pal Selector */}
+              <View style={styles.palSelector}>
+                <TouchableOpacity
+                  style={[
+                    styles.palBtn,
+                    {
+                      backgroundColor:
+                        uiStore.colorScheme === 'dark'
+                          ? theme.colors.inverseOnSurface
+                          : theme.colors.inverseSurface,
+                    },
+                    activePal?.color && {
+                      backgroundColor: activePal?.color?.[0],
+                    },
+                  ]}
+                  onPress={onPalBtnPress}
+                  accessibilityLabel="Select Pal"
+                  accessibilityRole="button">
+                  <Animated.View
+                    style={{
+                      transform: [{rotate: rotateInterpolate}],
+                    }}>
+                    <ChevronUpIcon stroke={theme.colors.onSurface} />
+                  </Animated.View>
+                </TouchableOpacity>
+
+                {/* Pal Name Display */}
+                {activePal?.name && hasActiveModel && (
+                  <Text
+                    style={[
+                      styles.palNameCompact,
+                      {
+                        color: activePal.color?.[0],
+                      },
+                    ]}>
+                    Pal:{' '}
+                    <Text
+                      style={[
+                        styles.palNameValueCompact,
+                        {
+                          color: activePal.color?.[0],
+                        },
+                      ]}>
+                      {activePal?.name}
+                    </Text>
+                  </Text>
+                )}
+              </View>
+            </View>
+
+            {/* Right Controls */}
+            <View style={styles.rightControls}>
+              {/* Send/Stop Button */}
+              {isStopVisible ? (
+                <StopButton
+                  key={onSurfaceColor}
+                  color={onSurfaceColor}
+                  onPress={onStopPress}
+                />
               ) : (
-                // Standard chat - show send or stop button
-                <>
-                  {isSendButtonVisible ? (
+                isSendButtonVisible && (
+                  <View style={{opacity: sendButtonOpacity}}>
                     <SendButton
-                      key={inputTextColor}
-                      color={inputTextColor}
-                      onPress={handleSend}
+                      key={onSurfaceColor}
+                      color={onSurfaceColor}
+                      onPress={isSendButtonEnabled ? handleSend : () => {}}
+                      touchableOpacityProps={{
+                        disabled: !isSendButtonEnabled,
+                      }}
                     />
-                  ) : null}
-                  {isStopVisible && (
-                    <StopButton
-                      key={inputTextColor}
-                      color={inputTextColor}
-                      onPress={onStopPress}
-                    />
-                  )}
-                </>
+                  </View>
+                )
               )}
             </View>
           </View>

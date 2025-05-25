@@ -12,16 +12,28 @@ export const createStyles = ({
 }) =>
   StyleSheet.create({
     container: {
-      alignItems: 'center',
-      flexDirection: 'row',
+      flexDirection: 'column',
     },
     palBtn: {
       height: 28,
       width: 28,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: theme.colors.inverseTextSecondary,
       borderRadius: 100,
+    },
+    plusButton: {
+      height: 28,
+      width: 28,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 100,
+      opacity: 0.9,
+    },
+    palSelector: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+      flex: 1,
     },
     inputWrapper: {
       flexDirection: 'row',
@@ -41,10 +53,33 @@ export const createStyles = ({
     },
     inputContainer: {
       flex: 1,
-      flexDirection: 'row',
-      alignItems: 'flex-end',
+      flexDirection: 'column',
       borderRadius: 12,
       overflow: 'hidden',
+    },
+    textInputArea: {
+      flex: 1,
+      paddingHorizontal: 24,
+      paddingTop: 20,
+      paddingBottom: 8,
+    },
+    controlBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: 24,
+      paddingVertical: 8,
+      minHeight: 36,
+    },
+    leftControls: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+      flex: 1,
+    },
+    rightControls: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     editBar: {
       position: 'absolute',
@@ -84,6 +119,44 @@ export const createStyles = ({
       fontSize: 12,
       color: theme.colors.inverseOnSurface,
       ...fontStyles.semibold,
+    },
+    // New compact pal name styles for control bar
+    palNameCompact: {
+      fontSize: 10,
+      ...fontStyles.regular,
+      color: theme.colors.inverseOnSurface,
+    },
+    palNameValueCompact: {
+      fontSize: 10,
+      ...fontStyles.semibold,
+      color: theme.colors.inverseOnSurface,
+    },
+    // Image preview styles
+    imagePreviewContainer: {
+      marginVertical: 8,
+      paddingHorizontal: 16,
+    },
+    imageScrollContent: {
+      paddingHorizontal: 4,
+    },
+    imageContainer: {
+      marginHorizontal: 4,
+      position: 'relative',
+    },
+    previewImage: {
+      width: 80,
+      height: 80,
+      borderRadius: 8,
+      backgroundColor: theme.colors.surfaceVariant,
+    },
+    removeImageButton: {
+      position: 'absolute',
+      top: -8,
+      right: -8,
+      margin: 0,
+      padding: 0,
+      backgroundColor: theme.colors.surface,
+      borderRadius: 12,
     },
     inputInnerContainer: {
       flexShrink: 1,

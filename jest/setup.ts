@@ -102,3 +102,6 @@ jest.mock('../src/utils/keepAwake', () => ({
 jest.mock('react-native-share', () => ({
   default: jest.fn(),
 }));
+
+jest.mock('react-native-image-picker');
+jest.mock('react-native-vision-camera');

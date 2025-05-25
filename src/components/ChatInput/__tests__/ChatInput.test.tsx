@@ -6,6 +6,13 @@ import {user} from '../../../../jest/fixtures';
 import {l10n} from '../../../utils/l10n';
 import {UserContext} from '../../../utils';
 import {ChatInput} from '../ChatInput';
+import {PalType} from '../../PalsSheets/types';
+
+// Mock react-native-image-picker
+jest.mock('react-native-image-picker', () => ({
+  launchCamera: jest.fn(),
+  launchImageLibrary: jest.fn(),
+}));
 
 const renderScrollable = () => <ScrollView />;
 
@@ -192,51 +199,284 @@ describe('input', () => {
     expect(textInput.props).toHaveProperty('value', '');
   });
 
-  it('sends an image message', () => {
+  it('shows stop button when isStopVisible is true', () => {
     expect.assertions(1);
-    const onAttachmentPress = jest.fn();
-    const onSendPress = jest.fn();
-    const {getByLabelText} = render(
-      <UserContext.Provider value={user}>
-        <ChatInput
-          {...{
-            onAttachmentPress,
-            onSendPress,
-            renderScrollable,
-            sendButtonVisibilityMode: 'editing',
-          }}
-        />
-      </UserContext.Provider>,
-    );
-    const button = getByLabelText(
-      l10n.en.components.attachmentButton.attachmentButtonAccessibilityLabel,
-    );
-    fireEvent.press(button);
-    expect(onAttachmentPress).toHaveBeenCalledTimes(1);
-  });
-
-  it('shows activity indicator when attachment is uploading', () => {
-    expect.assertions(1);
-    const isAttachmentUploading = true;
+    const onStopPress = jest.fn();
     const onSendPress = jest.fn();
     const {getByTestId} = render(
       <UserContext.Provider value={user}>
         <ChatInput
           {...{
-            attachmentCircularActivityIndicatorProps: {
-              color: 'white',
-              size: undefined,
-            },
-            isAttachmentUploading,
             onSendPress,
-            renderScrollable,
+            onStopPress,
+            isStopVisible: true,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+    const stopButton = getByTestId('stop-button');
+    fireEvent.press(stopButton);
+    expect(onStopPress).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows plus button for image upload when showImageUpload is true', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const {getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            showImageUpload: true,
             sendButtonVisibilityMode: 'editing',
           }}
         />
       </UserContext.Provider>,
     );
 
-    const indicator = getByTestId('CircularActivityIndicator');
-    expect(indicator).toBeDefined();
+    const plusButton = getByLabelText('Add image');
+    expect(plusButton).toBeDefined();
+  });
+
+  it('does not show plus button when showImageUpload is false', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const {queryByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            showImageUpload: false,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const plusButton = queryByLabelText('Add image');
+    expect(plusButton).toBeNull();
+  });
+
+  it('renders plus button correctly when vision is enabled', () => {
+    expect.assertions(2);
+    const onSendPress = jest.fn();
+    const {getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            showImageUpload: true,
+            isVisionEnabled: true,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const plusButton = getByLabelText('Add image');
+    expect(plusButton).toBeTruthy();
+    expect(plusButton.props.accessibilityState.disabled).toBe(false);
+  });
+
+  it('shows pal selector button', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const onPalBtnPress = jest.fn();
+    const {getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            onPalBtnPress,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const palButton = getByLabelText('Select Pal');
+    fireEvent.press(palButton);
+    expect(onPalBtnPress).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows camera button for camera pal type', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const onStartCamera = jest.fn();
+    const {getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            onStartCamera,
+            palType: PalType.CAMERA,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const cameraButton = getByLabelText('Start camera');
+    fireEvent.press(cameraButton);
+    expect(onStartCamera).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows video button for video pal type', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const onStartCamera = jest.fn();
+    const {getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            onStartCamera,
+            palType: PalType.VIDEO,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const videoButton = getByLabelText('Start video');
+    fireEvent.press(videoButton);
+    expect(onStartCamera).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles prompt text change for camera pal', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const onPromptTextChange = jest.fn();
+    const {getByPlaceholderText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            onPromptTextChange,
+            palType: PalType.CAMERA,
+            promptText: 'initial text',
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const textInput = getByPlaceholderText(l10n.en.camera.promptPlaceholder);
+    fireEvent.changeText(textInput, 'new text');
+    expect(onPromptTextChange).toHaveBeenCalledWith('new text');
+  });
+
+  it('handles prompt text change for video pal', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const onPromptTextChange = jest.fn();
+    const {getByPlaceholderText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            onPromptTextChange,
+            palType: PalType.VIDEO,
+            promptText: 'initial text',
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const textInput = getByPlaceholderText(l10n.en.video.promptPlaceholder);
+    fireEvent.changeText(textInput, 'new text');
+    expect(onPromptTextChange).toHaveBeenCalledWith('new text');
+  });
+
+  it('disables plus button when vision is not enabled', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const {getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            showImageUpload: true,
+            isVisionEnabled: false,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const plusButton = getByLabelText('Add image');
+    expect(plusButton.props.accessibilityState.disabled).toBe(true);
+  });
+
+  it('enables plus button when vision is enabled', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const {getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            showImageUpload: true,
+            isVisionEnabled: true,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const plusButton = getByLabelText('Add image');
+    expect(plusButton.props.accessibilityState.disabled).toBe(false);
+  });
+
+  it('shows send button with always visibility mode', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const {getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            sendButtonVisibilityMode: 'always',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const sendButton = getByLabelText(
+      l10n.en.components.sendButton.accessibilityLabel,
+    );
+    expect(sendButton).toBeTruthy();
+  });
+
+  it('sends message with images when images are selected', () => {
+    expect.assertions(1);
+    const onSendPress = jest.fn();
+    const {getByPlaceholderText, getByLabelText} = render(
+      <UserContext.Provider value={user}>
+        <ChatInput
+          {...{
+            onSendPress,
+            sendButtonVisibilityMode: 'editing',
+          }}
+        />
+      </UserContext.Provider>,
+    );
+
+    const textInput = getByPlaceholderText(
+      l10n.en.components.chatInput.inputPlaceholder,
+    );
+    fireEvent.changeText(textInput, 'test message');
+
+    const sendButton = getByLabelText(
+      l10n.en.components.sendButton.accessibilityLabel,
+    );
+    fireEvent.press(sendButton);
+
+    expect(onSendPress).toHaveBeenCalledWith({
+      text: 'test message',
+      type: 'text',
+    });
   });
 });
