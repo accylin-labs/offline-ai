@@ -280,9 +280,7 @@ export const getModelDescription = (
       model.hfModel,
     );
     if (sizeBreakdown.hasProjection) {
-      sizeString = `${formatBytes(
-        sizeBreakdown.totalSize,
-      )} (includes vision support)`;
+      sizeString = `${formatBytes(sizeBreakdown.totalSize)}`;
     }
   }
 
