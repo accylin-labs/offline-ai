@@ -42,6 +42,7 @@ const languageNames: Record<AvailableLanguage, string> = {
   //tr: 'Türkçe (TR)',
   //uk: 'Українська (UK)',
   //ca: 'Català (CA)',
+  fr: 'Français (FR)',
   ja: '日本語 (JA)',
   zh: '中文 (ZH)',
 };
