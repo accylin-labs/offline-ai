@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <full-backup-content>
-    <exclude domain="file" path="models/"/>
-    <!-- only created in debuggable builds, but can be large and exceed
-     25mb cloud backup limit which makes dev testing difficult -->
-    <exclude domain="file" path="BridgeReactNativeDevBundle.js"/>
-    <exclude domain="root" path="code_cache/"/>
+    <include domain="sharedpref" path="." requireFlags="clientSideEncryption" />
+    <include domain="database" path="." requireFlags="clientSideEncryption"/>
+    <include domain="file" path="profileInstalled" requireFlags="clientSideEncryption"/>
+    <include domain="file" path="db-migration-complete.flag" requireFlags="clientSideEncryption"/>
+    <include domain="root" path="pocketpalai.db" requireFlags="clientSideEncryption"/>
+    <include domain="root" path="pocketpalai.db-wal" requireFlags="clientSideEncryption"/>
+    <include domain="root" path="pocketpalai.db-shm" requireFlags="clientSideEncryption"/>
 </full-backup-content>
