@@ -1706,7 +1706,7 @@ export const l10n = {
     },
   },
 
-  zh: {
+ zh: {
     common: {
       cancel: '取消',
       delete: '删除',
@@ -2004,11 +2004,11 @@ export const l10n = {
     about: {
       screenTitle: '关于',
       description:
-        '直接将语言模型完全本地部署在你手机上的APP，建立在llama.cpp和llama.rn的基础上！\n\n特别鸣谢：\nhttps://github.com/a-ghorbani/pocketpal-ai\n没有它就没有PocketPal X！\n\n作者：啥都不会的小星_',
+        '直接将语言模型完全本地部署在你手机上的APP，建立在llama.cpp和llama.rn的基础上！',
       supportProject: '支持项目',
       supportProjectDescription:
-        '如果你喜欢使用PocketPal X，请考虑通过以下方式支持项目：',
-      githubButton: '在GitHub上点个Star（PocketPal AI）',
+        '如果你喜欢使用PocketPal AI，请考虑通过以下方式支持项目：',
+      githubButton: '在GitHub上点个Star~',
       orText: '或',
       orBy: '或通过',
       sponsorButton: '成为帅气且尊贵的赞助者！',
@@ -2018,10 +2018,10 @@ export const l10n = {
     feedback: {
       title: '发送反馈',
       description:
-        '你的声音很重要！告诉我们PocketPal X如何帮助你以及我们可以做什么来使其更有用',
+        '你的声音很重要！告诉我们PocketPal AI如何帮助你以及我们可以做什么来使其更有用',
       shareThoughtsButton: '分享你的想法',
       useCase: {
-        label: '你如何使用PocketPal X？',
+        label: '你如何使用PocketPal AI？',
         placeholder: '例如：摘要、角色扮演等',
       },
       featureRequests: {
@@ -2033,7 +2033,7 @@ export const l10n = {
         placeholder: '如果你有其他想法，请随时分享',
       },
       usageFrequency: {
-        label: '你多久使用一次PocketPal X？（可选）',
+        label: '你多久使用一次PocketPal AI？（可选）',
         options: {
           daily: '每天',
           weekly: '每周',
