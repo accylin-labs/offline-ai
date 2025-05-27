@@ -40,7 +40,7 @@ export interface ChatInputTopLevelProps {
   isStreaming?: boolean;
   /** Will be called on {@link SendButton} tap. Has {@link MessageType.PartialText} which can
    * be transformed to {@link MessageType.Text} and added to the messages list. */
-  onSendPress: (message: MessageType.PartialText, imageUris?: string[]) => void;
+  onSendPress: (message: MessageType.PartialText) => void;
   onStopPress?: () => void;
   onCancelEdit?: () => void;
   onPalBtnPress?: () => void;
@@ -51,6 +51,9 @@ export interface ChatInputTopLevelProps {
   textInputProps?: TextInputProps;
   isPickerVisible?: boolean;
   inputBackgroundColor?: string;
+  /** External control for selected images (for edit mode) */
+  defaultImages?: string[];
+  onDefaultImagesChange?: (images: string[]) => void;
   /** Type of Pal being used, affects the input rendering */
   palType?: PalType;
   /** Camera-specific props */
@@ -100,6 +103,8 @@ export const ChatInput = observer(
     onPromptTextChange,
     showImageUpload = false,
     isVisionEnabled = false,
+    defaultImages,
+    onDefaultImagesChange,
   }: ChatInputProps) => {
     const l10n = React.useContext(L10nContext);
     const theme = useTheme();
@@ -117,8 +122,13 @@ export const ChatInput = observer(
 
     // Use `defaultValue` if provided
     const [text, setText] = React.useState(textInputProps?.defaultValue ?? '');
-    // State for selected images
-    const [selectedImages, setSelectedImages] = React.useState<string[]>([]);
+    // State for selected images - use external control when provided
+    const [internalSelectedImages, setInternalSelectedImages] = React.useState<
+      string[]
+    >([]);
+    const selectedImages = defaultImages ?? internalSelectedImages;
+    const setSelectedImages =
+      onDefaultImagesChange ?? setInternalSelectedImages;
     // State for image upload menu
     const [showImageUploadMenu, setShowImageUploadMenu] = React.useState(false);
     const isEditMode = chatSessionStore.isEditMode;
@@ -175,12 +185,12 @@ export const ChatInput = observer(
     const handleSend = () => {
       const trimmedValue = value.trim();
       if (trimmedValue) {
-        // Pass selected images only if we have any, otherwise call with just the message
-        if (selectedImages.length > 0) {
-          onSendPress({text: trimmedValue, type: 'text'}, selectedImages);
-        } else {
-          onSendPress({text: trimmedValue, type: 'text'});
-        }
+        // Include imageUris in the message object
+        onSendPress({
+          text: trimmedValue,
+          type: 'text',
+          imageUris: selectedImages.length > 0 ? selectedImages : undefined,
+        });
         setText('');
         // Clear selected images after sending
         setSelectedImages([]);
@@ -195,6 +205,10 @@ export const ChatInput = observer(
     // Handle taking a photo with the camera
     const handleTakePhoto = async () => {
       try {
+        // Disable auto-release during camera operation
+        // this is only needed on Android.
+        modelStore.disableAutoRelease('camera-photo');
+
         const result = await launchCamera({
           mediaType: 'photo',
           quality: 0.8,
@@ -211,12 +225,19 @@ export const ChatInput = observer(
           l10n.errors.cameraErrorTitle,
           l10n.errors.cameraErrorMessage,
         );
+      } finally {
+        // Re-enable auto-release after camera operation
+        modelStore.enableAutoRelease('camera-photo');
       }
     };
 
     // Handle selecting images from the gallery
     const handleSelectImages = async () => {
       try {
+        // Disable auto-release during gallery operation
+        // this is only needed on Android.
+        modelStore.disableAutoRelease('image-gallery');
+
         const result = await launchImageLibrary({
           mediaType: 'photo',
           selectionLimit: 5, // Allow multiple images
@@ -240,6 +261,9 @@ export const ChatInput = observer(
           l10n.errors.galleryErrorTitle,
           l10n.errors.galleryErrorMessage,
         );
+      } finally {
+        // Re-enable auto-release after gallery operation
+        modelStore.enableAutoRelease('image-gallery');
       }
     };
 
@@ -306,7 +330,11 @@ export const ChatInput = observer(
 
           {/* Image Preview Section */}
           {selectedImages.length > 0 && (
-            <View style={styles.imagePreviewContainer}>
+            <View
+              style={[
+                styles.imagePreviewContainer,
+                isEditMode && styles.imagePreviewContainerEditMode,
+              ]}>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -338,7 +366,15 @@ export const ChatInput = observer(
           <View
             style={[
               styles.textInputArea,
-              {paddingTop: selectedImages.length > 0 ? 0 : 20},
+              {
+                paddingTop: isEditMode
+                  ? selectedImages.length > 0
+                    ? 8 // Reduced padding when images present in edit mode
+                    : 48 // Edit bar height (28px) + normal padding (20px)
+                  : selectedImages.length > 0
+                  ? 0
+                  : 20,
+              },
             ]}>
             <TextInput
               ref={inputRef}
@@ -377,7 +413,6 @@ export const ChatInput = observer(
             <View style={styles.leftControls}>
               {/* Plus Button for Image Upload (only for regular chat) */}
               {showImageUpload &&
-                !isEditMode &&
                 !isStreaming &&
                 !isStopVisible &&
                 palType !== PalType.CAMERA &&

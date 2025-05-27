@@ -424,6 +424,7 @@ export function hfAsModel(
     hfUrl: hfModel.url ?? '',
     progress: 0,
     filename: modelFile.rfilename,
+    capabilities: isVisionLLM ? ['vision'] : undefined,
     //fullPath: '',
     isLocal: false,
     origin: ModelOrigin.HF,

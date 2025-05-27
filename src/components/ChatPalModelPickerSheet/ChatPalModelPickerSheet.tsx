@@ -189,14 +189,16 @@ export const ChatPalModelPickerSheet = observer(
                 ]}>
                 {model.name}
               </Text>
-              <Text
-                style={[
-                  styles.itemSubtitle,
-                  isActiveModel && styles.activeItemSubtitle,
-                ]}>
-                {getLocalizedModelCapabilities(model, l10n) ||
-                  l10n.components.chatPalModelPickerSheet.noDescription}
-              </Text>
+              {model.capabilities && model.capabilities.length > 0 && (
+                <Text
+                  style={[
+                    styles.itemSubtitle,
+                    isActiveModel && styles.activeItemSubtitle,
+                  ]}>
+                  {getLocalizedModelCapabilities(model.capabilities, l10n) ||
+                    l10n.components.chatPalModelPickerSheet.noDescription}
+                </Text>
+              )}
             </View>
           </Pressable>
         );

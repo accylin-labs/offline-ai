@@ -105,6 +105,7 @@ export namespace MessageType {
     previewData?: PreviewData;
     text: string;
     type: 'text';
+    imageUris?: string[]; // Optional array of image URIs for multimodal messages
   }
 
   export interface Text extends Base, PartialText {

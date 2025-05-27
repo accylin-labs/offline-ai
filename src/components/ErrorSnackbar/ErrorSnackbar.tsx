@@ -50,6 +50,8 @@ export const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({
         return 'harddisk-remove';
       case 'server':
         return 'server-off';
+      case 'multimodal':
+        return 'image-off-outline';
       default:
         return 'alert-circle-outline';
     }
@@ -88,8 +90,11 @@ export const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({
     };
   };
 
-  // Calculate duration based on error type
+  // Calculate duration based on error type and severity
   const getDuration = () => {
+    if (error.severity === 'warning') {
+      return 8000; // 8 seconds for warnings
+    }
     if (
       error.code === 'authentication' ||
       error.code === 'authorization' ||
@@ -98,6 +103,14 @@ export const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({
       return 20000; // 20 seconds for critical errors
     }
     return 10000; // 10 seconds for regular errors
+  };
+
+  // Get the appropriate icon color based on severity
+  const getIconColor = () => {
+    if (error.severity === 'warning') {
+      return theme.colors.onSurfaceVariant; // More subtle color for warnings
+    }
+    return theme.colors.error; // Standard error color
   };
 
   return (
@@ -114,7 +127,7 @@ export const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({
             testID={`icon-${getIcon()}`}
             name={getIcon()}
             size={20}
-            color={theme.colors.error}
+            color={getIconColor()}
             style={styles.icon}
           />
           <Text style={styles.message}>{error.message}</Text>

@@ -101,6 +101,13 @@ class ModelStore {
 
   lastUsedModelId: string | undefined = undefined;
 
+  // Auto-release tracking (persistent)
+  wasAutoReleased: boolean = false;
+  lastAutoReleasedModelId: string | undefined = undefined;
+
+  // System UI protection (runtime)
+  private autoReleaseDisabledReasons = new Set<string>();
+
   MIN_CONTEXT_SIZE = 200;
 
   inferencing: boolean = false;
@@ -126,6 +133,9 @@ class ModelStore {
         'cache_type_v',
         'n_batch',
         'n_ubatch',
+        'lastUsedModelId',
+        'wasAutoReleased',
+        'lastAutoReleasedModelId',
       ],
       storage: AsyncStorage,
     }).then(() => {
@@ -285,6 +295,9 @@ class ModelStore {
     }
 
     this.initializeUseMetal();
+
+    // Check if we need to reload an auto-released model (for app restarts)
+    this.checkAndReloadAutoReleasedModel();
   };
 
   mergeModelLists = () => {
@@ -387,19 +400,80 @@ class ModelStore {
     AppState.addEventListener('change', this.handleAppStateChange);
   };
 
+  // Auto-release management methods
+  disableAutoRelease = (reason: string) => {
+    this.autoReleaseDisabledReasons.add(reason);
+    console.log(
+      `Auto-release disabled: ${reason}`,
+      Array.from(this.autoReleaseDisabledReasons),
+    );
+  };
+
+  enableAutoRelease = (reason: string) => {
+    this.autoReleaseDisabledReasons.delete(reason);
+    console.log(
+      `Auto-release enabled: ${reason}`,
+      Array.from(this.autoReleaseDisabledReasons),
+    );
+  };
+
+  get isAutoReleaseEnabled() {
+    return this.useAutoRelease && this.autoReleaseDisabledReasons.size === 0;
+  }
+
+  private markAutoReleased = (modelId: string) => {
+    console.log('Marking auto-released: ', modelId);
+    runInAction(() => {
+      this.wasAutoReleased = true;
+      this.lastAutoReleasedModelId = modelId;
+    });
+  };
+
+  private clearAutoReleaseFlags = () => {
+    console.log('Clearing auto-release flags');
+    runInAction(() => {
+      this.wasAutoReleased = false;
+      this.lastAutoReleasedModelId = undefined;
+    });
+  };
+
+  checkAndReloadAutoReleasedModel = async () => {
+    if (this.wasAutoReleased && this.lastAutoReleasedModelId) {
+      const model = this.models.find(
+        m => m.id === this.lastAutoReleasedModelId && m.isDownloaded,
+      );
+      if (model) {
+        console.log('Reloading auto-released model:', model.id);
+        await this.initContext(model);
+      }
+      this.clearAutoReleaseFlags();
+    }
+  };
+
   handleAppStateChange = async (nextAppState: AppStateStatus) => {
+    console.log(`App state change: ${this.appState} → ${nextAppState}`);
+
     if (
       this.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      if (this.useAutoRelease) {
-        await this.reinitializeContext();
+      // Coming to foreground - check if we need to reload auto-released model
+      await this.checkAndReloadAutoReleasedModel();
+    } else if (this.appState === 'active' && nextAppState === 'inactive') {
+      // active → inactive: NO action (per requirements)
+      console.log('Active → Inactive: No auto-release action');
+    } else if (this.appState === 'inactive' && nextAppState === 'background') {
+      // inactive → background: release if enabled
+      if (this.isAutoReleaseEnabled && this.activeModelId) {
+        console.log('Inactive → Background: Auto-releasing context');
+        this.markAutoReleased(this.activeModelId);
+        await this.releaseContext();
       }
-    } else if (
-      this.appState === 'active' &&
-      nextAppState.match(/inactive|background/)
-    ) {
-      if (this.useAutoRelease) {
+    } else if (this.appState === 'active' && nextAppState === 'background') {
+      // active → background: release if enabled (direct transition)
+      if (this.isAutoReleaseEnabled && this.activeModelId) {
+        console.log('Active → Background: Auto-releasing context');
+        this.markAutoReleased(this.activeModelId);
         await this.releaseContext();
       }
     }

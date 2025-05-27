@@ -29,6 +29,8 @@ export const l10n = {
       justNow: 'just now',
       ok: 'OK',
       close: 'Close',
+      clear: 'Clear All',
+      gallery: 'Gallery',
     },
     settings: {
       // Model Initialization Settings
@@ -715,6 +717,7 @@ export const l10n = {
       startCamera: 'Start Camera',
       stopCamera: 'Stop Camera',
       promptPlaceholder: 'What do you want to know about this image?',
+      takePhoto: 'Camera',
     },
     video: {
       permissionTitle: 'Camera Permission Required',
@@ -751,6 +754,7 @@ export const l10n = {
       goToModels: 'Go to Models',
       readyToChat: 'Ready to chat? Load the last used model.',
       pleaseLoadModel: 'Load a model to chat.',
+      multimodalNotEnabled: 'Multimodal is not enabled for this model. Images will be displayed but not processed by the AI.',
     },
     benchmark: {
       title: 'Benchmark',
@@ -897,6 +901,10 @@ export const l10n = {
       downloadSetupFailedTitle: 'Download Setup Failed',
       downloadSetupFailedMessage:
         'Failed to prepare model for download: {message}',
+      cameraErrorTitle: 'Camera Error',
+      cameraErrorMessage: 'Failed to take photo',
+      galleryErrorTitle: 'Gallery Error',
+      galleryErrorMessage: 'Failed to select images',
     },
   },
 
@@ -930,6 +938,8 @@ export const l10n = {
       justNow: 'たった今',
       ok: 'OK',
       close: '閉じる',
+      clear: 'すべてクリア',
+      gallery: 'ギャラリー',
     },
     settings: {
       // Model Initialization Settings
@@ -1622,6 +1632,7 @@ export const l10n = {
       startCamera: 'カメラを起動',
       stopCamera: 'カメラを停止',
       promptPlaceholder: 'この画像について何を知りたいですか？',
+      takePhoto: 'カメラ',
     },
     video: {
       permissionTitle: 'カメラ許可が必要',
@@ -1660,6 +1671,7 @@ export const l10n = {
       goToModels: 'モデルへ移動',
       readyToChat: 'チャットを始めましょう。前回使用したモデルを読み込みます。',
       pleaseLoadModel: 'チャットを開始するにはモデルを読み込んでください。',
+      multimodalNotEnabled: 'このモデルではマルチモーダル機能が有効になっていません。画像は表示されますが、AIによって処理されません。',
     },
     benchmark: {
       title: 'ベンチマーク',
@@ -1807,6 +1819,10 @@ export const l10n = {
       downloadSetupFailedTitle: 'ダウンロード設定失敗',
       downloadSetupFailedMessage:
         'モデルのダウンロード準備に失敗しました: {message}',
+      cameraErrorTitle: 'カメラエラー',
+      cameraErrorMessage: '写真撮影に失敗しました',
+      galleryErrorTitle: 'ギャラリーエラー',
+      galleryErrorMessage: '画像選択に失敗しました',
     },
   },
 
@@ -1839,6 +1855,8 @@ export const l10n = {
       justNow: '刚刚',
       ok: '确定',
       close: '关闭',
+      clear: '全部清除',
+      gallery: '图库',
     },
     settings: {
       // Model Initialization Settings
@@ -2480,6 +2498,7 @@ export const l10n = {
       startCamera: '启动相机',
       stopCamera: '停止相机',
       promptPlaceholder: '您想了解这张图片的什么信息？',
+      takePhoto: '相机',
     },
     video: {
       permissionTitle: '需要相机权限',
@@ -2516,6 +2535,7 @@ export const l10n = {
       goToModels: '转到模型',
       readyToChat: '聊天准备好了吗？加载最后使用的模型。',
       pleaseLoadModel: '要聊天，请加载模型。',
+      multimodalNotEnabled: '此模型未启用多模态功能。图片将显示但不会被AI处理。',
     },
     benchmark: {
       title: '基准测试',
@@ -2655,6 +2675,10 @@ export const l10n = {
       networkError: '网络错误：无法连接到API',
       downloadSetupFailedTitle: '下载设置失败',
       downloadSetupFailedMessage: '无法准备模型下载: {message}',
+      cameraErrorTitle: '相机错误',
+      cameraErrorMessage: '拍照失败',
+      galleryErrorTitle: '图库错误',
+      galleryErrorMessage: '选择图片失败',
     },
   },
 };

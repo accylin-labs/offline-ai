@@ -95,6 +95,7 @@ export const createStyles = ({
       borderTopRightRadius: 12,
       borderBottomWidth: 1,
       borderBottomColor: theme.colors.outlineVariant,
+      zIndex: 10, // Ensure edit bar stays above other elements
     },
     editBarText: {
       color: theme.colors.onSurfaceVariant,
@@ -136,6 +137,9 @@ export const createStyles = ({
       marginVertical: 8,
       paddingHorizontal: 16,
     },
+    imagePreviewContainerEditMode: {
+      marginTop: 36, // Account for edit bar height (28px) + extra spacing (8px)
+    },
     imageScrollContent: {
       paddingHorizontal: 4,
     },
@@ -151,12 +155,14 @@ export const createStyles = ({
     },
     removeImageButton: {
       position: 'absolute',
-      top: -8,
-      right: -8,
+      top: 0,
+      right: 0,
       margin: 0,
       padding: 0,
       backgroundColor: theme.colors.surface,
-      borderRadius: 12,
+      borderRadius: 8,
+      width: 25,
+      height: 25,
     },
     inputInnerContainer: {
       flexShrink: 1,

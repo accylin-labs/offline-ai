@@ -178,6 +178,7 @@ export const ChatView = observer(
     const styles = createStyles({theme});
 
     const [inputText, setInputText] = React.useState('');
+    const [inputImages, setInputImages] = React.useState<string[]>([]);
     const [isPickerVisible, setIsPickerVisible] = React.useState(false);
 
     const animationRef = React.useRef(false);
@@ -307,6 +308,7 @@ export const ChatView = observer(
 
     const handleCancelEdit = React.useCallback(() => {
       setInputText('');
+      setInputImages([]);
       chatSessionStore.exitEditMode();
     }, []);
 
@@ -316,6 +318,7 @@ export const ChatView = observer(
         messages,
         handleSendPress: wrappedOnSendPress,
         setInputText,
+        setInputImages,
       });
 
     const {chatMessages, gallery} = calculateChatMessages(messages, user, {
@@ -789,6 +792,8 @@ export const ChatView = observer(
                     sendButtonVisibilityMode,
                     showImageUpload,
                     isVisionEnabled,
+                    defaultImages: inputImages,
+                    onDefaultImagesChange: setInputImages,
                     textInputProps: {
                       ...textInputProps,
                       // Only override value and onChangeText if not using promptText

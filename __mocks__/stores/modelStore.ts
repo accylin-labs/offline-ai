@@ -108,6 +108,11 @@ class MockModelStore {
   isModelAvailable(modelId: string) {
     return this.availableModels.some(model => model.id === modelId);
   }
+
+  async isMultimodalEnabled(): Promise<boolean> {
+    // Mock implementation - return false by default for tests
+    return false;
+  }
 }
 
 export const mockModelStore = new MockModelStore();
