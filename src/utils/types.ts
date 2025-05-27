@@ -7,6 +7,7 @@ import {TokenData} from '@pocketpalai/llama.rn';
 import {CompletionParams} from './completionTypes';
 import {PreviewData} from '@flyerhq/react-native-link-preview';
 import {MD3Colors, MD3Typescale} from 'react-native-paper/lib/typescript/types';
+import {SkillKey} from '.';
 
 export namespace MessageType {
   export type Any = Custom | File | Image | Text | Unsupported;
@@ -312,7 +313,7 @@ export interface Model {
   author: string;
   name: string;
   type?: string;
-  capabilities?: string[]; // Array of capability keys for localization
+  capabilities?: SkillKey[]; // Array of capability keys
   size: number; // Size in bytes
   params: number;
   isDownloaded: boolean;

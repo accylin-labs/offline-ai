@@ -10,7 +10,6 @@ import {
   Button,
   IconButton,
   Text,
-  Paragraph,
   TouchableRipple,
   HelperText,
   ActivityIndicator,
@@ -30,8 +29,8 @@ import {
   getModelDescription,
   L10nContext,
   checkModelFileIntegrity,
-  getLocalizedModelCapabilities,
 } from '../../../utils';
+import {ProjectionModelSelector, SkillsDisplay} from '../../../components';
 
 type ChatScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList>;
 
@@ -52,6 +51,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
 
     const [snackbarVisible, setSnackbarVisible] = useState(false); // Snackbar visibility
     const [integrityError, setIntegrityError] = useState<string | null>(null);
+    const [showProjectionSelector, setShowProjectionSelector] = useState(false);
 
     const {memoryWarning, shortMemoryWarning} = useMemoryCheck(model);
     const {isOk: storageOk, message: storageNOkMessage} = useStorageCheck(
@@ -67,7 +67,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     // Check integrity when model is downloaded
     useEffect(() => {
       if (isDownloaded) {
-        checkModelFileIntegrity(model, modelStore).then(({errorMessage}) => {
+        checkModelFileIntegrity(model).then(({errorMessage}) => {
           setIntegrityError(errorMessage);
         });
       } else {
@@ -101,6 +101,17 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
         });
       }
     }, [model.hfUrl]);
+
+    const handleProjectionModelSelect = useCallback(
+      (projectionModelId: string) => {
+        modelStore.setDefaultProjectionModel(model.id, projectionModelId);
+      },
+      [model.id],
+    );
+
+    const toggleProjectionSelector = useCallback(() => {
+      setShowProjectionSelector(prev => !prev);
+    }, []);
 
     const handleRemove = useCallback(() => {
       Alert.alert(
@@ -236,23 +247,16 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                     )}
                   </View>
                   <Text style={styles.modelDescription}>
-                    {getModelDescription(
-                      model,
-                      isActiveModel,
-                      modelStore,
-                      l10n,
-                    )}
+                    {getModelDescription(model, isActiveModel, l10n)}
                   </Text>
-                  {model.capabilities && (
-                    <View style={styles.skillsContainer}>
-                      <Text style={styles.skillsLabel}>
-                        {l10n.models.modelCard.labels.skills}
-                      </Text>
-                      <Text style={styles.skillsText}>
-                        {getLocalizedModelCapabilities(model, l10n)}
-                      </Text>
-                    </View>
-                  )}
+                  <SkillsDisplay
+                    model={model}
+                    onVisionPress={
+                      model.supportsMultimodal
+                        ? toggleProjectionSelector
+                        : undefined
+                    }
+                  />
                 </View>
               </View>
 
@@ -272,6 +276,14 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                     <Text style={styles.warningText}>{shortMemoryWarning}</Text>
                   </View>
                 </TouchableRipple>
+              )}
+
+              {/* Show projection model selector for multimodal models */}
+              {model.supportsMultimodal && showProjectionSelector && (
+                <ProjectionModelSelector
+                  model={model}
+                  onProjectionModelSelect={handleProjectionModelSelect}
+                />
               )}
 
               {/* Display integrity warning if check fails */}
@@ -301,9 +313,9 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                     style={styles.progressBar}
                   />
                   {model.downloadSpeed && (
-                    <Paragraph style={styles.downloadSpeed}>
+                    <Text style={styles.downloadSpeed}>
                       {model.downloadSpeed}
-                    </Paragraph>
+                    </Text>
                   )}
                 </>
               )}

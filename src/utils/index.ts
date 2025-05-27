@@ -582,28 +582,135 @@ export const safeParseJSON = (json: string) => {
 };
 
 /**
- * Returns a localized string of model capabilities based on capability keys
- * @param model - The model object containing capabilities array
- * @param l10nData - The localization data to use
- * @returns A comma-separated string of localized capabilities
+ * Configuration for model capabilities with their visual representation
  */
-export const getLocalizedModelCapabilities = (
-  capabilities: string[],
-  l10nData = l10n.en,
-): string => {
-  if (!capabilities?.length) {
-    return '';
+export const SKILL_CONFIG = {
+  vision: {
+    icon: 'eye',
+    color: 'tertiary' as const,
+    isSpecial: true, // Gets special visual treatment
+    labelKey: 'vision' as const,
+  },
+  questionAnswering: {
+    icon: 'help-circle-outline',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'questionAnswering' as const,
+  },
+  summarization: {
+    icon: 'text-short',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'summarization' as const,
+  },
+  reasoning: {
+    icon: 'brain',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'reasoning' as const,
+  },
+  roleplay: {
+    icon: 'account-voice',
+    color: 'primary' as const,
+    isSpecial: true,
+    labelKey: 'roleplay' as const,
+  },
+  instructions: {
+    icon: 'format-list-bulleted',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'instructions' as const,
+  },
+  code: {
+    icon: 'code-tags',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'code' as const,
+  },
+  math: {
+    icon: 'calculator',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'math' as const,
+  },
+  multilingual: {
+    icon: 'translate',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'multilingual' as const,
+  },
+  rewriting: {
+    icon: 'pencil',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'rewriting' as const,
+  },
+  creativity: {
+    icon: 'lightbulb-outline',
+    color: 'primary' as const,
+    isSpecial: false,
+    labelKey: 'creativity' as const,
+  },
+} as const;
+
+export type SkillKey = keyof typeof SKILL_CONFIG;
+
+/**
+ * Enhanced skill item with icon and styling information
+ */
+export interface SkillItem {
+  key: string;
+  labelKey: string;
+  icon?: string;
+  color?: 'primary' | 'tertiary';
+  isSpecial?: boolean;
+}
+
+/**
+ * Get unified skills list for a model, combining capabilities and multimodal support
+ * @param model - The model object
+ * @returns Array of skill items with icons and styling (localization done at render time)
+ */
+export const getModelSkills = (model: {
+  capabilities?: string[];
+  supportsMultimodal?: boolean;
+}): SkillItem[] => {
+  const skills: SkillItem[] = [];
+
+  // Add vision skill first if model supports multimodal
+  if (model.supportsMultimodal) {
+    const visionConfig = SKILL_CONFIG.vision;
+    skills.push({
+      key: 'vision',
+      labelKey: visionConfig.labelKey,
+      icon: visionConfig.icon,
+      color: visionConfig.color,
+      isSpecial: visionConfig.isSpecial,
+    });
   }
 
-  return capabilities
-    .map(
-      capability =>
-        l10nData.models.modelCapabilities[
-          capability as keyof typeof l10nData.models.modelCapabilities
-        ],
-    )
-    .filter(Boolean)
-    .join(', ');
+  // Add other capabilities (excluding vision to avoid duplication)
+  if (model.capabilities?.length) {
+    const otherCapabilities = model.capabilities.filter(
+      cap => cap !== 'vision',
+    );
+
+    otherCapabilities.forEach(capability => {
+      const config = SKILL_CONFIG[capability as SkillKey];
+
+      if (config) {
+        skills.push({
+          key: capability,
+          labelKey: config.labelKey,
+          icon: config.icon,
+          color: config.color,
+          isSpecial: config.isSpecial,
+        });
+      }
+    });
+  }
+
+  return skills;
 };
 
 /**

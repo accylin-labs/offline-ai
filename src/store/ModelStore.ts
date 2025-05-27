@@ -622,7 +622,18 @@ class ModelStore {
       await downloadManager.startDownload(model, destinationPath, authToken);
     } catch (err) {
       console.error('Failed to start download:', err);
-      uiStore.showError('Failed to start download: ' + (err as Error).message);
+
+      // Create proper error state for the snackbar system
+      const errorState = createErrorState(err, 'download', 'huggingface', {
+        modelId,
+      });
+
+      runInAction(() => {
+        this.downloadError = errorState;
+      });
+
+      // Re-throw so the caller knows the download failed
+      throw err;
     }
   };
 
