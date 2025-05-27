@@ -1706,7 +1706,7 @@ export const l10n = {
     },
   },
 
- zh: {
+  zh: {
     common: {
       cancel: '取消',
       delete: '删除',
