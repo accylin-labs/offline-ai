@@ -13,7 +13,7 @@ import {useTheme} from '../../hooks';
 import {createStyles} from './styles';
 import {modelStore, palStore, chatSessionStore} from '../../store';
 import {CustomBackdrop} from '../Sheet/CustomBackdrop';
-import {getLocalizedModelCapabilities, L10nContext} from '../../utils';
+import {getModelSkills, L10nContext, Model} from '../../utils';
 //import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {CloseIcon} from '../../assets/icons';
 import {PalType} from '../PalsSheets/types';
@@ -174,8 +174,11 @@ export const ChatPalModelPickerSheet = observer(
     ]);
 
     const renderModelItem = React.useCallback(
-      (model: (typeof modelStore.availableModels)[0]) => {
+      (model: Model) => {
         const isActiveModel = model.id === modelStore.activeModelId;
+        const modelSkills = getModelSkills(model)
+          .flatMap(skill => skill.labelKey)
+          .join(', ');
         return (
           <Pressable
             key={model.id}
@@ -189,21 +192,20 @@ export const ChatPalModelPickerSheet = observer(
                 ]}>
                 {model.name}
               </Text>
-              {model.capabilities && model.capabilities.length > 0 && (
+              {modelSkills && (
                 <Text
                   style={[
                     styles.itemSubtitle,
                     isActiveModel && styles.activeItemSubtitle,
                   ]}>
-                  {getLocalizedModelCapabilities(model.capabilities, l10n) ||
-                    l10n.components.chatPalModelPickerSheet.noDescription}
+                  {modelSkills}
                 </Text>
               )}
             </View>
           </Pressable>
         );
       },
-      [styles, l10n, handleModelSelect],
+      [styles, handleModelSelect],
     );
 
     const palTypeText = React.useCallback(
