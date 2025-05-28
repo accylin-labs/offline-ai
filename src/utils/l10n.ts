@@ -1715,7 +1715,7 @@ export const l10n = {
       reset: '重置',
       save: '保存',
       update: '更新',
-      networkError: '网络错误，请重试',
+      networkError: '网络错误。请重试。',
       downloadETA: '预计时间',
       calculating: '计算中...',
       second: '秒',
@@ -1739,29 +1739,28 @@ export const l10n = {
       modelInitializationSettings: '模型初始化设置',
       // Metal Settings
       metal: 'Metal',
-      metalDescription: 'Apple的硬件加速API',
+      metalDescription: 'Apple的硬件加速API。',
       metalRequiresNewerIOS:
-        'Metal加速需要iOS 18或更高版本，请升级设备以使用此功能',
+        'Metal加速需要iOS 18或更高版本。请升级设备以使用此功能。',
       layersOnGPU: 'GPU层数：{{gpuLayers}}',
       // Context Size
-      contextSize: '上下文长度',
-      contextSizePlaceholder: '输入上下文长度（最小{{minContextSize}}）',
+      contextSize: '上下文大小',
+      contextSizePlaceholder: '输入上下文大小（最小{{minContextSize}}）',
       invalidContextSizeError: '请输入有效数字（最小{{minContextSize}}）',
-      modelReloadNotice: '更改需要模型重新加载才能生效',
+      modelReloadNotice: '更改需要模型重新加载才能生效。',
       // Advanced Settings
       advancedSettings: '高级设置',
       // Batch Size
-      batchSize: '批处理大小',
-      batchSizeDescription: '批处理大小: {{batchSize}}{{effectiveBatch}}',
+      batchSize: '批量大小',
+      batchSizeDescription: '批量大小: {{batchSize}}{{effectiveBatch}}',
       effectiveLabel: '有效',
       // Physical Batch Size
-      physicalBatchSize: '物理批处理大小',
+      physicalBatchSize: '物理批量大小',
       physicalBatchSizeDescription:
-        '物理批处理大小: {{physicalBatchSize}}{{effectivePhysicalBatch}}',
+        '物理批量大小: {{physicalBatchSize}}{{effectivePhysicalBatch}}',
       // Thread Count
       cpuThreads: 'CPU线程',
-      cpuThreadsDescription:
-        '使用{{threads}}个线程（可用{{maxThreads}}个线程）',
+      cpuThreadsDescription: '使用可用{{maxThreads}}线程中的{{threads}}',
       // Flash Attention
       flashAttention: 'Flash Attention',
       flashAttentionDescription: '启用Flash Attention以加快处理速度',
@@ -1777,44 +1776,44 @@ export const l10n = {
       modelLoadingSettings: '模型加载设置',
       // Auto Offload/Load
       autoOffloadLoad: '自动卸载/加载',
-      autoOffloadLoadDescription: '当APP在后台时自动卸载模型',
+      autoOffloadLoadDescription: '当应用程序在后台时卸载模型。',
       // Auto Navigate to Chat
       autoNavigateToChat: '自动导航到聊天',
-      autoNavigateToChatDescription: '加载完成时导航到聊天界面',
+      autoNavigateToChatDescription: '加载开始时导航到聊天。',
       // App Settings
-      appSettings: 'APP设置',
+      appSettings: '应用程序设置',
       // Language
       language: '语言',
       // Dark Mode
-      darkMode: '深色模式',
+      darkMode: '暗模式',
       // Display Memory Usage
       displayMemoryUsage: '显示内存使用情况',
-      displayMemoryUsageDescription: '在聊天页面中显示内存使用情况',
+      displayMemoryUsageDescription: '在聊天页面中显示内存使用情况。',
       // Export/Import Options
       exportOptions: '导出选项',
       exportLegacyChats: '导出旧版聊天会话',
       exportLegacyChatsDescription:
-        '如果迁移失败或需要恢复旧聊天会话，请使用此选项',
+        '如果迁移失败或需要恢复旧聊天会话，请使用此选项。',
       exportButton: '导出',
       importChats: '导入聊天会话',
-      importChatsDescription: '从JSON文件导入聊天会话',
+      importChatsDescription: '从JSON文件导入聊天会话。',
       importButton: '导入',
-      importSuccess: '成功导入{{count}}个聊天会话',
-      importError: '导入聊天会话失败，请检查文件格式',
+      importSuccess: '成功导入{{count}}个聊天会话。',
+      importError: '导入聊天会话失败。请检查文件格式。',
       // API Settings
       apiSettingsTitle: 'API设置',
       // Hugging Face Token
       huggingFaceTokenLabel: 'Hugging Face令牌',
-      tokenIsSetDescription: '令牌已设置，访问受限模型时需要',
-      setTokenDescription: '设置令牌以从Hugging Face访问受限模型',
+      tokenIsSetDescription: '令牌已设置。访问受限模型时需要。',
+      setTokenDescription: '设置令牌以从Hugging Face访问受限模型。',
       setTokenButton: '设置令牌',
       useHfTokenLabel: '使用HF令牌',
-      useHfTokenDescription: '使用HF令牌访问受限模型',
+      useHfTokenDescription: '使用HF令牌访问受限模型。',
     },
     memory: {
       shortWarning: '内存警告',
       warning:
-        '警告：模型大小可能会超过可用内存，这可能会影响设备的性能和稳定性',
+        '警告：模型大小可能会超过可用内存。这可能会影响设备的性能和稳定性。',
     },
     storage: {
       checkFailed: '检查存储失败',
@@ -1827,7 +1826,7 @@ export const l10n = {
     models: {
       fileManagement: {
         fileAlreadyExists: '文件已存在',
-        fileAlreadyExistsMessage: '此名称的文件已存在，你想做什么？',
+        fileAlreadyExistsMessage: '此名称的文件已存在。您想做什么？',
         replace: '替换',
         keepBoth: '保留两者',
       },
@@ -1837,10 +1836,10 @@ export const l10n = {
         unknownGroup: '未知',
         availableToUse: '可使用',
         availableToDownload: '可下载',
-        useAddButtonForMore: '点击 + 按钮添加更多模型',
+        useAddButtonForMore: '使用+按钮查找更多模型',
       },
       buttons: {
-        addFromHuggingFace: '从Hugging Face添加（镜像站）',
+        addFromHuggingFace: '从Hugging Face添加',
         addLocalModel: '添加本地模型',
         reset: '重置',
       },
@@ -1855,7 +1854,7 @@ export const l10n = {
         confirmReset: '确认重置',
       },
       chatTemplate: {
-        label: '基础聊天模板:',
+        label: '基本聊天模板:',
       },
       details: {
         title: '可用 GGUF 文件',
@@ -1863,29 +1862,29 @@ export const l10n = {
       modelFile: {
         alerts: {
           cannotRemoveTitle: '无法删除',
-          modelPreset: '此模型是预设的',
-          downloadedFirst: '模型已下载，请先删除模型',
+          modelPreset: '此模型是预设的。',
+          downloadedFirst: '模型已下载。请先删除文件。',
           removeTitle: '删除模型',
-          removeMessage: '你确定要从列表中删除此模型吗？',
-          removeError: '无法删除模型',
+          removeMessage: '您确定要从列表中删除此模型吗？',
+          removeError: '无法删除模型。',
           alreadyDownloadedTitle: '模型已下载',
-          alreadyDownloadedMessage: '模型已下载',
+          alreadyDownloadedMessage: '模型已下载。',
           deleteTitle: '删除模型',
-          deleteMessage: '你确定要删除此已下载的模型吗？',
+          deleteMessage: '您确定要删除此已下载的模型吗？',
         },
         buttons: {
           remove: '删除',
         },
         warnings: {
           storage: {
-            message: '没有足够的存储空间',
+            message: '没有足够的存储空间。',
             shortMessage: '存储不足',
           },
           memory: {
-            message: '模型大小接近或超过设备的总内存，这可能会导致意外行为',
+            message: '模型大小接近或超过设备的总内存。这可能会导致意外行为。',
           },
           legacy: {
-            message: '旧版量化格式 - 模型可能无法运行',
+            message: '旧版量化格式 - 模型可能无法运行。',
             shortMessage: '旧版量化',
           },
           multiple: '{count}个警告',
@@ -1902,14 +1901,14 @@ export const l10n = {
         modelUpdatedShort: '{{time}}前',
         modelUpdatedJustNowLong: '刚刚更新',
         modelUpdatedJustNowShort: '刚刚',
-        errorOccurred: '无法加载模型，请重试',
+        errorOccurred: '无法加载模型。请重试。',
       },
       modelCard: {
         alerts: {
           deleteTitle: '删除模型',
-          deleteMessage: '你确定要删除此已下载的模型吗？',
+          deleteMessage: '您确定要删除此已下载的模型吗？',
           removeTitle: '删除模型',
-          removeMessage: '你确定要从列表中删除此模型吗？',
+          removeMessage: '您确定要从列表中删除此模型吗？',
         },
         buttons: {
           settings: '设置',
@@ -1927,8 +1926,8 @@ export const l10n = {
           label: '模板:',
           editButton: '编辑',
           dialogTitle: '编辑聊天模板',
-          note1: '注意: 更改模板可能会更改BOS、EOS和系统提示',
-          note2: '使用Nunjucks，留空以使用模型的模板',
+          note1: '注意: 更改模板可能会更改BOS、EOS和系统提示。',
+          note2: '使用Nunjucks。留空以使用模型的模板。',
           placeholder: '在此输入聊天模板...',
           closeButton: '关闭',
         },
@@ -1939,9 +1938,9 @@ export const l10n = {
         tokenSettings: {
           bos: 'BOS',
           eos: 'EOS',
-          addGenerationPrompt: '添加生成Prompt',
-          bosTokenPlaceholder: 'BOS Token',
-          eosTokenPlaceholder: 'EOS Token',
+          addGenerationPrompt: '添加生成提示',
+          bosTokenPlaceholder: 'BOS令牌',
+          eosTokenPlaceholder: 'EOS令牌',
           systemPrompt: '系统提示',
         },
       },
@@ -1966,74 +1965,74 @@ export const l10n = {
     },
     completionParams: {
       include_thinking_in_context:
-        '在发送给模型的上下文中包含AI的思考/推理部分，禁用此选项可以节省上下文空间，但可能会影响性能',
+        '在发送给模型的上下文中包含AI的思考/推理部分。禁用此选项可以节省上下文空间，但可能会影响性能。',
       grammar: '应用特定的语法规则，以确保生成的文本遵循特定的结构或格式',
       stop: '定义将停止文本生成的特定短语',
-      n_predict: '设置生成响应的长度（以token为单位）',
-      n_probs: '显示替代词的概率分数',
+      n_predict: '设置生成响应的长度（以令牌为单位）',
+      n_probs: '显示替代词的概率分数。',
       top_k:
-        '通过限制单词选择到K个最可能的选项来控制创造性，较低的值会使响应更集中',
+        '通过限制单词选择到K个最可能的选项来控制创造性。较低的值会使响应更集中',
       top_p:
-        '平衡创造性和连贯性，较高的值（接近1.0）允许更富有创造性但可能不那么集中的响应',
+        '平衡创造性和连贯性。较高的值（接近1.0）允许更富有创造性但可能不那么集中的响应',
       min_p:
-        '考虑token的最小概率，过滤掉不太可能的单词以减少不合逻辑或上下文外的响应',
+        '考虑令牌的最小概率。过滤掉不太可能的单词以减少不合逻辑或上下文外的响应',
       temperature:
-        '控制创造性和可预测性，较高的值会使响应更富有创造性但焦点较少',
-      penalty_last_n: '检查重复的范围，较大的值有助于防止长期重复',
-      penalty_repeat: '抑制单词重复，较高的值会使响应使用更多样化的语言',
-      penalty_freq: '惩罚常用词，较高的值鼓励使用更广泛的词汇',
-      penalty_present: '减少主题和想法的重复，较高的值鼓励更多样化的内容',
+        '控制创造性和可预测性。较高的值会使响应更富有创造性但焦点较少',
+      penalty_last_n: '检查重复的范围。较大的值有助于防止长期重复',
+      penalty_repeat: '抑制单词重复。较高的值会使响应使用更多样化的语言',
+      penalty_freq: '惩罚常用词。较高的值鼓励使用更广泛的词汇',
+      penalty_present: '减少主题和想法的重复。较高的值鼓励更多样化的内容',
       mirostat:
-        '启用对响应创造性的高级控制，为了智能、实时调整随机性和连贯性，请设置为1或2（更平滑）',
+        '启用对响应创造性的高级控制。为了智能、实时调整随机性和连贯性，请设置为1或2（更平滑）',
       mirostat_tau:
-        '设置Mirostat的创造性水平，较高的值允许更多样化和富有想象力的响应，而较低的值确保更集中的输出',
-      mirostat_eta: 'Mirostat调整创造性的速度，较高的值意味着调整速度更快',
-      dry_multiplier: 'DRY（不要重复自己）功能的强度，较高的值强烈防止重复',
-      dry_base: 'DRY模式中的重复基本惩罚，较高的值更积极地防止重复',
+        '设置Mirostat的创造性水平。较高的值允许更多样化和富有想象力的响应，而较低的值确保更集中的输出',
+      mirostat_eta: 'Mirostat调整创造性的速度。较高的值意味着调整速度更快',
+      dry_multiplier: 'DRY（不要重复自己）功能的强度。较高的值强烈防止重复',
+      dry_base: 'DRY模式中的重复基本惩罚。较高的值更积极地防止重复',
       dry_allowed_length: 'DRY惩罚在应用之前可以重复的单词数',
       dry_penalty_last_n: 'DRY模式中检查重复的范围',
       dry_sequence_breakers: '重置DRY模式中重复检查器的符号',
-      ignore_eos: '即使模型想要停止也要继续生成，有助于强制更长的响应',
+      ignore_eos: '即使模型想要停止也要继续生成。有助于强制更长的响应',
       logit_bias: '调整特定单词出现在响应中的可能性',
-      seed: '设置随机数生成器的种子，有助于重现结果',
-      xtc_probability: '设置token通过XTC采样器删除的可能性，0是禁用',
+      seed: '设置随机数生成器的种子。有助于重现结果',
+      xtc_probability: '设置令牌通过XTC采样器删除的可能性。0是禁用',
       xtc_threshold:
-        '设置token通过XTC采样器删除的最小概率阈值，（> 0.5禁用XTC）',
-      typical_p: '使用参数p启用本地典型采样，1.0是禁用',
+        '设置令牌通过XTC采样器删除的最小概率阈值。（> 0.5禁用XTC）',
+      typical_p: '使用参数p启用本地典型采样。1.0是禁用',
     },
     about: {
-      screenTitle: '关于',
+      screenTitle: '应用程序信息',
       description:
-        '直接将语言模型完全本地部署在你手机上的APP，建立在llama.cpp和llama.rn的基础上！',
+        '直接将语言模型带到您的智能手机的应用程序。建立在llama.cpp和llama.rn的基础上。',
       supportProject: '支持项目',
       supportProjectDescription:
-        '如果你喜欢使用PocketPal AI，请考虑通过以下方式支持项目：',
-      githubButton: '在GitHub上点个Star~',
+        '如果您喜欢使用PocketPal AI，请考虑通过以下方式支持项目：',
+      githubButton: '在GitHub上星标',
       orText: '或',
       orBy: '或通过',
-      sponsorButton: '成为帅气且尊贵的赞助者！',
-      versionCopiedTitle: '复制成功！',
+      sponsorButton: '成为赞助商',
+      versionCopiedTitle: '版本已复制',
       versionCopiedDescription: '版本信息已复制到剪贴板',
     },
     feedback: {
       title: '发送反馈',
       description:
-        '你的声音很重要！告诉我们PocketPal AI如何帮助你以及我们可以做什么来使其更有用',
-      shareThoughtsButton: '分享你的想法',
+        '您的声音很重要！告诉我们PocketPal AI如何帮助您以及我们可以做什么来使其更有用。',
+      shareThoughtsButton: '分享您的想法',
       useCase: {
-        label: '你如何使用PocketPal AI？',
+        label: '您如何使用PocketPal AI？',
         placeholder: '例如：摘要、角色扮演等',
       },
       featureRequests: {
-        label: '你想在未来看到什么功能？',
-        placeholder: '分享你的想法或功能建议',
+        label: '您想在未来看到什么功能？',
+        placeholder: '分享您的想法或功能建议',
       },
       generalFeedback: {
         label: '一般反馈',
-        placeholder: '如果你有其他想法，请随时分享',
+        placeholder: '如果您有其他想法，请随时分享。',
       },
       usageFrequency: {
-        label: '你多久使用一次PocketPal AI？（可选）',
+        label: '您多久使用一次PocketPal AI？（可选）',
         options: {
           daily: '每天',
           weekly: '每周',
@@ -2043,15 +2042,15 @@ export const l10n = {
       },
       email: {
         label: '联系电子邮件（可选）',
-        placeholder: '你的电子邮件地址',
+        placeholder: '您的电子邮件地址',
       },
       submit: '提交反馈',
       validation: {
         required: '请提供至少一些反馈',
       },
-      success: '感谢你的反馈！',
+      success: '感谢您的反馈！',
       error: {
-        general: '发送反馈时出错，请再试一次',
+        general: '发送反馈时出错。请再试一次。',
       },
     },
     components: {
@@ -2060,25 +2059,25 @@ export const l10n = {
       },
       bubble: {
         timingsString:
-          '每token{{predictedMs}}ms，每秒{{predictedPerSecond}}tokens',
+          '每个令牌{{predictedMs}}ms，每秒{{predictedPerSecond}}令牌',
       },
       exportUtils: {
         fileSaved: '文件已保存',
-        fileSavedMessage: '文件已保存到你的下载文件夹，文件名为{{filename}}',
+        fileSavedMessage: '文件已保存到您的下载文件夹，文件名为{{filename}}',
         share: '分享',
         ok: '确定',
         shareError: '分享错误',
-        shareErrorMessage: '无法分享文件，请重试',
+        shareErrorMessage: '无法分享文件。请重试。',
         saveError: '保存到下载文件夹时出错',
         saveOptions: '保存选项',
-        saveOptionsMessage: '无法直接保存到下载文件夹，你想分享文件吗？',
+        saveOptionsMessage: '无法直接保存到下载文件夹。您想分享文件吗？',
         cancel: '取消',
-        shareContentErrorMessage: '无法分享内容，请重试',
+        shareContentErrorMessage: '无法分享内容。请重试。',
         exportError: '导出错误',
-        exportErrorMessage: '导出文件时出错，请重试',
+        exportErrorMessage: '导出文件时出错。请重试。',
         permissionRequired: '需要存储权限',
-        permissionMessage: '需要存储权限才能将文件保存到下载文件夹',
-        permissionDenied: '存储权限被拒绝',
+        permissionMessage: '需要权限才能将文件保存到下载文件夹',
+        permissionDenied: '权限被拒绝',
         permissionDeniedMessage: '没有存储权限，导出功能将被禁用',
         continue: '继续',
       },
@@ -2087,10 +2086,11 @@ export const l10n = {
       },
       chatEmptyPlaceholder: {
         noModelsTitle: '没有可用的模型',
-        noModelsDescription: '需要下载一个模型，才能与PocketPal开始聊天',
+        noModelsDescription: '要开始与PocketPal聊天，请下载模型',
         noModelsButton: '下载模型',
-        activateModelTitle: '在你和PocketPal聊天前，请先激活模型~',
-        activateModelDescription: '选择并加载一个模型以开始聊天',
+        activateModelTitle: '要开始，请激活模型',
+        activateModelDescription:
+          '选择模型并下载它。下载后，点击模型旁边的加载以开始聊天。',
         activateModelButton: '选择模型',
         loading: '加载中...',
       },
@@ -2121,15 +2121,15 @@ export const l10n = {
       },
       chatPalModelPickerSheet: {
         modelsTab: '模型',
-        palsTab: 'Pal',
-        noPal: '没有Pal',
-        disablePal: '禁用当前Pal',
+        palsTab: '助手',
+        noPal: '没有助手',
+        disablePal: '禁用活动助手',
         noDescription: '没有描述',
-        assistantType: 'Pal',
+        assistantType: '助手',
         roleplayType: '角色扮演',
         confirmationTitle: '确认',
         modelSwitchMessage:
-          '此Pal具有不同的默认模型({{modelName}})，要切换到Pal的默认模型吗？',
+          '此助手具有不同的默认模型({{modelName}})。要切换到助手的默认模型吗？',
         keepButton: '保持',
         switchButton: '切换',
       },
@@ -2138,25 +2138,25 @@ export const l10n = {
         downloadFailedMessage: '模型下载失败: {message}',
         unauthorizedTitle: '认证失败',
         unauthorizedMessage:
-          '你的Hugging Face令牌似乎无效或已过期，请在设置中更新你的令牌',
+          '您的Hugging Face令牌似乎无效或已过期。请在设置中更新您的令牌。',
         forbiddenTitle: '访问被拒绝',
-        forbiddenMessage: '你没有权限访问此模型，请确保:',
+        forbiddenMessage: '您没有权限访问此模型。请确保:',
         forbiddenSteps: [
-          '你的令牌具有"读取"权限',
-          '你已请求并获得了此模型的访问权限',
-          '模型所有者已批准你的访问请求',
+          '您的令牌具有"读取"权限',
+          '您已请求并获得了此模型的访问权限',
+          '模型所有者已批准您的访问请求',
         ],
         getTokenTitle: '获取Hugging Face令牌',
-        getTokenMessage: '下载此模型需要Hugging Face令牌',
+        getTokenMessage: '下载此模型需要Hugging Face令牌。',
         getTokenSteps: [
-          '访问huggingface并登录',
+          '访问huggingface.co并登录',
           '导航至设置 > 访问令牌',
           '创建具有"读取"权限的新令牌',
           '复制令牌并粘贴到令牌字段中',
         ],
         tokenDisabledTitle: '令牌已禁用',
         tokenDisabledMessage:
-          '你有一个Hugging Face令牌设置，但它目前被禁用，此模型需要令牌才能下载；请启用你的令牌以继续',
+          '您有一个Hugging Face令牌设置，但目前它已禁用。此模型需要令牌才能下载。请启用您的令牌以继续。',
         enableAndRetry: '启用并重试',
         goToSettings: '前往设置',
         tryAgain: '重试',
@@ -2164,7 +2164,7 @@ export const l10n = {
       },
       headerRight: {
         deleteChatTitle: '删除聊天',
-        deleteChatMessage: '确定要删除这个聊天记录吗？',
+        deleteChatMessage: '您确定要删除此聊天吗？',
         generationSettings: '生成设置',
         model: '模型',
         duplicateChatHistory: '复制聊天历史',
@@ -2179,19 +2179,19 @@ export const l10n = {
         title: 'Hugging Face 令牌',
         description: '访问受限模型所需',
         inputLabel: '个人访问令牌',
-        inputPlaceholder: '在此粘贴你的令牌',
+        inputPlaceholder: '在此粘贴您的令牌',
         save: '保存令牌',
         saved: '令牌已成功保存',
         reset: '重置令牌',
         resetSuccess: '令牌已成功删除',
         instructions: '如何获取令牌：',
         instructionsSteps: [
-          '登录 huggingface',
+          '登录 huggingface.co',
           '导航至设置 > 访问令牌',
           '创建具有"read"权限的新令牌',
           '复制令牌并粘贴在下方',
         ],
-        getTokenLink: '从 huggingface 获取令牌 ↗',
+        getTokenLink: '从 huggingface.co 获取令牌 ↗',
         error: {
           saving: '保存令牌时出错',
           missing: '需要 Hugging Face 令牌',
@@ -2201,7 +2201,7 @@ export const l10n = {
         gatedModelIndicator: '需要令牌',
         tokenRequired: '此模型需要 Hugging Face 访问令牌',
         searchErrorHint:
-          '你的 Hugging Face API 令牌无效或已过期；如果要继续搜索，请在设置中删除令牌或禁用令牌验证',
+          '您的 Hugging Face API 令牌无效或已过期。要继续搜索，请在设置中删除令牌或禁用令牌验证。',
         disableAndRetry: '禁用令牌并重试',
       },
       modelSettingsSheet: {
@@ -2220,32 +2220,32 @@ export const l10n = {
       },
       assistantPalSheet: {
         title: {
-          create: '创建助手Pal',
-          edit: '编辑助手Pal',
+          create: '创建助手帕尔',
+          edit: '编辑助手帕尔',
         },
-        palName: 'Pal名',
+        palName: '帕尔名',
         palNamePlaceholder: '名称',
         defaultModel: '默认模型',
         defaultModelPlaceholder: '选择模型',
         validation: {
-          generatingPromptRequired: '需要生成Prompt',
-          promptModelRequired: '需要Prompt生成模型',
+          generatingPromptRequired: '需要生成提示',
+          promptModelRequired: '需要提示生成模型',
         },
         create: '创建',
       },
       modelNotAvailable: {
-        noModelsDownloaded: '你还没有下载任何模型，请先下载模型',
+        noModelsDownloaded: '您还没有下载任何模型。请先下载模型。',
         downloadAModel: '下载模型',
-        defaultModelNotDownloaded: '默认模型还没有下载，请先下载它',
+        defaultModelNotDownloaded: '默认模型还没有下载。请先下载它。',
         cancelDownload: '取消下载',
         download: '下载',
       },
       roleplayPalSheet: {
         title: {
-          create: '创建角色扮演Pal',
-          edit: '编辑角色扮演Pal',
+          create: '创建角色扮演帕尔',
+          edit: '编辑角色扮演帕尔',
         },
-        palName: 'Pal名',
+        palName: '帕尔名',
         palNamePlaceholder: '名称',
         defaultModel: '默认模型',
         defaultModelPlaceholder: '选择模型',
@@ -2263,10 +2263,10 @@ export const l10n = {
         userRoleSublabel: '你是谁？',
         situation: '情况',
         situationPlaceholder: '救援任务，解开谜团',
-        toneStyle: '语气/风格',
+        toneStyle: '音调/风格',
         toneStylePlaceholder: '严肃',
         validation: {
-          promptModelRequired: '需要Prompt生成模型',
+          promptModelRequired: '需要提示生成模型',
         },
         create: '创建',
       },
@@ -2278,12 +2278,12 @@ export const l10n = {
         useAIPrompt: '使用AI生成系统提示',
         modelSelector: {
           label: '选择生成用模型*',
-          sublabel: '推荐: Llama 3.2 3B 或 Qwen3 4B.',
+          sublabel: '推荐: Llama 3.2 3B 或 Qwen2.5 3B.',
           placeholder: '选择模型',
         },
         generatingPrompt: {
-          label: '生成Prompt',
-          placeholder: '输入生成Prompt',
+          label: '生成提示',
+          placeholder: '输入生成提示',
         },
         buttons: {
           loadingModel: '加载模型中...',
@@ -2292,8 +2292,8 @@ export const l10n = {
         },
         systemPrompt: {
           label: '系统提示',
-          sublabel: '自由编辑内容以找到最佳Prompt',
-          placeholder: '你是一个乐于助人的助手',
+          sublabel: '自由编辑以找到最佳提示',
+          placeholder: '您是帮助助手',
         },
         warnings: {
           promptChanged: '系统提示已手动更改',
@@ -2303,14 +2303,14 @@ export const l10n = {
         menuItems: {
           chat: '聊天',
           models: '模型',
-          pals: 'Pals',
+          pals: '帕尔',
           benchmark: '基准测试',
           settings: '设置',
-          appInfo: '关于',
+          appInfo: '应用程序信息',
           testCompletion: '测试完成',
         },
         deleteChatTitle: '删除聊天',
-        deleteChatMessage: '确定要删除这个聊天记录吗？',
+        deleteChatMessage: '您确定要删除此聊天吗？',
         dateGroups: {
           today: '今天',
           yesterday: '昨天',
@@ -2334,34 +2334,34 @@ export const l10n = {
       },
     },
     validation: {
-      nameRequired: '需要填写名称',
-      systemPromptRequired: '需要填写系统提示',
-      worldRequired: '需要填写世界设置',
-      locationRequired: '需要填写位置',
-      aiRoleRequired: '需要填写AI角色',
-      userRoleRequired: '需要填写用户角色',
-      situationRequired: '需要填写情况',
-      toneStyleRequired: '需要填写语气/风格',
+      nameRequired: '需要名称',
+      systemPromptRequired: '需要系统提示',
+      worldRequired: '需要世界设置',
+      locationRequired: '需要位置',
+      aiRoleRequired: '需要AI角色',
+      userRoleRequired: '需要用户角色',
+      situationRequired: '需要情况',
+      toneStyleRequired: '需要音调/风格',
     },
     screenTitles: {
       chat: '聊天',
       models: '模型',
-      pals: 'Pals（实验性）',
+      pals: '帕尔（实验性）',
       benchmark: '基准测试',
       settings: '设置',
-      appInfo: '关于',
+      appInfo: '应用程序信息',
       testCompletion: '测试完成',
     },
     chat: {
       conversationReset: '对话已重置！',
-      modelNotLoaded: '模型未加载，请初始化模型',
+      modelNotLoaded: '模型未加载。请初始化模型。',
       completionFailed: '生成失败: ',
       loadingModel: '加载模型中...',
       typeYourMessage: '输入消息',
       load: '加载',
       goToModels: '转到模型',
-      readyToChat: '准备好聊天了吗？加载上次使用的模型',
-      pleaseLoadModel: '在你聊天前，请先加载模型',
+      readyToChat: '聊天准备好了吗？加载最后使用的模型。',
+      pleaseLoadModel: '要聊天，请加载模型。',
     },
     benchmark: {
       title: '基准测试',
@@ -2382,9 +2382,10 @@ export const l10n = {
         hideRawData: '隐藏原始数据',
       },
       messages: {
-        pleaseSelectModel: '请先选择并初始化一个模型',
-        testWarning: '注意：大模型可能需要2-5分钟进行测试，一旦开始就无法中断',
-        keepScreenOpen: '请保持此界面打开！',
+        pleaseSelectModel: '请先选择并初始化模型',
+        testWarning:
+          '注意：大模型可能需要2-5分钟进行测试，一旦开始就无法中断。',
+        keepScreenOpen: '请保持此屏幕打开。',
         initializingModel: '正在初始化模型...',
         modelMaxValue: '(最大值: {{maxValue}})',
       },
@@ -2393,15 +2394,15 @@ export const l10n = {
           title: '高级设置',
           testProfile: '测试配置文件',
           customParameters: '自定义参数',
-          description: '微调基准测试参数以适应特定测试场景',
+          description: '微调基准测试参数以适应特定测试场景。',
         },
         deleteResult: {
           title: '删除结果',
-          message: '你确定要删除此基准测试结果吗？',
+          message: '您确定要删除此基准测试结果吗？',
         },
         clearAllResults: {
           title: '清除所有结果',
-          message: '你确定要删除所有基准测试结果吗？',
+          message: '您确定要删除所有基准测试结果吗？',
         },
         shareResults: {
           title: '共享基准测试结果',
@@ -2424,9 +2425,9 @@ export const l10n = {
         },
         modelSettings: {
           title: '模型设置',
-          context: '上下文长度: {{context}}',
-          batch: '批处理: {{batch}}',
-          ubatch: 'U批处理: {{ubatch}}',
+          context: '上下文: {{context}}',
+          batch: '批量: {{batch}}',
+          ubatch: 'U批量: {{ubatch}}',
           cpuThreads: 'CPU线程: {{threads}}',
           gpuLayers: 'GPU层数: {{layers}}',
           flashAttentionEnabled: '启用Flash Attention',
@@ -2434,11 +2435,11 @@ export const l10n = {
           cacheTypes: '缓存类型: {{cacheK}}/{{cacheV}}',
         },
         results: {
-          promptProcessing: 'Prompt处理',
-          tokenGeneration: 'Token生成',
+          promptProcessing: '提示处理',
+          tokenGeneration: '令牌生成',
           totalTime: '总时间',
           peakMemory: '峰值内存',
-          tokensPerSecond: 'tok/sec',
+          tokensPerSecond: '令牌/秒',
         },
         actions: {
           deleteButton: '',
@@ -2464,7 +2465,7 @@ export const l10n = {
         sections: {
           basicInfo: '基本信息',
           cpuDetails: 'CPU详细信息',
-          appInfo: 'APP信息',
+          appInfo: '应用程序信息',
         },
         fields: {
           architecture: '架构',
@@ -2529,23 +2530,25 @@ export const l10n = {
       hours: 'heures',
       minute: 'min',
       minutes: 'min',
-      justNow: 'à l\'instant',
+      justNow: "à l'instant",
     },
     settings: {
       // Model Initialization Settings
-      modelInitializationSettings: 'Paramètres d\'initialisation du modèle',
+      modelInitializationSettings: "Paramètres d'initialisation du modèle",
       // Metal Settings
       metal: 'Metal',
-      metalDescription: 'API accélérée par le matériel d\'Apple.',
+      metalDescription: "API accélérée par le matériel d'Apple.",
       metalRequiresNewerIOS:
-        'L\'accélération Metal nécessite iOS 18 ou supérieur. Veuillez mettre à jour votre appareil pour utiliser cette fonctionnalité.',
+        "L'accélération Metal nécessite iOS 18 ou supérieur. Veuillez mettre à jour votre appareil pour utiliser cette fonctionnalité.",
       layersOnGPU: 'Couches sur GPU : {{gpuLayers}}',
       // Context Size
       contextSize: 'Taille du contexte',
-      contextSizePlaceholder: 'Entrez la taille du contexte (min {{minContextSize}})',
+      contextSizePlaceholder:
+        'Entrez la taille du contexte (min {{minContextSize}})',
       invalidContextSizeError:
         'Veuillez entrer un nombre valide (minimum {{minContextSize}})',
-      modelReloadNotice: 'Rechargement du modèle nécessaire pour appliquer les changements.',
+      modelReloadNotice:
+        'Rechargement du modèle nécessaire pour appliquer les changements.',
       // Advanced Settings
       advancedSettings: 'Paramètres avancés',
       // Batch Size
@@ -2562,39 +2565,45 @@ export const l10n = {
         'Utilisation de {{threads}} sur {{maxThreads}} threads disponibles',
       // Flash Attention
       flashAttention: 'Flash Attention',
-      flashAttentionDescription: 'Activer Flash Attention pour un traitement plus rapide',
+      flashAttentionDescription:
+        'Activer Flash Attention pour un traitement plus rapide',
       // Cache Type K
       keyCacheType: 'Type de cache clé',
-      keyCacheTypeDescription: 'Sélectionnez le type de cache pour le calcul des clés',
+      keyCacheTypeDescription:
+        'Sélectionnez le type de cache pour le calcul des clés',
       keyCacheTypeDisabledDescription:
         'Activez Flash Attention pour modifier le type de cache',
       // Cache Type V
       valueCacheType: 'Type de cache valeur',
-      valueCacheTypeDescription: 'Sélectionnez le type de cache pour le calcul des valeurs',
+      valueCacheTypeDescription:
+        'Sélectionnez le type de cache pour le calcul des valeurs',
       valueCacheTypeDisabledDescription:
         'Activez Flash Attention pour modifier le type de cache',
       // Model Loading Settings
       modelLoadingSettings: 'Paramètres de chargement du modèle',
       // Auto Offload/Load
       autoOffloadLoad: 'Déchargement/Chargement auto',
-      autoOffloadLoadDescription: 'Décharger le modèle quand l\'application est en arrière-plan.',
+      autoOffloadLoadDescription:
+        "Décharger le modèle quand l'application est en arrière-plan.",
       // Auto Navigate to Chat
       autoNavigateToChat: 'Navigation auto vers le chat',
-      autoNavigateToChatDescription: 'Naviguer vers le chat quand le chargement commence.',
+      autoNavigateToChatDescription:
+        'Naviguer vers le chat quand le chargement commence.',
       // App Settings
-      appSettings: 'Paramètres de l\'application',
+      appSettings: "Paramètres de l'application",
       // Language
       language: 'Langue',
       // Dark Mode
       darkMode: 'Mode sombre',
       // Display Memory Usage
-      displayMemoryUsage: 'Afficher l\'utilisation de mémoire',
-      displayMemoryUsageDescription: 'Afficher l\'utilisation de mémoire dans la page de chat.',
+      displayMemoryUsage: "Afficher l'utilisation de mémoire",
+      displayMemoryUsageDescription:
+        "Afficher l'utilisation de mémoire dans la page de chat.",
       // Export/Import Options
-      exportOptions: 'Options d\'exportation',
+      exportOptions: "Options d'exportation",
       exportLegacyChats: 'Exporter les anciens chats',
       exportLegacyChatsDescription:
-        'Utilisez cette option si la migration a échoué ou si vous devez récupérer d\'anciennes sessions de chat.',
+        "Utilisez cette option si la migration a échoué ou si vous devez récupérer d'anciennes sessions de chat.",
       exportButton: 'Exporter',
       importChats: 'Importer des sessions de chat',
       importChatsDescription:
@@ -2602,7 +2611,7 @@ export const l10n = {
       importButton: 'Importer',
       importSuccess: '{{count}} session(s) de chat importée(s) avec succès.',
       importError:
-        'Échec de l\'importation des sessions de chat. Veuillez vérifier le format du fichier.',
+        "Échec de l'importation des sessions de chat. Veuillez vérifier le format du fichier.",
       // API Settings
       apiSettingsTitle: 'Paramètres API',
       // Hugging Face Token
@@ -2614,7 +2623,7 @@ export const l10n = {
       setTokenButton: 'Configurer le token',
       useHfTokenLabel: 'Utiliser le token HF',
       useHfTokenDescription:
-        'Activez pour utiliser le token pour les requêtes API. Désactivez si le token cause des problèmes d\'authentification.',
+        "Activez pour utiliser le token pour les requêtes API. Désactivez si le token cause des problèmes d'authentification.",
     },
     memory: {
       shortWarning: 'Alerte mémoire',
@@ -2623,7 +2632,8 @@ export const l10n = {
     },
     storage: {
       checkFailed: 'Échec de vérification du stockage',
-      lowStorage: 'Stockage faible ! Modèle {{modelSize}} > {{freeSpace}} libre',
+      lowStorage:
+        'Stockage faible ! Modèle {{modelSize}} > {{freeSpace}} libre',
     },
     generation: {
       modelNotInitialized: 'Contexte du modèle non initialisé',
@@ -2643,7 +2653,8 @@ export const l10n = {
         unknownGroup: 'Inconnu',
         availableToUse: 'Prêt à utiliser',
         availableToDownload: 'Disponible au téléchargement',
-        useAddButtonForMore: 'Utilisez le bouton + pour trouver plus de modèles',
+        useAddButtonForMore:
+          'Utilisez le bouton + pour trouver plus de modèles',
       },
       buttons: {
         addFromHuggingFace: 'Ajouter depuis Hugging Face',
@@ -2671,7 +2682,7 @@ export const l10n = {
           cannotRemoveTitle: 'Suppression impossible',
           modelPreset: 'Le modèle est préconfiguré.',
           downloadedFirst:
-            'Le modèle est téléchargé. Veuillez d\'abord supprimer le fichier.',
+            "Le modèle est téléchargé. Veuillez d'abord supprimer le fichier.",
           removeTitle: 'Supprimer le modèle',
           removeMessage:
             'Êtes-vous sûr de vouloir supprimer ce modèle de la liste ?',
@@ -2695,7 +2706,8 @@ export const l10n = {
               'La taille du modèle est proche ou dépasse la mémoire totale de votre appareil. Cela peut causer un comportement inattendu.',
           },
           legacy: {
-            message: 'Format de quantification ancien - le modèle pourrait ne pas fonctionner.',
+            message:
+              'Format de quantification ancien - le modèle pourrait ne pas fonctionner.',
             shortMessage: 'Quantification ancienne',
           },
           multiple: '{count} Avertissements',
@@ -2710,8 +2722,8 @@ export const l10n = {
         searchPlaceholder: 'Rechercher des modèles Hugging Face',
         modelUpdatedLong: 'Mis à jour il y a {{time}}',
         modelUpdatedShort: 'il y a {{time}}',
-        modelUpdatedJustNowLong: 'Mis à jour à l\'instant',
-        modelUpdatedJustNowShort: 'à l\'instant',
+        modelUpdatedJustNowLong: "Mis à jour à l'instant",
+        modelUpdatedJustNowShort: "à l'instant",
         errorOccurred: 'Impossible de charger les modèles. Veuillez réessayer.',
       },
       modelCard: {
@@ -2740,14 +2752,15 @@ export const l10n = {
           editButton: 'Modifier',
           dialogTitle: 'Modifier le modèle de chat',
           note1:
-            'Note : Modifier le modèle peut altérer BOS, EOS et l\'invite système.',
-          note2: 'Utilise Nunjucks. Laissez vide pour utiliser le modèle par défaut.',
+            "Note : Modifier le modèle peut altérer BOS, EOS et l'invite système.",
+          note2:
+            'Utilise Nunjucks. Laissez vide pour utiliser le modèle par défaut.',
           placeholder: 'Entrez votre modèle de chat ici...',
           closeButton: 'Fermer',
         },
         stopWords: {
-          label: 'MOTS D\'ARRÊT',
-          placeholder: 'Ajouter un nouveau mot d\'arrêt',
+          label: "MOTS D'ARRÊT",
+          placeholder: "Ajouter un nouveau mot d'arrêt",
         },
         tokenSettings: {
           bos: 'BOS',
@@ -2769,7 +2782,7 @@ export const l10n = {
         summarization: 'Résumé',
         reasoning: 'Raisonnement',
         roleplay: 'Jeu de rôle',
-        instructions: 'Suivi d\'instructions',
+        instructions: "Suivi d'instructions",
         code: 'Génération de code',
         math: 'Résolution mathématique',
         multilingual: 'Multilingue',
@@ -2779,9 +2792,9 @@ export const l10n = {
     },
     completionParams: {
       include_thinking_in_context:
-        'Inclure les parties de réflexion/raisonnement de l\'IA dans le contexte envoyé au modèle. Désactiver ceci peut économiser de l\'espace de contexte. Cela pourrait impacter les performances.',
+        "Inclure les parties de réflexion/raisonnement de l'IA dans le contexte envoyé au modèle. Désactiver ceci peut économiser de l'espace de contexte. Cela pourrait impacter les performances.",
       grammar:
-        'Appliquer des règles grammaticales spécifiques pour s\'assurer que le texte généré suit une structure ou un format particulier',
+        "Appliquer des règles grammaticales spécifiques pour s'assurer que le texte généré suit une structure ou un format particulier",
       stop: 'Définir des phrases spécifiques qui arrêteront la génération de texte',
       n_predict: 'Définir la longueur de la réponse générée (en tokens)',
       n_probs: 'Afficher les scores de probabilité pour les mots alternatifs.',
@@ -2790,46 +2803,46 @@ export const l10n = {
       top_p:
         'Équilibrer créativité et cohérence. Des valeurs plus élevées (proche de 1.0) permettent des réponses plus créatives mais potentiellement moins ciblées',
       min_p:
-        'La probabilité minimale pour qu\'un token soit considéré. Filtrer les mots peu probables pour réduire les réponses absurdes ou hors contexte',
+        "La probabilité minimale pour qu'un token soit considéré. Filtrer les mots peu probables pour réduire les réponses absurdes ou hors contexte",
       temperature:
         'Contrôler la créativité vs prévisibilité. Des valeurs plus élevées rendent les réponses plus créatives mais moins ciblées',
       penalty_last_n:
-        'Jusqu\'où vérifier les répétitions. Des valeurs plus grandes aident à prévenir les répétitions à long terme',
+        "Jusqu'où vérifier les répétitions. Des valeurs plus grandes aident à prévenir les répétitions à long terme",
       penalty_repeat:
         'Décourager la répétition de mots. Des valeurs plus élevées font utiliser un langage plus diversifié',
       penalty_freq:
-        'Pénaliser les mots surutilisés. Des valeurs plus élevées encouragent l\'utilisation d\'un vocabulaire plus large',
+        "Pénaliser les mots surutilisés. Des valeurs plus élevées encouragent l'utilisation d'un vocabulaire plus large",
       penalty_present:
-        'Réduire la répétition de thèmes et d\'idées. Des valeurs plus élevées encouragent un contenu plus diversifié',
+        "Réduire la répétition de thèmes et d'idées. Des valeurs plus élevées encouragent un contenu plus diversifié",
       mirostat:
-        'Activer un contrôle avancé sur la créativité des réponses. Régler sur 1 ou 2 (plus fluide) pour des ajustements intelligents en temps réel de l\'aléatoire et de la cohérence.',
+        "Activer un contrôle avancé sur la créativité des réponses. Régler sur 1 ou 2 (plus fluide) pour des ajustements intelligents en temps réel de l<'aléatoire et de la cohérence.",
       mirostat_tau:
         'Définir le niveau de créativité cible pour Mirostat. Des valeurs plus élevées permettent des réponses plus diverses et imaginatives, tandis que des valeurs plus basses assurent des sorties plus ciblées.',
       mirostat_eta:
         'Vitesse à laquelle Mirostat ajuste la créativité. Des valeurs plus élevées signifient des ajustements plus rapides',
       dry_multiplier:
-        'Force de la fonctionnalité DRY (Don\'t Repeat Yourself). Des valeurs plus élevées préviennent fortement la répétition',
+        "Force de la fonctionnalité DRY (Don't Repeat Yourself). Des valeurs plus élevées préviennent fortement la répétition",
       dry_base:
         'Pénalité de base pour la répétition en mode DRY. Des valeurs plus élevées sont plus agressives pour prévenir la répétition',
       dry_allowed_length:
-        'Combien de mots peuvent se répéter avant que la pénalité DRY ne s\'active',
-      dry_penalty_last_n: 'Jusqu\'où regarder les répétitions en mode DRY',
+        "Combien de mots peuvent se répéter avant que la pénalité DRY ne s'active",
+      dry_penalty_last_n: "Jusqu'où regarder les répétitions en mode DRY",
       dry_sequence_breakers:
         'Symboles qui réinitialisent le vérificateur de répétition en mode DRY',
       ignore_eos:
-        'Continuer la génération même si le modèle veut s\'arrêter. Utile pour forcer des réponses plus longues',
+        "Continuer la génération même si le modèle veut s'arrêter. Utile pour forcer des réponses plus longues",
       logit_bias:
-        'Influencer la probabilité d\'apparition de mots spécifiques dans la réponse',
+        "Influencer la probabilité d'apparition de mots spécifiques dans la réponse",
       seed: 'Définir la graine du générateur de nombres aléatoires. Utile pour des résultats reproductibles',
       xtc_probability:
-        'Définir la probabilité de suppression de token via l\'échantillonneur XTC. 0 est désactivé',
+        "Définir la probabilité de suppression de token via l'échantillonneur XTC. 0 est désactivé",
       xtc_threshold:
-        'Définir un seuil de probabilité minimum pour que les tokens soient supprimés via l\'échantillonneur XTC. (> 0.5 désactive XTC)',
+        "Définir un seuil de probabilité minimum pour que les tokens soient supprimés via l'échantillonneur XTC. (> 0.5 désactive XTC)",
       typical_p:
-        'Activer l\'échantillonnage typique local avec le paramètre p. 1.0 est désactivé',
+        "Activer l'échantillonnage typique local avec le paramètre p. 1.0 est désactivé",
     },
     about: {
-      screenTitle: 'Infos sur l\'application',
+      screenTitle: "Infos sur l'application",
       description:
         'Une application qui apporte des modèles de langage directement sur votre téléphone. Repose sur llama.cpp et llama.rn.',
       supportProject: 'Soutenir le projet',
@@ -2879,7 +2892,7 @@ export const l10n = {
       },
       success: 'Merci pour votre feedback !',
       error: {
-        general: 'Erreur lors de l\'envoi du feedback. Veuillez réessayer.',
+        general: "Erreur lors de l'envoi du feedback. Veuillez réessayer.",
       },
     },
     components: {
@@ -2897,23 +2910,24 @@ export const l10n = {
         share: 'Partager',
         ok: 'OK',
         shareError: 'Erreur de partage',
-        shareErrorMessage: 'Impossible de partager le fichier. Veuillez réessayer.',
-        saveError: 'Erreur d\'enregistrement dans Téléchargements',
-        saveOptions: 'Options d\'enregistrement',
+        shareErrorMessage:
+          'Impossible de partager le fichier. Veuillez réessayer.',
+        saveError: "Erreur d'enregistrement dans Téléchargements",
+        saveOptions: "Options d'enregistrement",
         saveOptionsMessage:
-          'Impossible d\'enregistrer directement dans Téléchargements. Voulez-vous partager le fichier à la place ?',
+          "Impossible d'enregistrer directement dans Téléchargements. Voulez-vous partager le fichier à la place ?",
         cancel: 'Annuler',
         shareContentErrorMessage:
           'Impossible de partager le contenu. Veuillez réessayer.',
-        exportError: 'Erreur d\'exportation',
+        exportError: "Erreur d'exportation",
         exportErrorMessage:
-          'Une erreur s\'est produite lors de l\'exportation du fichier. Veuillez réessayer.',
+          "Une erreur s'est produite lors de l'exportation du fichier. Veuillez réessayer.",
         permissionRequired: 'Permission de stockage requise',
         permissionMessage:
-          'Nous avons besoin d\'une permission pour enregistrer votre export dans le dossier Téléchargements.',
+          "Nous avons besoin d'une permission pour enregistrer votre export dans le dossier Téléchargements.",
         permissionDenied: 'Permission refusée',
         permissionDeniedMessage:
-          'Sans permission de stockage, la fonction d\'exportation sera désactivée.',
+          "Sans permission de stockage, la fonction d'exportation sera désactivée.",
         continue: 'Continuer',
       },
       thinkingBubble: {
@@ -2946,7 +2960,8 @@ export const l10n = {
         resetToPreset: 'Réinitialiser au préréglage',
         applytoPresetAlert: {
           title: 'Succès',
-          message: 'Ces paramètres seront appliqués à toutes les futures sessions',
+          message:
+            'Ces paramètres seront appliqués à toutes les futures sessions',
         },
       },
       chatHeaderTitle: {
@@ -2958,37 +2973,37 @@ export const l10n = {
       chatPalModelPickerSheet: {
         modelsTab: 'Modèles',
         palsTab: 'Assistants',
-        noPal: 'Pas d\'assistant',
-        disablePal: 'Désactiver l\'assistant actif',
+        noPal: "Pas d'assistant",
+        disablePal: "Désactiver l'assistant actif",
         noDescription: 'Pas de description',
         assistantType: 'Assistant',
         roleplayType: 'Jeu de rôle',
         confirmationTitle: 'Confirmation',
         modelSwitchMessage:
-          'Cet assistant a un modèle par défaut différent ({{modelName}}). Voulez-vous passer au modèle par défaut de l\'assistant ?',
+          "Cet assistant a un modèle par défaut différent ({{modelName}}). Voulez-vous passer au modèle par défaut de l'assistant ?",
         keepButton: 'Garder',
         switchButton: 'Changer',
       },
       downloadErrorDialog: {
         downloadFailedTitle: 'Échec du téléchargement',
         downloadFailedMessage: 'Échec du téléchargement du modèle : {message}',
-        unauthorizedTitle: 'Échec d\'authentification',
+        unauthorizedTitle: "Échec d'authentification",
         unauthorizedMessage:
           'Votre token Hugging Face semble invalide ou expiré. Veuillez mettre à jour votre token dans les paramètres.',
         forbiddenTitle: 'Accès refusé',
         forbiddenMessage:
-          'Vous n\'avez pas la permission d\'accéder à ce modèle. Veuillez vous assurer que :',
+          "Vous n'avez pas la permission d'accéder à ce modèle. Veuillez vous assurer que :",
         forbiddenSteps: [
           'Votre token a une permission de "lecture"',
-          'Vous avez demandé et obtenu l\'accès à ce modèle',
-          'Le propriétaire du modèle a approuvé votre demande d\'accès',
+          "Vous avez demandé et obtenu l'accès à ce modèle",
+          "Le propriétaire du modèle a approuvé votre demande d'accès",
         ],
         getTokenTitle: 'Obtenir un token Hugging Face',
         getTokenMessage:
           'Ce modèle nécessite un token Hugging Face pour être téléchargé.',
         getTokenSteps: [
           'Allez sur huggingface.co et connectez-vous',
-          'Naviguez vers Paramètres > Tokens d\'accès',
+          "Naviguez vers Paramètres > Tokens d'accès",
           'Créez un nouveau token avec accès "lecture"',
           'Copiez le token et collez-le dans le champ correspondant',
         ],
@@ -3002,10 +3017,11 @@ export const l10n = {
       },
       headerRight: {
         deleteChatTitle: 'Supprimer la discussion',
-        deleteChatMessage: 'Êtes-vous sûr de vouloir supprimer cette discussion ?',
+        deleteChatMessage:
+          'Êtes-vous sûr de vouloir supprimer cette discussion ?',
         generationSettings: 'Paramètres de génération',
         model: 'Modèle',
-        duplicateChatHistory: 'Dupliquer l\'historique de discussion',
+        duplicateChatHistory: "Dupliquer l'historique de discussion",
         makeChatTemporary: 'Rendre la discussion temporaire',
         export: 'Exporter/Importer',
         exportCurrentSession: 'Exporter la session actuelle',
@@ -3016,7 +3032,7 @@ export const l10n = {
       hfTokenSheet: {
         title: 'Token Hugging Face',
         description: 'Nécessaire pour accéder aux modèles restreints',
-        inputLabel: 'Token d\'accès personnel',
+        inputLabel: "Token d'accès personnel",
         inputPlaceholder: 'Collez votre token ici',
         save: 'Enregistrer le token',
         saved: 'Token enregistré avec succès',
@@ -3025,21 +3041,21 @@ export const l10n = {
         instructions: 'Comment obtenir un token :',
         instructionsSteps: [
           'Allez sur huggingface.co et connectez-vous',
-          'Naviguez vers Paramètres > Tokens d\'accès',
+          "Naviguez vers Paramètres > Tokens d'accès",
           'Créez un nouveau token avec accès "lecture"',
           'Copiez le token et collez-le ci-dessous',
         ],
         getTokenLink: 'Obtenir un token depuis huggingface.co ↗',
         error: {
-          saving: 'Erreur d\'enregistrement du token',
+          saving: "Erreur d'enregistrement du token",
           missing: 'Token Hugging Face requis',
           invalid: 'Token invalide ou expiré',
-          gatedModelAccess: 'L\'accès à ce modèle restreint a été refusé',
+          gatedModelAccess: "L'accès à ce modèle restreint a été refusé",
         },
         gatedModelIndicator: 'Nécessite un token',
-        tokenRequired: 'Ce modèle nécessite un token d\'accès Hugging Face',
+        tokenRequired: "Ce modèle nécessite un token d'accès Hugging Face",
         searchErrorHint:
-          'Votre token API Hugging Face est invalide ou expiré. Pour continuer la recherche, veuillez soit supprimer le token, soit désactiver l\'authentification par token dans les Paramètres.',
+          "Votre token API Hugging Face est invalide ou expiré. Pour continuer la recherche, veuillez soit supprimer le token, soit désactiver l'authentification par token dans les Paramètres.",
         disableAndRetry: 'Désactiver le token et réessayer',
       },
       modelSettingsSheet: {
@@ -3061,22 +3077,22 @@ export const l10n = {
           create: 'Créer un assistant',
           edit: 'Modifier un assistant',
         },
-        palName: 'Nom de l\'assistant',
+        palName: "Nom de l'assistant",
         palNamePlaceholder: 'Nom',
         defaultModel: 'Modèle par défaut',
         defaultModelPlaceholder: 'Sélectionner un modèle',
         validation: {
-          generatingPromptRequired: 'L\'invite de génération est requise',
-          promptModelRequired: 'Le modèle de génération d\'invites est requis',
+          generatingPromptRequired: "L'invite de génération est requise",
+          promptModelRequired: "Le modèle de génération d'invites est requis",
         },
         create: 'Créer',
       },
       modelNotAvailable: {
         noModelsDownloaded:
-          'Vous n\'avez encore téléchargé aucun modèle. Veuillez d\'abord télécharger un modèle.',
+          "Vous n'avez encore téléchargé aucun modèle. Veuillez d'abord télécharger un modèle.",
         downloadAModel: 'Télécharger un modèle',
         defaultModelNotDownloaded:
-          'Le modèle par défaut n\'est pas encore téléchargé. Veuillez d\'abord le télécharger.',
+          "Le modèle par défaut n'est pas encore téléchargé. Veuillez d'abord le télécharger.",
         cancelDownload: 'Annuler le téléchargement',
         download: 'Télécharger',
       },
@@ -3085,7 +3101,7 @@ export const l10n = {
           create: 'Créer un assistant de jeu de rôle',
           edit: 'Modifier un assistant de jeu de rôle',
         },
-        palName: 'Nom de l\'assistant',
+        palName: "Nom de l'assistant",
         palNamePlaceholder: 'Nom',
         defaultModel: 'Modèle par défaut',
         defaultModelPlaceholder: 'Sélectionner un modèle',
@@ -3094,19 +3110,19 @@ export const l10n = {
         worldPlaceholder: 'Fantaisie',
         location: 'Lieu',
         locationPlaceholder: 'Forêt enchantée',
-        locationSublabel: 'Où se déroule l\'histoire ?',
+        locationSublabel: "Où se déroule l'histoire ?",
         aiRole: "Rôle de l'IA",
         aiRolePlaceholder: 'Eldara, un esprit malicieux de la forêt',
         aiRoleSublabel: 'Définir le rôle du personnage',
-        userRole: 'Rôle de l\'utilisateur',
+        userRole: "Rôle de l'utilisateur",
         userRolePlaceholder: 'Sir Elandor, un chevalier courageux',
         userRoleSublabel: 'Qui êtes-vous ?',
         situation: 'Situation',
-        situationPlaceholder: 'Mission de sauvetage, résolution d\'un mystère',
+        situationPlaceholder: "Mission de sauvetage, résolution d'un mystère",
         toneStyle: 'Ton/Style',
         toneStylePlaceholder: 'Sérieux',
         validation: {
-          promptModelRequired: 'Le modèle de génération d\'invites est requis',
+          promptModelRequired: "Le modèle de génération d'invites est requis",
         },
         create: 'Créer',
       },
@@ -3115,7 +3131,7 @@ export const l10n = {
       },
       systemPromptSection: {
         sectionTitle: 'Invite système',
-        useAIPrompt: 'Utiliser l\'IA pour générer l\'invite système',
+        useAIPrompt: "Utiliser l'IA pour générer l'invite système",
         modelSelector: {
           label: 'Sélectionner un modèle pour la génération*',
           sublabel: 'Recommandé : Llama 3.2 3B ou Qwen2.5 3B.',
@@ -3123,21 +3139,21 @@ export const l10n = {
         },
         generatingPrompt: {
           label: 'Invite de génération',
-          placeholder: 'Entrez l\'invite pour la génération',
+          placeholder: "Entrez l'invite pour la génération",
         },
         buttons: {
           loadingModel: 'Chargement du modèle...',
           stopGenerating: 'Arrêter la génération',
-          generatePrompt: 'Générer l\'invite système',
+          generatePrompt: "Générer l'invite système",
         },
         systemPrompt: {
           label: 'Invite système',
           sublabel:
-            'N\'hésitez pas à modifier et expérimenter pour trouver l\'invite optimale pour votre scénario',
+            "N'hésitez pas à modifier et expérimenter pour trouver l'invite optimale pour votre scénario",
           placeholder: 'Vous êtes un assistant serviable',
         },
         warnings: {
-          promptChanged: 'L\'invite système a été modifiée manuellement',
+          promptChanged: "L'invite système a été modifiée manuellement",
         },
       },
       sidebarContent: {
@@ -3151,9 +3167,10 @@ export const l10n = {
           testCompletion: 'Test de complétion',
         },
         deleteChatTitle: 'Supprimer la discussion',
-        deleteChatMessage: 'Êtes-vous sûr de vouloir supprimer cette discussion ?',
+        deleteChatMessage:
+          'Êtes-vous sûr de vouloir supprimer cette discussion ?',
         dateGroups: {
-          today: 'Aujourd\'hui',
+          today: "Aujourd'hui",
           yesterday: 'Hier',
           thisWeek: 'Cette semaine',
           lastWeek: 'La semaine dernière',
@@ -3176,11 +3193,11 @@ export const l10n = {
     },
     validation: {
       nameRequired: 'Le nom est requis',
-      systemPromptRequired: 'L\'invite système est requise',
+      systemPromptRequired: "L'invite système est requise",
       worldRequired: 'Le monde est requis',
       locationRequired: 'Le lieu est requis',
-      aiRoleRequired: 'Le rôle de l\'IA est requis',
-      userRoleRequired: 'Le rôle de l\'utilisateur est requis',
+      aiRoleRequired: "Le rôle de l'IA est requis",
+      userRoleRequired: "Le rôle de l'utilisateur est requis",
       situationRequired: 'La situation est requise',
       toneStyleRequired: 'Le ton/style est requis',
     },
@@ -3223,9 +3240,10 @@ export const l10n = {
         hideRawData: 'Masquer données brutes',
       },
       messages: {
-        pleaseSelectModel: 'Veuillez d\'abord sélectionner et initialiser un modèle',
+        pleaseSelectModel:
+          "Veuillez d'abord sélectionner et initialiser un modèle",
         testWarning:
-          'Note : Le test pourrait durer jusqu\'à 2-5 minutes pour les grands modèles et ne peut pas être interrompu une fois démarré.',
+          "Note : Le test pourrait durer jusqu'à 2-5 minutes pour les grands modèles et ne peut pas être interrompu une fois démarré.",
         keepScreenOpen: 'Veuillez garder cet écran ouvert.',
         initializingModel: 'Initialisation du modèle...',
         modelMaxValue: '(max : {{maxValue}})',
@@ -3240,16 +3258,19 @@ export const l10n = {
         },
         deleteResult: {
           title: 'Supprimer le résultat',
-          message: 'Êtes-vous sûr de vouloir supprimer ce résultat de benchmark ?',
+          message:
+            'Êtes-vous sûr de vouloir supprimer ce résultat de benchmark ?',
         },
         clearAllResults: {
           title: 'Effacer tous les résultats',
-          message: 'Êtes-vous sûr de vouloir supprimer tous les résultats de benchmark ?',
+          message:
+            'Êtes-vous sûr de vouloir supprimer tous les résultats de benchmark ?',
         },
         shareResults: {
           title: 'Partager les résultats du benchmark',
           sharedDataTitle: 'Les données partagées incluent :',
-          deviceAndModelInfo: '• Spécifications de l\'appareil et infos du modèle',
+          deviceAndModelInfo:
+            "• Spécifications de l'appareil et infos du modèle",
           performanceMetrics: '• Métriques de performance',
           dontShowAgain: 'Ne plus afficher ce message',
         },
@@ -3277,7 +3298,7 @@ export const l10n = {
           cacheTypes: 'Types de cache : {{cacheK}}/{{cacheV}}',
         },
         results: {
-          promptProcessing: 'Traitement de l\'invite',
+          promptProcessing: "Traitement de l'invite",
           tokenGeneration: 'Génération de tokens',
           totalTime: 'Temps total',
           peakMemory: 'Mémoire maximale',
@@ -3288,7 +3309,8 @@ export const l10n = {
           submittedText: '✓ Partagé à',
           leaderboardLink: 'Classement AI Phone ↗',
           cannotShare: 'Impossible de partager',
-          cannotShareTooltip: 'Les résultats des modèles locaux ne peuvent pas être partagés',
+          cannotShareTooltip:
+            'Les résultats des modèles locaux ne peuvent pas être partagés',
           submitButton: 'Soumettre au classement',
           viewLeaderboard: 'Voir le classement ↗',
         },
@@ -3301,7 +3323,7 @@ export const l10n = {
         },
       },
       deviceInfoCard: {
-        title: 'Informations sur l\'appareil',
+        title: "Informations sur l'appareil",
         deviceSummary: '{{brand}} {{model}} • {{systemName}} {{systemVersion}}',
         coreSummary: '{{cores}} cœurs • {{memory}}',
         sections: {
@@ -3312,7 +3334,7 @@ export const l10n = {
         fields: {
           architecture: 'Architecture',
           totalMemory: 'Mémoire totale',
-          deviceId: 'ID de l\'appareil',
+          deviceId: "ID de l'appareil",
           cpuCores: 'Cœurs CPU',
           cpuModel: 'Modèle CPU',
           chipset: 'Chipset',
@@ -3331,21 +3353,24 @@ export const l10n = {
     errors: {
       unexpectedError: 'Une erreur inattendue est survenue',
       hfAuthenticationError:
-        'Erreur d\'authentification Hugging Face : Token manquant ou invalide',
+        "Erreur d'authentification Hugging Face : Token manquant ou invalide",
       hfAuthenticationErrorSearch:
-        'Erreur d\'authentification Hugging Face : Token invalide',
-      authenticationError: 'Erreur d\'authentification : Token manquant ou invalide',
+        "Erreur d'authentification Hugging Face : Token invalide",
+      authenticationError:
+        "Erreur d'authentification : Token manquant ou invalide",
       hfAuthorizationError:
-        'Erreur d\'autorisation Hugging Face : Aucune permission pour accéder à cette ressource',
+        "Erreur d'autorisation Hugging Face : Aucune permission pour accéder à cette ressource",
       authorizationError:
-        'Erreur d\'autorisation : Aucune permission pour accéder à cette ressource',
+        "Erreur d'autorisation : Aucune permission pour accéder à cette ressource",
       hfServerError: 'Erreur serveur Hugging Face : Problème de serveur API',
       serverError: 'Erreur serveur : Problème de serveur API',
       hfNetworkTimeout:
-        'Délai d\'attente réseau : La requête vers Hugging Face a pris trop de temps à se terminer',
-      networkTimeout: 'Délai d\'attente réseau : La requête a pris trop de temps à se terminer',
-      hfNetworkError: 'Erreur réseau : Impossible de se connecter à l\'API Hugging Face',
-      networkError: 'Erreur réseau : Impossible de se connecter à l\'API',
+        "Délai d'attente réseau : La requête vers Hugging Face a pris trop de temps à se terminer",
+      networkTimeout:
+        "Délai d'attente réseau : La requête a pris trop de temps à se terminer",
+      hfNetworkError:
+        "Erreur réseau : Impossible de se connecter à l'API Hugging Face",
+      networkError: "Erreur réseau : Impossible de se connecter à l'API",
       downloadSetupFailedTitle: 'Échec de configuration du téléchargement',
       downloadSetupFailedMessage:
         'Échec de préparation du modèle pour le téléchargement : {message}',
