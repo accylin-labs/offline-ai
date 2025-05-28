@@ -11,7 +11,7 @@ import {observer} from 'mobx-react-lite';
 import {Button, Text} from 'react-native-paper';
 import {zodResolver} from '@hookform/resolvers/zod';
 import Slider from '@react-native-community/slider';
-import {useForm, FormProvider, Controller} from 'react-hook-form';
+import {useForm, FormProvider, Controller, useWatch} from 'react-hook-form';
 
 import {useTheme} from '../../hooks';
 
@@ -69,6 +69,12 @@ export const VideoPalSheet: React.FC<VideoPalSheetProps> = observer(
     const methods = useForm<VideoPalFormData>({
       resolver: zodResolver(videoFormSchema),
       defaultValues: {...INITIAL_STATE, palType: PalType.VIDEO},
+    });
+
+    // Watch the defaultModel field to get reactive updates
+    const watchedDefaultModel = useWatch({
+      control: methods.control,
+      name: 'defaultModel',
     });
 
     const resetForm = useCallback(() => {
@@ -176,9 +182,7 @@ export const VideoPalSheet: React.FC<VideoPalSheetProps> = observer(
               />
 
               <ModelNotAvailable
-                model={
-                  editPal?.defaultModel || methods.getValues().defaultModel
-                }
+                model={editPal?.defaultModel || watchedDefaultModel}
                 closeSheet={handleClose}
               />
 

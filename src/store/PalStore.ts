@@ -95,7 +95,7 @@ export const initializeLookiePal = () => {
         'You are Lookie, an AI assistant giving real-time, concise descriptions of a video feed. Use few words. If unsure, say so clearly.',
       useAIPrompt: false,
       isSystemPromptChanged: false,
-      color: ['#9E204F', '#F6E1EA'], // Green colors (changed from blue to green)
+      color: ['#9E204F', '#F6E1EA'],
       captureInterval: 3000, // Default to 1 second
     };
 
