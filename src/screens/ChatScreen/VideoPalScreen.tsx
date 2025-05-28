@@ -20,6 +20,7 @@ export const VideoPalScreen = observer(() => {
   const [promptText, setPromptText] = useState('What do you see?');
   const [captureInterval, setCaptureInterval] = useState(1000); // Default to 1 second
   const [lastAnalysisTime, setLastAnalysisTime] = useState(0);
+  const [isStoppingCamera, setIsStoppingCamera] = useState(false);
 
   // Get the active VideoPal to access its captureInterval setting
   const activeVideoPal = React.useMemo(() => {
@@ -56,34 +57,46 @@ export const VideoPalScreen = observer(() => {
       if (palDefaultModel) {
         console.log('Initializing Video Pal model with projection model');
 
-        // Find the projection model if it exists
-        const projectionModel = activeVideoPal.projectionModel
-          ? modelStore.availableModels.find(
-              m => m.id === activeVideoPal.projectionModel?.id,
-            )
-          : null;
+        // Check if this model supports multimodal and has a default projection model
+        if (
+          palDefaultModel.supportsMultimodal &&
+          palDefaultModel.defaultProjectionModel
+        ) {
+          // Find the default projection model
+          const projectionModel = modelStore.availableModels.find(
+            m => m.id === palDefaultModel.defaultProjectionModel,
+          );
 
-        if (projectionModel) {
-          console.log('Found projection model:', projectionModel.name);
-          // Get the projection model path
-          modelStore
-            .getModelFullPath(projectionModel)
-            .then(projectionModelPath => {
-              console.log(
-                'Initializing with projection model path:',
-                projectionModelPath,
-              );
-              // Initialize with both the main model and projection model
-              modelStore.initContext(palDefaultModel, projectionModelPath);
-            })
-            .catch(error => {
-              console.error('Failed to get projection model path:', error);
-              // Fall back to initializing without projection model
-              modelStore.initContext(palDefaultModel);
-            });
+          if (projectionModel) {
+            console.log(
+              'Found default projection model:',
+              projectionModel.name,
+            );
+            // Get the projection model path
+            modelStore
+              .getModelFullPath(projectionModel)
+              .then(projectionModelPath => {
+                console.log(
+                  'Initializing with projection model path:',
+                  projectionModelPath,
+                );
+                // Initialize with both the main model and projection model
+                modelStore.initContext(palDefaultModel, projectionModelPath);
+              })
+              .catch(error => {
+                console.error('Failed to get projection model path:', error);
+                // Fall back to initializing without projection model
+                modelStore.initContext(palDefaultModel);
+              });
+          } else {
+            console.warn(
+              'Default projection model not found, initializing without it',
+            );
+            modelStore.initContext(palDefaultModel);
+          }
         } else {
-          console.warn(
-            'No projection model found for Video Pal, initializing without it',
+          console.log(
+            'Model does not support multimodal or has no default projection model',
           );
           modelStore.initContext(palDefaultModel);
         }
@@ -130,12 +143,22 @@ export const VideoPalScreen = observer(() => {
   }, [l10n]);
 
   // Handle stopping the camera
-  const handleStopCamera = useCallback(() => {
-    if (modelStore.inferencing) {
-      modelStore.context?.stopCompletion();
+  const handleStopCamera = useCallback(async () => {
+    setIsStoppingCamera(true);
+
+    // Stop any ongoing completion first
+    if (modelStore.inferencing || modelStore.isStreaming) {
+      try {
+        await modelStore.context?.stopCompletion();
+      } catch (error) {
+        console.error('Error stopping completion:', error);
+      }
     }
-    setIsCameraActive(false);
+
+    // Clear response text and stop camera
     setResponseText('');
+    setIsCameraActive(false);
+    setIsStoppingCamera(false);
   }, []);
 
   // Handle capture interval change
@@ -156,6 +179,11 @@ export const VideoPalScreen = observer(() => {
   // Handle image capture from the video stream
   const handleImageCapture = useCallback(
     async (imagePath: string) => {
+      // Don't process if we're stopping the camera
+      if (isStoppingCamera) {
+        return;
+      }
+
       // Throttle analysis to avoid overwhelming the model
       const now = Date.now();
       if (now - lastAnalysisTime < captureInterval) {
@@ -177,7 +205,10 @@ export const VideoPalScreen = observer(() => {
           image_path: imagePath,
           systemMessage: systemPrompt,
           onToken: token => {
-            setResponseText(prev => prev + token);
+            // Only update response text if we're not stopping the camera
+            if (!isStoppingCamera) {
+              setResponseText(prev => prev + token);
+            }
           },
           onComplete: () => {
             // This is called when the entire completion is done
@@ -191,7 +222,13 @@ export const VideoPalScreen = observer(() => {
         console.error('Error processing image:', error);
       }
     },
-    [promptText, captureInterval, lastAnalysisTime, activeVideoPal],
+    [
+      promptText,
+      captureInterval,
+      lastAnalysisTime,
+      activeVideoPal,
+      isStoppingCamera,
+    ],
   );
 
   // Render the chat view with embedded camera when active

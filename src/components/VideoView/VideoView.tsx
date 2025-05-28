@@ -37,7 +37,7 @@ export const VideoView = observer(
     analysisText,
   }: VideoViewProps) => {
     const theme = useTheme();
-    const styles = createStyles({theme});
+    const styles = createStyles();
     const l10n = React.useContext(L10nContext);
     const {hasPermission, requestPermission} = useCameraPermission();
     const [cameraPosition, setCameraPosition] =

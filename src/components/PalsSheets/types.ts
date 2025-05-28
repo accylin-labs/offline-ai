@@ -44,7 +44,6 @@ export function createSchemaWithL10n(l10n: any) {
   const videoSchema = z.object({
     ...baseFormSchema,
     palType: z.literal(PalType.VIDEO),
-    projectionModel: z.any().optional(),
     captureInterval: z.number().min(500).default(1000),
   });
 
@@ -99,7 +98,6 @@ export const videoPalFormSchema = z.object({
   promptGenerationModel: z.any().optional(),
   generatingPrompt: z.string().optional(),
   palType: z.literal(PalType.VIDEO),
-  projectionModel: z.any().optional(),
   captureInterval: z.number().min(500).default(1000),
 });
 
