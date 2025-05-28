@@ -194,4 +194,32 @@ export const createStyles = ({
       alignItems: 'center',
       marginBottom: 8,
     },
+
+    // Compact Video Button (for right side)
+    compactVideoButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 16,
+      gap: 6,
+      minWidth: 85,
+    },
+    compactButtonText: {
+      color: 'white',
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    // Prompt Label for Video Pals
+    promptLabel: {
+      fontSize: 11,
+      color: theme.colors.onSurfaceVariant,
+      fontWeight: '500',
+      marginBottom: 4,
+      opacity: 0.8,
+    },
+    inputWithLabel: {
+      marginTop: 0,
+    },
   });

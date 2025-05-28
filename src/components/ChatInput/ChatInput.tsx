@@ -271,6 +271,7 @@ export const ChatInput = observer(
       !isStreaming &&
       !isStopVisible &&
       user &&
+      palType !== PalType.VIDEO && // Hide send button for video pals
       (sendButtonVisibilityMode === 'always' || value.trim());
     const isSendButtonEnabled = value.trim().length > 0;
     const sendButtonOpacity = isSendButtonEnabled ? 1 : 0.4;
@@ -364,6 +365,10 @@ export const ChatInput = observer(
                   : 20,
               },
             ]}>
+            {/* Subtle Prompt Label for Video Pals */}
+            {palType === PalType.VIDEO && (
+              <Text style={styles.promptLabel}>{l10n.palsScreen.prompt}:</Text>
+            )}
             <TextInput
               ref={inputRef}
               multiline
@@ -382,6 +387,7 @@ export const ChatInput = observer(
                 {
                   color: onSurfaceColor,
                 },
+                palType === PalType.VIDEO && styles.inputWithLabel,
               ]}
               onChangeText={handleChangeText}
               value={value}
@@ -428,27 +434,6 @@ export const ChatInput = observer(
                       onPress={handleSelectImages}
                     />
                   </Menu>
-                )}
-
-              {/* Video Button for Video Pals */}
-              {palType === PalType.VIDEO &&
-                !isCameraActive &&
-                !isStopVisible && (
-                  <TouchableOpacity
-                    style={[
-                      styles.plusButton,
-                      {backgroundColor: activePal?.color?.[0]},
-                    ]}
-                    onPress={onStartCamera}
-                    accessibilityLabel="Start video"
-                    accessibilityRole="button">
-                    <VideoRecorderIcon
-                      width={20}
-                      height={20}
-                      stroke="white"
-                      strokeWidth={2}
-                    />
-                  </TouchableOpacity>
                 )}
 
               {/* Pal Selector */}
@@ -510,6 +495,29 @@ export const ChatInput = observer(
                   color={onSurfaceColor}
                   onPress={onStopPress}
                 />
+              ) : palType === PalType.VIDEO && !isCameraActive ? (
+                /* Compact Start Video Button for Video Pals */
+                <TouchableOpacity
+                  style={[
+                    styles.compactVideoButton,
+                    {
+                      backgroundColor:
+                        activePal?.color?.[0] || theme.colors.primary,
+                    },
+                  ]}
+                  onPress={onStartCamera}
+                  accessibilityLabel="Start video analysis"
+                  accessibilityRole="button">
+                  <VideoRecorderIcon
+                    width={16}
+                    height={16}
+                    stroke="white"
+                    strokeWidth={2}
+                  />
+                  <Text style={styles.compactButtonText}>
+                    {l10n.video.startCamera}
+                  </Text>
+                </TouchableOpacity>
               ) : (
                 isSendButtonVisible && (
                   <View style={{opacity: sendButtonOpacity}}>
