@@ -376,7 +376,7 @@ const crossPlatformModels: Model[] = [
     isDownloaded: false,
     downloadUrl:
       'https://huggingface.co/ggml-org/SmolVLM-500M-Instruct-GGUF/resolve/main/SmolVLM-500M-Instruct-Q8_0.gguf',
-    hfUrl: 'https://huggingface.co/ggml-org/SmolVLM-500M-Instruct-GGUF§',
+    hfUrl: 'https://huggingface.co/ggml-org/SmolVLM-500M-Instruct-GGUF',
     progress: 0,
     filename: 'SmolVLM-500M-Instruct-Q8_0.gguf',
     isLocal: false,
