@@ -2508,7 +2508,7 @@ export const l10n = {
     common: {
       cancel: 'Annuler',
       delete: 'Supprimer',
-      dismiss: 'Refuser',
+      dismiss: 'Fermer',
       rename: 'Renommer',
       reset: 'Réinitialiser',
       save: 'Enregistrer',
