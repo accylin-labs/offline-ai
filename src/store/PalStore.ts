@@ -1,25 +1,24 @@
+import {v4 as uuidv4} from 'uuid';
 import {makeAutoObservable} from 'mobx';
+import 'react-native-get-random-values';
 import {makePersistable} from 'mobx-persist-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import 'react-native-get-random-values';
-import {v4 as uuidv4} from 'uuid';
+
 import {
   AssistantFormData,
   PalType,
   RoleplayFormData,
-  CameraPalFormData,
   VideoPalFormData,
 } from '../components/PalsSheets/types';
+import {defaultModels} from './defaultModels';
 
 export type Pal = {id: string} & (
   | AssistantFormData
   | RoleplayFormData
-  | CameraPalFormData
   | VideoPalFormData
 );
 export type AssistantPal = Pal & {palType: PalType.ASSISTANT};
 export type RoleplayPal = Pal & {palType: PalType.ROLEPLAY};
-export type CameraPal = Pal & {palType: PalType.CAMERA};
 export type VideoPal = Pal & {palType: PalType.VIDEO};
 
 class PalStore {
@@ -34,13 +33,7 @@ class PalStore {
     });
   }
 
-  addPal = (
-    data:
-      | AssistantFormData
-      | RoleplayFormData
-      | CameraPalFormData
-      | VideoPalFormData,
-  ) => {
+  addPal = (data: AssistantFormData | RoleplayFormData | VideoPalFormData) => {
     const newPal = {
       id: uuidv4(),
       ...data,
@@ -50,12 +43,7 @@ class PalStore {
 
   updatePal = (
     id: string,
-    data: Partial<
-      | AssistantFormData
-      | RoleplayFormData
-      | CameraPalFormData
-      | VideoPalFormData
-    >,
+    data: Partial<AssistantFormData | RoleplayFormData | VideoPalFormData>,
   ) => {
     const palIndex = this.pals.findIndex(p => p.id === id);
     if (palIndex !== -1) {
@@ -82,54 +70,35 @@ class PalStore {
 
 export const palStore = new PalStore();
 
-// Create the default "Lookie" CameraPal if it doesn't exist
+// Create the default "Lookie" VideoPal if it doesn't exist
 export const initializeLookiePal = () => {
   // Check if Lookie already exists
   const lookiePal = palStore.pals.find(
-    p => p.palType === PalType.CAMERA && p.name === 'Lookie',
+    p => p.palType === PalType.VIDEO && p.name === 'Lookie',
   );
 
   if (!lookiePal) {
+    // Find the default SmolVLM model directly from defaultModels
+    // This avoids timing issues with ModelStore initialization
+    const defaultModelId =
+      'ggml-org/SmolVLM-500M-Instruct-GGUF/SmolVLM-500M-Instruct-Q8_0.gguf';
+    const defaultModel = defaultModels.find(
+      model => model.id === defaultModelId,
+    );
+
     // Create the Lookie pal
-    const lookieData: CameraPalFormData = {
+    const lookieData: VideoPalFormData = {
       name: 'Lookie',
-      palType: PalType.CAMERA,
+      palType: PalType.VIDEO,
+      defaultModel: defaultModel, // Set the default model so users know what to download
       systemPrompt:
-        'You are Lookie, an AI assistant that analyzes images. ' +
-        'Provide brief, concise descriptions of what you see in the camera. ' +
-        'If unsure about something, be honest about it.',
+        'You are Lookie, an AI assistant giving real-time, concise descriptions of a video feed. Use few words. If unsure, say so clearly.',
       useAIPrompt: false,
       isSystemPromptChanged: false,
-      color: ['#4CAF50', '#81C784'], // Green colors
+      color: ['#9E204F', '#F6E1EA'], // Green colors (changed from blue to green)
+      captureInterval: 3000, // Default to 1 second
     };
 
     palStore.addPal(lookieData);
-  }
-};
-
-// Create the default "LiveLens" VideoPal if it doesn't exist
-export const initializeLiveLensPal = () => {
-  // Check if LiveLens already exists
-  const liveLensPal = palStore.pals.find(
-    p => p.palType === PalType.VIDEO && p.name === 'LiveLens',
-  );
-
-  if (!liveLensPal) {
-    // Create the LiveLens pal
-    const liveLensData: VideoPalFormData = {
-      name: 'LiveLens',
-      palType: PalType.VIDEO,
-      systemPrompt:
-        'You are LiveLens, an AI assistant that provides real-time commentary on video streams. ' +
-        'Provide brief, concise descriptions of what you see in the camera feed. ' +
-        'Focus on changes and interesting elements in the scene. ' +
-        'If unsure about something, be honest about it.',
-      useAIPrompt: false,
-      isSystemPromptChanged: false,
-      color: ['#2196F3', '#64B5F6'], // Blue colors
-      captureInterval: 1000, // Default to 1 second
-    };
-
-    palStore.addPal(liveLensData);
   }
 };

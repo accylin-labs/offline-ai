@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {View, ScrollView, Pressable, Alert} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Text, Divider, IconButton} from 'react-native-paper';
@@ -17,41 +17,26 @@ import {
 import {
   AssistantPalSheet,
   RoleplayPalSheet,
-  LookieSheet,
   VideoPalSheet,
   PalType,
 } from '../../components/PalsSheets';
 import {palStore, Pal} from '../../store/PalStore';
 import {modelStore} from '../../store/ModelStore';
+import {L10nContext} from '../../utils';
 
 const PalDetails = ({pal}: {pal: Pal}) => {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const styles = createStyles(theme, insets);
+  const l10n = useContext(L10nContext);
 
   if (pal.palType === PalType.ASSISTANT) {
     return (
       <View style={styles.infoContainer}>
         <View style={styles.infoColumn}>
-          <Text style={theme.fonts.titleMediumLight}>System Prompt</Text>
-          <Text style={styles.itemDescription}>{pal.systemPrompt}</Text>
-        </View>
-      </View>
-    );
-  }
-
-  if (pal.palType === PalType.CAMERA) {
-    return (
-      <View style={styles.infoContainer}>
-        <View style={styles.infoColumn}>
-          <Text style={theme.fonts.titleMediumLight}>Vision</Text>
-          <Text style={styles.itemDescription}>
-            This is a camera-based AI assistant that analyzes images captured
-            through your device's camera.
+          <Text style={theme.fonts.titleMediumLight}>
+            {l10n.palsScreen.systemPrompt}
           </Text>
-        </View>
-        <View style={styles.infoColumn}>
-          <Text style={theme.fonts.titleMediumLight}>System Prompt</Text>
           <Text style={styles.itemDescription}>{pal.systemPrompt}</Text>
         </View>
       </View>
@@ -62,20 +47,25 @@ const PalDetails = ({pal}: {pal: Pal}) => {
     return (
       <View style={styles.infoContainer}>
         <View style={styles.infoColumn}>
-          <Text style={theme.fonts.titleMediumLight}>Video Analysis</Text>
+          <Text style={theme.fonts.titleMediumLight}>
+            {l10n.palsScreen.videoAnalysis}
+          </Text>
           <Text style={styles.itemDescription}>
-            This is a video-based AI assistant that provides real-time
-            commentary on video streams from your device's camera.
+            {l10n.palsScreen.videoAnalysisDescription}
           </Text>
         </View>
         <View style={styles.infoColumn}>
-          <Text style={theme.fonts.titleMediumLight}>Capture Interval</Text>
+          <Text style={theme.fonts.titleMediumLight}>
+            {l10n.palsScreen.captureInterval}
+          </Text>
           <Text style={styles.itemDescription}>
-            {(pal as any).captureInterval} ms
+            {(pal as any).captureInterval} {l10n.palsScreen.captureIntervalUnit}
           </Text>
         </View>
         <View style={styles.infoColumn}>
-          <Text style={theme.fonts.titleMediumLight}>System Prompt</Text>
+          <Text style={theme.fonts.titleMediumLight}>
+            {l10n.palsScreen.systemPrompt}
+          </Text>
           <Text style={styles.itemDescription}>{pal.systemPrompt}</Text>
         </View>
       </View>
@@ -85,27 +75,37 @@ const PalDetails = ({pal}: {pal: Pal}) => {
   return (
     <View style={styles.infoContainer}>
       <View style={styles.infoColumn}>
-        <Text style={theme.fonts.titleMediumLight}>World</Text>
+        <Text style={theme.fonts.titleMediumLight}>
+          {l10n.palsScreen.world}
+        </Text>
         <Text style={styles.itemDescription}>{pal.world}</Text>
       </View>
 
       <View style={styles.infoColumn}>
-        <Text style={theme.fonts.titleMediumLight}>Tone/Style</Text>
+        <Text style={theme.fonts.titleMediumLight}>
+          {l10n.palsScreen.toneStyle}
+        </Text>
         <Text style={styles.itemDescription}>{pal.toneStyle}</Text>
       </View>
 
       <View style={styles.infoColumn}>
-        <Text style={theme.fonts.titleMediumLight}>AI's Role</Text>
+        <Text style={theme.fonts.titleMediumLight}>
+          {l10n.palsScreen.aiRole}
+        </Text>
         <Text style={styles.itemDescription}>{pal.aiRole}</Text>
       </View>
 
       <View style={styles.infoColumn}>
-        <Text style={theme.fonts.titleMediumLight}>My Role</Text>
+        <Text style={theme.fonts.titleMediumLight}>
+          {l10n.palsScreen.userRole}
+        </Text>
         <Text style={styles.itemDescription}>{pal.userRole}</Text>
       </View>
 
       <View style={styles.infoColumn}>
-        <Text style={theme.fonts.titleMediumLight}>Prompt</Text>
+        <Text style={theme.fonts.titleMediumLight}>
+          {l10n.palsScreen.prompt}
+        </Text>
         <Text style={styles.itemDescription}>{pal.systemPrompt}</Text>
       </View>
     </View>
@@ -117,17 +117,18 @@ const PalCard = ({pal, onEdit}: {pal: Pal; onEdit: (pal: Pal) => void}) => {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const styles = createStyles(theme, insets);
+  const l10n = useContext(L10nContext);
   const isDefaultModelMissing =
     pal.defaultModel && !modelStore.isModelAvailable(pal.defaultModel?.id);
 
   const handleDelete = () => {
-    Alert.alert('Delete Pal', 'Are you sure you want to delete this pal?', [
+    Alert.alert(l10n.palsScreen.deletePal, l10n.palsScreen.deletePalMessage, [
       {
-        text: 'Cancel',
+        text: l10n.common.cancel,
         style: 'cancel',
       },
       {
-        text: 'Delete',
+        text: l10n.common.delete,
         onPress: () => palStore.deletePal(pal.id),
         style: 'destructive',
       },
@@ -136,8 +137,11 @@ const PalCard = ({pal, onEdit}: {pal: Pal; onEdit: (pal: Pal) => void}) => {
 
   const handleWarningPress = () => {
     Alert.alert(
-      'Missing Model',
-      `The default model "${pal.defaultModel?.name}" for this pal is not available. Please download it in the edit sheet or select a different model.`,
+      l10n.palsScreen.missingModel,
+      l10n.palsScreen.missingModelMessage.replace(
+        '{{modelName}}',
+        pal.defaultModel?.name || '',
+      ),
     );
   };
 
@@ -196,10 +200,11 @@ export const PalsScreen: React.FC = observer(() => {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const styles = createStyles(theme, insets);
+  const l10n = useContext(L10nContext);
 
   const [showAssistantSheet, setShowAssistantSheet] = useState(false);
   const [showRoleplaySheet, setShowRoleplaySheet] = useState(false);
-  const [showLookieSheet, setShowLookieSheet] = useState(false);
+
   const [showVideoSheet, setShowVideoSheet] = useState(false);
   const [editPal, setEditPal] = useState<Pal | undefined>();
 
@@ -209,8 +214,6 @@ export const PalsScreen: React.FC = observer(() => {
       setShowAssistantSheet(true);
     } else if (type === PalType.ROLEPLAY) {
       setShowRoleplaySheet(true);
-    } else if (type === PalType.CAMERA) {
-      setShowLookieSheet(true);
     } else if (type === PalType.VIDEO) {
       setShowVideoSheet(true);
     }
@@ -222,8 +225,6 @@ export const PalsScreen: React.FC = observer(() => {
       setShowAssistantSheet(true);
     } else if (pal.palType === PalType.ROLEPLAY) {
       setShowRoleplaySheet(true);
-    } else if (pal.palType === PalType.CAMERA) {
-      setShowLookieSheet(true);
     } else if (pal.palType === PalType.VIDEO) {
       setShowVideoSheet(true);
     }
@@ -239,25 +240,26 @@ export const PalsScreen: React.FC = observer(() => {
         <Pressable
           style={styles.itemContainer}
           onPress={() => handleCreatePal(PalType.ASSISTANT)}>
-          <Text style={theme.fonts.titleMediumLight}>Assistant</Text>
+          <Text style={theme.fonts.titleMediumLight}>
+            {l10n.palsScreen.assistant}
+          </Text>
           <PlusIcon stroke={theme.colors.onSurface} />
         </Pressable>
         <Pressable
           style={styles.itemContainer}
           onPress={() => handleCreatePal(PalType.ROLEPLAY)}>
-          <Text style={theme.fonts.titleMediumLight}>Roleplay</Text>
+          <Text style={theme.fonts.titleMediumLight}>
+            {l10n.palsScreen.roleplay}
+          </Text>
           <PlusIcon stroke={theme.colors.onSurface} />
         </Pressable>
-        <Pressable
-          style={styles.itemContainer}
-          onPress={() => handleCreatePal(PalType.CAMERA)}>
-          <Text style={theme.fonts.titleMediumLight}>Vision</Text>
-          <PlusIcon stroke={theme.colors.onSurface} />
-        </Pressable>
+
         <Pressable
           style={styles.itemContainer}
           onPress={() => handleCreatePal(PalType.VIDEO)}>
-          <Text style={theme.fonts.titleMediumLight}>Video</Text>
+          <Text style={theme.fonts.titleMediumLight}>
+            {l10n.palsScreen.video}
+          </Text>
           <PlusIcon stroke={theme.colors.onSurface} />
         </Pressable>
       </View>
@@ -280,12 +282,6 @@ export const PalsScreen: React.FC = observer(() => {
         isVisible={showRoleplaySheet}
         onClose={() => setShowRoleplaySheet(false)}
         editPal={editPal?.palType === PalType.ROLEPLAY ? editPal : undefined}
-      />
-
-      <LookieSheet
-        isVisible={showLookieSheet}
-        onClose={() => setShowLookieSheet(false)}
-        editPal={editPal?.palType === PalType.CAMERA ? editPal : undefined}
       />
 
       <VideoPalSheet

@@ -16,7 +16,7 @@ import {
 import {uiStore} from './src/store';
 import {useTheme} from './src/hooks';
 import {Theme} from './src/utils/types';
-import {initializeLookiePal, initializeLiveLensPal} from './src/store/PalStore';
+import {initializeLookiePal} from './src/store/PalStore';
 
 import {l10n} from './src/utils/l10n';
 import {initLocale} from './src/utils';
@@ -57,7 +57,6 @@ const App = observer(() => {
   React.useEffect(() => {
     initLocale(uiStore.language);
     initializeLookiePal();
-    initializeLiveLensPal();
   }, []);
 
   return (

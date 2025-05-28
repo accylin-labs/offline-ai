@@ -215,8 +215,6 @@ export const ChatPalModelPickerSheet = observer(
             return l10n.components.chatPalModelPickerSheet.assistantType;
           case PalType.ROLEPLAY:
             return l10n.components.chatPalModelPickerSheet.roleplayType;
-          case PalType.CAMERA:
-            return l10n.components.chatPalModelPickerSheet.cameraType;
           case PalType.VIDEO:
             return l10n.components.chatPalModelPickerSheet.videoType;
           default:

@@ -17,12 +17,7 @@ import {IconButton, Text} from 'react-native-paper';
 
 import {PalType} from '../PalsSheets/types';
 
-import {
-  ChevronUpIcon,
-  CameraIcon,
-  VideoRecorderIcon,
-  PlusIcon,
-} from '../../assets/icons';
+import {ChevronUpIcon, VideoRecorderIcon, PlusIcon} from '../../assets/icons';
 
 import {useTheme} from '../../hooks';
 
@@ -115,10 +110,7 @@ export const ChatInput = observer(
     const activePalId = chatSessionStore.activePalId;
     const activePal = palStore.pals.find(pal => pal.id === activePalId);
 
-    const hasActiveModel =
-      palType === PalType.CAMERA
-        ? !!modelStore.context
-        : !!modelStore.activeModelId;
+    const hasActiveModel = !!modelStore.activeModelId;
 
     // Use `defaultValue` if provided
     const [text, setText] = React.useState(textInputProps?.defaultValue ?? '');
@@ -137,8 +129,7 @@ export const ChatInput = observer(
 
     // For camera input, use promptText if provided
     const value =
-      (palType === PalType.CAMERA || palType === PalType.VIDEO) &&
-      promptText !== undefined
+      palType === PalType.VIDEO && promptText !== undefined
         ? promptText
         : textInputProps?.value ?? text;
 
@@ -171,10 +162,7 @@ export const ChatInput = observer(
     }, [isPickerVisible, iconRotation]);
 
     const handleChangeText = (newText: string) => {
-      if (
-        (palType === PalType.CAMERA || palType === PalType.VIDEO) &&
-        onPromptTextChange
-      ) {
+      if (palType === PalType.VIDEO && onPromptTextChange) {
         onPromptTextChange(newText);
       } else {
         setText(newText);
@@ -381,9 +369,7 @@ export const ChatInput = observer(
               multiline
               key={onSurfaceColor}
               placeholder={
-                palType === PalType.CAMERA
-                  ? l10n.camera.promptPlaceholder
-                  : palType === PalType.VIDEO
+                palType === PalType.VIDEO
                   ? l10n.video.promptPlaceholder
                   : l10n.components.chatInput.inputPlaceholder
               }
@@ -400,7 +386,7 @@ export const ChatInput = observer(
               onChangeText={handleChangeText}
               value={value}
               editable={
-                palType === PalType.CAMERA || palType === PalType.VIDEO
+                palType === PalType.VIDEO
                   ? !isStreaming && !isCameraActive
                   : textInputProps?.editable !== false
               }
@@ -415,7 +401,6 @@ export const ChatInput = observer(
               {showImageUpload &&
                 !isStreaming &&
                 !isStopVisible &&
-                palType !== PalType.CAMERA &&
                 palType !== PalType.VIDEO && (
                   <Menu
                     visible={showImageUploadMenu}
@@ -445,8 +430,8 @@ export const ChatInput = observer(
                   </Menu>
                 )}
 
-              {/* Camera Button for Camera/Video Pals */}
-              {(palType === PalType.CAMERA || palType === PalType.VIDEO) &&
+              {/* Video Button for Video Pals */}
+              {palType === PalType.VIDEO &&
                 !isCameraActive &&
                 !isStopVisible && (
                   <TouchableOpacity
@@ -455,25 +440,14 @@ export const ChatInput = observer(
                       {backgroundColor: activePal?.color?.[0]},
                     ]}
                     onPress={onStartCamera}
-                    accessibilityLabel={
-                      palType === PalType.VIDEO ? 'Start video' : 'Start camera'
-                    }
+                    accessibilityLabel="Start video"
                     accessibilityRole="button">
-                    {palType === PalType.VIDEO ? (
-                      <VideoRecorderIcon
-                        width={20}
-                        height={20}
-                        stroke="white"
-                        strokeWidth={2}
-                      />
-                    ) : (
-                      <CameraIcon
-                        width={20}
-                        height={20}
-                        stroke="white"
-                        strokeWidth={2}
-                      />
-                    )}
+                    <VideoRecorderIcon
+                      width={20}
+                      height={20}
+                      stroke="white"
+                      strokeWidth={2}
+                    />
                   </TouchableOpacity>
                 )}
 

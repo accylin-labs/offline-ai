@@ -612,7 +612,7 @@ export const SKILL_CONFIG = {
   roleplay: {
     icon: 'account-voice',
     color: 'primary' as const,
-    isSpecial: true,
+    isSpecial: false,
     labelKey: 'roleplay' as const,
   },
   instructions: {

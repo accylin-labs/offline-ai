@@ -482,7 +482,6 @@ export const l10n = {
         noDescription: 'No description',
         assistantType: 'Assistant',
         roleplayType: 'Roleplay',
-        cameraType: 'Vision',
         videoType: 'Video',
         confirmationTitle: 'Confirmation',
         modelSwitchMessage:
@@ -631,6 +630,21 @@ export const l10n = {
         },
         create: 'Create',
       },
+      lookiePalSheet: {
+        title: {
+          create: 'Create Lookie Pal',
+          edit: 'Edit Lookie Pal',
+        },
+        palName: 'Pal Name',
+        palNamePlaceholder: 'Enter a name for your Lookie Pal',
+        visionModel: 'Vision Model',
+        visionModelPlaceholder: 'Select a vision model',
+        requiredModelsSection: 'Required Models',
+        captureInterval: 'Capture Interval',
+        captureIntervalHelper:
+          'Time between automatic captures in milliseconds',
+        create: 'Create',
+      },
       sendButton: {
         accessibilityLabel: 'Send',
       },
@@ -695,6 +709,27 @@ export const l10n = {
         byteSizes: ['Bytes', 'KB', 'MB', 'GB'],
       },
     },
+    palsScreen: {
+      systemPrompt: 'System Prompt',
+      videoAnalysis: 'Video Analysis',
+      videoAnalysisDescription:
+        "This is a video-based AI assistant that provides real-time commentary on video streams from your device's camera.",
+      captureInterval: 'Capture Interval',
+      captureIntervalUnit: 'ms',
+      world: 'World',
+      toneStyle: 'Tone/Style',
+      aiRole: "AI's Role",
+      userRole: 'My Role',
+      prompt: 'Prompt',
+      assistant: 'Assistant',
+      roleplay: 'Roleplay',
+      video: 'Video',
+      deletePal: 'Delete Pal',
+      deletePalMessage: 'Are you sure you want to delete this pal?',
+      missingModel: 'Missing Model',
+      missingModelMessage:
+        'The default model "{{modelName}}" for this pal is not available. Please download it in the edit sheet or select a different model.',
+    },
     validation: {
       nameRequired: 'Name is required',
       systemPromptRequired: 'System prompt is required',
@@ -754,7 +789,8 @@ export const l10n = {
       goToModels: 'Go to Models',
       readyToChat: 'Ready to chat? Load the last used model.',
       pleaseLoadModel: 'Load a model to chat.',
-      multimodalNotEnabled: 'Multimodal is not enabled for this model. Images will be displayed but not processed by the AI.',
+      multimodalNotEnabled:
+        'Multimodal is not enabled for this model. Images will be displayed but not processed by the AI.',
     },
     benchmark: {
       title: 'Benchmark',
@@ -905,6 +941,10 @@ export const l10n = {
       cameraErrorMessage: 'Failed to take photo',
       galleryErrorTitle: 'Gallery Error',
       galleryErrorMessage: 'Failed to select images',
+    },
+    simulator: {
+      cameraNotAvailable:
+        'Camera not available in simulator. Please use a physical device.',
     },
   },
 
@@ -1397,7 +1437,6 @@ export const l10n = {
         noDescription: '説明なし',
         assistantType: 'アシスタント',
         roleplayType: 'ロールプレイ',
-        cameraType: 'ビジョン',
         videoType: 'ビデオ',
         confirmationTitle: '確認',
         modelSwitchMessage:
@@ -1546,6 +1585,20 @@ export const l10n = {
         },
         create: '作成する',
       },
+      lookiePalSheet: {
+        title: {
+          create: 'Lookieアシスタントを作成',
+          edit: 'Lookieアシスタントを編集',
+        },
+        palName: 'アシスタント名',
+        palNamePlaceholder: 'Lookieアシスタントの名前を入力',
+        visionModel: 'ビジョンモデル',
+        visionModelPlaceholder: 'ビジョンモデルを選択',
+        requiredModelsSection: '必要なモデル',
+        captureInterval: 'キャプチャ間隔',
+        captureIntervalHelper: '自動キャプチャ間の時間（ミリ秒）',
+        create: '作成する',
+      },
       sendButton: {
         accessibilityLabel: '送信',
       },
@@ -1609,6 +1662,27 @@ export const l10n = {
         byteSizes: ['B', 'KB', 'MB', 'GB'],
       },
     },
+    palsScreen: {
+      systemPrompt: 'システムプロンプト',
+      videoAnalysis: '動画解析',
+      videoAnalysisDescription:
+        'デバイスのカメラからの動画ストリームにリアルタイムでコメントを提供する動画ベースのAIアシスタントです。',
+      captureInterval: 'キャプチャ間隔',
+      captureIntervalUnit: 'ミリ秒',
+      world: '世界観',
+      toneStyle: '雰囲気/スタイル',
+      aiRole: 'AIの役割',
+      userRole: 'ユーザーの役割',
+      prompt: 'プロンプト',
+      assistant: 'アシスタント',
+      roleplay: 'ロールプレイ',
+      video: '動画',
+      deletePal: 'アシスタントを削除',
+      deletePalMessage: 'このアシスタントを削除してもよろしいですか？',
+      missingModel: 'モデルが見つかりません',
+      missingModelMessage:
+        'このアシスタントのデフォルトモデル「{{modelName}}」が利用できません。編集シートでダウンロードするか、別のモデルを選択してください。',
+    },
     validation: {
       nameRequired: '名前を入力してください',
       systemPromptRequired: 'システムプロンプトを入力してください',
@@ -1671,7 +1745,8 @@ export const l10n = {
       goToModels: 'モデルへ移動',
       readyToChat: 'チャットを始めましょう。前回使用したモデルを読み込みます。',
       pleaseLoadModel: 'チャットを開始するにはモデルを読み込んでください。',
-      multimodalNotEnabled: 'このモデルではマルチモーダル機能が有効になっていません。画像は表示されますが、AIによって処理されません。',
+      multimodalNotEnabled:
+        'このモデルではマルチモーダル機能が有効になっていません。画像は表示されますが、AIによって処理されません。',
     },
     benchmark: {
       title: 'ベンチマーク',
@@ -1823,6 +1898,10 @@ export const l10n = {
       cameraErrorMessage: '写真撮影に失敗しました',
       galleryErrorTitle: 'ギャラリーエラー',
       galleryErrorMessage: '画像選択に失敗しました',
+    },
+    simulator: {
+      cameraNotAvailable:
+        'シミュレーターではカメラを使用できません。実機をご使用ください。',
     },
   },
 
@@ -2268,7 +2347,6 @@ export const l10n = {
         noDescription: '没有描述',
         assistantType: '助手',
         roleplayType: '角色扮演',
-        cameraType: '视觉',
         videoType: '视频',
         confirmationTitle: '确认',
         modelSwitchMessage:
@@ -2413,6 +2491,20 @@ export const l10n = {
         },
         create: '创建',
       },
+      lookiePalSheet: {
+        title: {
+          create: '创建Lookie帕尔',
+          edit: '编辑Lookie帕尔',
+        },
+        palName: '帕尔名',
+        palNamePlaceholder: '输入您的Lookie帕尔名称',
+        visionModel: '视觉模型',
+        visionModelPlaceholder: '选择视觉模型',
+        requiredModelsSection: '必需模型',
+        captureInterval: '捕获间隔',
+        captureIntervalHelper: '自动捕获之间的时间（毫秒）',
+        create: '创建',
+      },
       sendButton: {
         accessibilityLabel: '发送',
       },
@@ -2476,6 +2568,27 @@ export const l10n = {
         byteSizes: ['字节', 'KB', 'MB', 'GB'],
       },
     },
+    palsScreen: {
+      systemPrompt: '系统提示',
+      videoAnalysis: '视频分析',
+      videoAnalysisDescription:
+        '这是一个基于视频的AI助手，可以对来自设备摄像头的视频流提供实时评论。',
+      captureInterval: '捕获间隔',
+      captureIntervalUnit: '毫秒',
+      world: '世界',
+      toneStyle: '音调/风格',
+      aiRole: 'AI的角色',
+      userRole: '用户角色',
+      prompt: '提示',
+      assistant: '助手',
+      roleplay: '角色扮演',
+      video: '视频',
+      deletePal: '删除帕尔',
+      deletePalMessage: '您确定要删除此帕尔吗？',
+      missingModel: '缺少模型',
+      missingModelMessage:
+        '此帕尔的默认模型"{{modelName}}"不可用。请在编辑表中下载它或选择其他模型。',
+    },
     validation: {
       nameRequired: '需要名称',
       systemPromptRequired: '需要系统提示',
@@ -2535,7 +2648,8 @@ export const l10n = {
       goToModels: '转到模型',
       readyToChat: '聊天准备好了吗？加载最后使用的模型。',
       pleaseLoadModel: '要聊天，请加载模型。',
-      multimodalNotEnabled: '此模型未启用多模态功能。图片将显示但不会被AI处理。',
+      multimodalNotEnabled:
+        '此模型未启用多模态功能。图片将显示但不会被AI处理。',
     },
     benchmark: {
       title: '基准测试',
@@ -2679,6 +2793,9 @@ export const l10n = {
       cameraErrorMessage: '拍照失败',
       galleryErrorTitle: '图库错误',
       galleryErrorMessage: '选择图片失败',
+    },
+    simulator: {
+      cameraNotAvailable: '模拟器中无法使用相机。请使用真实设备。',
     },
   },
 };

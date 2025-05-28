@@ -300,28 +300,6 @@ describe('input', () => {
     expect(onPalBtnPress).toHaveBeenCalledTimes(1);
   });
 
-  it('shows camera button for camera pal type', () => {
-    expect.assertions(1);
-    const onSendPress = jest.fn();
-    const onStartCamera = jest.fn();
-    const {getByLabelText} = render(
-      <UserContext.Provider value={user}>
-        <ChatInput
-          {...{
-            onSendPress,
-            onStartCamera,
-            palType: PalType.CAMERA,
-            sendButtonVisibilityMode: 'editing',
-          }}
-        />
-      </UserContext.Provider>,
-    );
-
-    const cameraButton = getByLabelText('Start camera');
-    fireEvent.press(cameraButton);
-    expect(onStartCamera).toHaveBeenCalledTimes(1);
-  });
-
   it('shows video button for video pal type', () => {
     expect.assertions(1);
     const onSendPress = jest.fn();
@@ -342,29 +320,6 @@ describe('input', () => {
     const videoButton = getByLabelText('Start video');
     fireEvent.press(videoButton);
     expect(onStartCamera).toHaveBeenCalledTimes(1);
-  });
-
-  it('handles prompt text change for camera pal', () => {
-    expect.assertions(1);
-    const onSendPress = jest.fn();
-    const onPromptTextChange = jest.fn();
-    const {getByPlaceholderText} = render(
-      <UserContext.Provider value={user}>
-        <ChatInput
-          {...{
-            onSendPress,
-            onPromptTextChange,
-            palType: PalType.CAMERA,
-            promptText: 'initial text',
-            sendButtonVisibilityMode: 'editing',
-          }}
-        />
-      </UserContext.Provider>,
-    );
-
-    const textInput = getByPlaceholderText(l10n.en.camera.promptPlaceholder);
-    fireEvent.changeText(textInput, 'new text');
-    expect(onPromptTextChange).toHaveBeenCalledWith('new text');
   });
 
   it('handles prompt text change for video pal', () => {

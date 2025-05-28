@@ -4,7 +4,6 @@ import {Model} from '../../utils/types';
 export enum PalType {
   ROLEPLAY = 'roleplay',
   ASSISTANT = 'assistant',
-  CAMERA = 'camera',
   VIDEO = 'video',
 }
 
@@ -41,13 +40,6 @@ export function createSchemaWithL10n(l10n: any) {
     toneStyle: z.string().min(1, l10n.validation.toneStyleRequired),
   });
 
-  // Camera-specific schema
-  const cameraSchema = z.object({
-    ...baseFormSchema,
-    palType: z.literal(PalType.CAMERA),
-    projectionModel: z.any().optional(),
-  });
-
   // Video-specific schema
   const videoSchema = z.object({
     ...baseFormSchema,
@@ -59,7 +51,6 @@ export function createSchemaWithL10n(l10n: any) {
   return {
     assistantSchema,
     roleplaySchema,
-    cameraSchema,
     videoSchema,
   };
 }
@@ -95,20 +86,6 @@ export const roleplayFormSchema = z.object({
   userRole: z.string().min(1, 'User role is required'),
   situation: z.string().min(1, 'Situation is required'),
   toneStyle: z.string().min(1, 'Tone/Style is required'),
-});
-
-export const cameraPalFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  defaultModel: z.any().optional(),
-  useAIPrompt: z.boolean(),
-  systemPrompt: z.string().min(1, 'System prompt is required'),
-  originalSystemPrompt: z.string().optional(),
-  isSystemPromptChanged: z.boolean().default(false),
-  color: z.tuple([z.string(), z.string()]).optional(),
-  promptGenerationModel: z.any().optional(),
-  generatingPrompt: z.string().optional(),
-  palType: z.literal(PalType.CAMERA),
-  projectionModel: z.any().optional(),
 });
 
 export const videoPalFormSchema = z.object({
@@ -156,16 +133,9 @@ export interface RoleplayFormData extends BaseFormData {
   toneStyle: string;
 }
 
-// Camera-specific type
-export interface CameraPalFormData extends BaseFormData {
-  palType: PalType.CAMERA;
-  projectionModel?: Model; // For vision models that require a projection model
-}
-
 // Video-specific type
 export interface VideoPalFormData extends BaseFormData {
   palType: PalType.VIDEO;
-  projectionModel?: Model; // For vision models that require a projection model
   captureInterval: number; // Interval in milliseconds between frame captures
 }
 
@@ -173,5 +143,4 @@ export interface VideoPalFormData extends BaseFormData {
 export type PalFormData =
   | AssistantFormData
   | RoleplayFormData
-  | CameraPalFormData
   | VideoPalFormData;

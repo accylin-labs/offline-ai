@@ -164,7 +164,7 @@ export const EmbeddedVideoView = observer(
         <View style={styles.permissionContainer}>
           <Text style={styles.permissionText}>
             {isSimulator
-              ? 'Camera not available in simulator. Please use a physical device.'
+              ? l10n.simulator.cameraNotAvailable
               : l10n.video.noDevice}
           </Text>
           {isSimulator && (
@@ -204,7 +204,8 @@ export const EmbeddedVideoView = observer(
           </TouchableOpacity>
           <View>
             <Text style={styles.intervalValue}>
-              {captureInterval}{l10n.video.captureIntervalUnit}
+              {captureInterval}
+              {l10n.video.captureIntervalUnit}
             </Text>
           </View>
           <TouchableOpacity
