@@ -538,8 +538,12 @@ describe('ModelStore', () => {
 
       // For LOCAL models, they are removed from the store entirely
       // So we check that they're no longer in the store
-      const remainingLlmModel = modelStore.models.find(m => m.id === llmModel.id);
-      const remainingProjModel = modelStore.models.find(m => m.id === projModel.id);
+      const remainingLlmModel = modelStore.models.find(
+        m => m.id === llmModel.id,
+      );
+      const remainingProjModel = modelStore.models.find(
+        m => m.id === projModel.id,
+      );
 
       // Verify LLM model was removed from store (for LOCAL models)
       expect(remainingLlmModel).toBeUndefined();
