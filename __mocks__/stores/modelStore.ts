@@ -55,6 +55,8 @@ class MockModelStore {
       cancelDownload: false,
       lastUsedModel: computed,
       activeModel: computed,
+      displayModels: computed,
+      availableModels: computed,
       isDownloading: computed,
     });
     this.refreshDownloadStatuses = jest.fn();
@@ -101,6 +103,11 @@ class MockModelStore {
     return this.models.find(model => model.id === this.activeModelId);
   }
 
+  get displayModels(): Model[] {
+    // Filter out projection models for display purposes
+    return this.models.filter(model => model.modelType !== 'projection');
+  }
+
   get availableModels() {
     return this.models.filter(model => model.isDownloaded);
   }
@@ -112,6 +119,11 @@ class MockModelStore {
   async isMultimodalEnabled(): Promise<boolean> {
     // Mock implementation - return false by default for tests
     return false;
+  }
+
+  async getModelFullPath(model: Model): Promise<string> {
+    // Mock implementation - return a simple path for tests
+    return `/mock/path/${model.filename || model.name}`;
   }
 }
 

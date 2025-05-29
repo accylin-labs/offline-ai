@@ -74,6 +74,14 @@ describe('ModelsScreen', () => {
       },
     ]);
 
+    // Mock RNFS.exists to return false for the destination path so no alert is shown
+    (RNFS.exists as jest.Mock).mockImplementation(async (path: string) => {
+      if (path.includes('/path/to/documents/models/local/mockModelFile.bin')) {
+        return false; // File doesn't exist, so no alert will be shown
+      }
+      return true; // Other paths exist by default
+    });
+
     const {getByTestId} = render(<ModelsScreen />, {
       withNavigation: true,
     });

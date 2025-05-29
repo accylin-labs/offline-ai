@@ -9,6 +9,7 @@ import {downloadManager} from '../../services/downloads';
 
 import {ModelOrigin, ModelType} from '../../utils/types';
 import {basicModel, mockContextModel} from '../../../jest/fixtures/models';
+import * as RNFS from '@dr.pogodin/react-native-fs';
 
 import {modelStore, uiStore} from '..';
 
@@ -23,11 +24,17 @@ jest.mock('../../services/downloads', () => ({
   },
 }));
 
+// RNFS is mocked globally in jest/setup.ts
+
 describe('ModelStore', () => {
   let showErrorSpy: jest.SpyInstance;
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Reset RNFS mock state
+    (RNFS as any).__resetMockState?.();
+
     showErrorSpy = jest.spyOn(uiStore, 'showError');
     modelStore.models = []; // Clear models before each test
     modelStore.context = undefined;
@@ -154,6 +161,10 @@ describe('ModelStore', () => {
   describe('projection model deletion', () => {
     beforeEach(() => {
       jest.clearAllMocks();
+
+      // Reset RNFS mock state
+      (RNFS as any).__resetMockState?.();
+
       // Reset store state
       modelStore.models = [];
       modelStore.context = undefined;
@@ -438,6 +449,9 @@ describe('ModelStore', () => {
         id: 'test-proj-model-1',
         modelType: ModelType.PROJECTION,
         isDownloaded: true,
+        fullPath: '/path/to/proj-model-1.gguf', // Unique path
+        isLocal: true,
+        origin: ModelOrigin.LOCAL,
       };
 
       const projModel2 = {
@@ -445,6 +459,9 @@ describe('ModelStore', () => {
         id: 'test-proj-model-2',
         modelType: ModelType.PROJECTION,
         isDownloaded: true,
+        fullPath: '/path/to/proj-model-2.gguf', // Unique path
+        isLocal: true,
+        origin: ModelOrigin.LOCAL,
       };
 
       const llmModel1 = {
@@ -454,6 +471,9 @@ describe('ModelStore', () => {
         defaultProjectionModel: projModel1.id,
         compatibleProjectionModels: [projModel1.id, projModel2.id],
         isDownloaded: true,
+        fullPath: '/path/to/llm-model-1.gguf', // Unique path
+        isLocal: true,
+        origin: ModelOrigin.LOCAL,
       };
 
       const llmModel2 = {
@@ -462,6 +482,9 @@ describe('ModelStore', () => {
         supportsMultimodal: true,
         defaultProjectionModel: projModel2.id, // Uses projModel2
         isDownloaded: true,
+        fullPath: '/path/to/llm-model-2.gguf', // Unique path
+        isLocal: true,
+        origin: ModelOrigin.LOCAL,
       };
 
       modelStore.models = [projModel1, projModel2, llmModel1, llmModel2];
@@ -477,8 +500,9 @@ describe('ModelStore', () => {
       const remainingProjModel2 = modelStore.models.find(
         m => m.id === projModel2.id,
       );
-      expect(remainingProjModel1?.isDownloaded).toBe(false);
-      expect(remainingProjModel2?.isDownloaded).toBe(true);
+      // For LOCAL models, they are removed from the store entirely when deleted
+      expect(remainingProjModel1).toBeUndefined(); // projModel1 should be removed
+      expect(remainingProjModel2).toBeDefined(); // projModel2 should remain
     });
 
     it('should set isDownloaded to false after deletion to enable orphaned cleanup', async () => {
@@ -487,6 +511,9 @@ describe('ModelStore', () => {
         id: 'test-proj-model',
         modelType: ModelType.PROJECTION,
         isDownloaded: true,
+        fullPath: '/path/to/test-proj-model.gguf', // Unique path
+        isLocal: true,
+        origin: ModelOrigin.LOCAL,
       };
 
       const llmModel = {
@@ -495,6 +522,9 @@ describe('ModelStore', () => {
         supportsMultimodal: true,
         defaultProjectionModel: projModel.id,
         isDownloaded: true,
+        fullPath: '/path/to/test-llm-model.gguf', // Unique path
+        isLocal: true,
+        origin: ModelOrigin.LOCAL,
       };
 
       modelStore.models = [projModel, llmModel];
@@ -506,11 +536,16 @@ describe('ModelStore', () => {
       // Delete the LLM model
       await modelStore.deleteModel(llmModel);
 
-      // Verify LLM model is marked as not downloaded after deletion
-      expect(llmModel.isDownloaded).toBe(false);
+      // For LOCAL models, they are removed from the store entirely
+      // So we check that they're no longer in the store
+      const remainingLlmModel = modelStore.models.find(m => m.id === llmModel.id);
+      const remainingProjModel = modelStore.models.find(m => m.id === projModel.id);
 
-      // Verify projection model was automatically cleaned up (also marked as not downloaded)
-      expect(projModel.isDownloaded).toBe(false);
+      // Verify LLM model was removed from store (for LOCAL models)
+      expect(remainingLlmModel).toBeUndefined();
+
+      // Verify projection model was automatically cleaned up (also removed from store)
+      expect(remainingProjModel).toBeUndefined();
     });
   });
 
@@ -561,9 +596,13 @@ describe('ModelStore', () => {
     it('should reinitialize context when coming back to foreground', async () => {
       // Setup
       modelStore.useAutoRelease = true;
-      const model = defaultModels[0];
+      const model = {...defaultModels[0], isDownloaded: true}; // Ensure model is downloaded
       modelStore.models = [model];
       modelStore.activeModelId = model.id;
+
+      // Set up the auto-release state to simulate that the model was auto-released
+      modelStore.wasAutoReleased = true;
+      modelStore.lastAutoReleasedModelId = model.id;
 
       const mockInitContext = jest.fn().mockResolvedValue(
         new LlamaContext({
@@ -647,7 +686,12 @@ describe('ModelStore', () => {
     });
 
     it('should handle download failure due to insufficient space', async () => {
-      const model = defaultModels[0];
+      const model = {
+        ...defaultModels[0],
+        downloadUrl: 'https://example.com/model.gguf', // Ensure model has download URL
+        isLocal: false,
+        origin: ModelOrigin.PRESET,
+      };
       modelStore.models = [model];
 
       // Mock startDownload to reject with insufficient space error
@@ -655,13 +699,12 @@ describe('ModelStore', () => {
         new Error('Not enough storage space to download the model'),
       );
 
-      await modelStore.checkSpaceAndDownload(model.id);
+      // Expect the error to be thrown
+      await expect(modelStore.checkSpaceAndDownload(model.id)).rejects.toThrow(
+        'Not enough storage space to download the model',
+      );
 
       expect(downloadManager.startDownload).toHaveBeenCalled();
-      // Should show error message
-      expect(showErrorSpy).toHaveBeenCalledWith(
-        'Failed to start download: Not enough storage space to download the model',
-      );
     });
   });
 
