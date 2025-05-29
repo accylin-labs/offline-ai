@@ -688,6 +688,33 @@ class ModelStore {
     }
     const _model = this.models[modelIndex];
 
+    // Special handling for projection models
+    if (_model.modelType === ModelType.PROJECTION) {
+      const canDeleteResult = this.canDeleteProjectionModel(_model.id);
+      if (!canDeleteResult.canDelete) {
+        throw new Error(
+          canDeleteResult.reason || 'Cannot delete projection model',
+        );
+      }
+    }
+
+    // Store all projection model IDs that this LLM could use
+    const projectionModelIds: string[] = [];
+    if (_model.supportsMultimodal) {
+      // Add the default projection model
+      if (_model.defaultProjectionModel) {
+        projectionModelIds.push(_model.defaultProjectionModel);
+      }
+      // Add all compatible projection models (in case user downloaded additional ones)
+      if (_model.compatibleProjectionModels) {
+        _model.compatibleProjectionModels.forEach(id => {
+          if (!projectionModelIds.includes(id)) {
+            projectionModelIds.push(id);
+          }
+        });
+      }
+    }
+
     const filePath = await this.getModelFullPath(_model);
     if (_model.isLocal || _model.origin === ModelOrigin.LOCAL) {
       // Local models are always removed from the list, when the file is deleted.
@@ -695,6 +722,13 @@ class ModelStore {
         this.models.splice(modelIndex, 1);
         if (this.activeModelId === _model.id) {
           this.releaseContext();
+        }
+        // If this is a projection model, clear it from active projection
+        if (
+          _model.modelType === ModelType.PROJECTION &&
+          this.activeProjectionModelId === _model.id
+        ) {
+          this.activeProjectionModelId = undefined;
         }
       });
       // Delete the file from internal storage
@@ -712,9 +746,17 @@ class ModelStore {
           await RNFS.unlink(filePath);
           runInAction(() => {
             _model.progress = 0;
+            _model.isDownloaded = false; // Mark as not downloaded after successful deletion
             if (this.activeModelId === _model.id) {
               this.releaseContext();
               this.activeModelId = undefined;
+            }
+            // If this is a projection model, clear it from active projection
+            if (
+              _model.modelType === ModelType.PROJECTION &&
+              this.activeProjectionModelId === _model.id
+            ) {
+              this.activeProjectionModelId = undefined;
             }
           });
           //console.log('models: ', this.models);
@@ -725,6 +767,14 @@ class ModelStore {
       } catch (err) {
         console.error('Failed to delete:', err);
       }
+    }
+
+    // After deleting an LLM, check if any of its projection models have become orphaned
+    if (
+      projectionModelIds.length > 0 &&
+      _model.modelType !== ModelType.PROJECTION
+    ) {
+      await this.cleanupOrphanedProjectionModels(projectionModelIds);
     }
   };
 
@@ -1377,6 +1427,125 @@ class ModelStore {
     }
 
     return this.models.find(m => m.id === model.defaultProjectionModel);
+  };
+
+  /**
+   * Get all LLM models that use a specific projection model as their default
+   * @param projectionModelId The ID of the projection model
+   * @returns Array of LLM models that use this projection model as default
+   */
+  getLLMsUsingProjectionModel = (projectionModelId: string): Model[] => {
+    return this.models.filter(
+      m =>
+        m.supportsMultimodal &&
+        m.defaultProjectionModel === projectionModelId &&
+        m.modelType !== ModelType.PROJECTION,
+    );
+  };
+
+  /**
+   * Get all downloaded LLM models that use a specific projection model as their default
+   * @param projectionModelId The ID of the projection model
+   * @returns Array of downloaded LLM models that use this projection model as default
+   */
+  getDownloadedLLMsUsingProjectionModel = (
+    projectionModelId: string,
+  ): Model[] => {
+    return this.getLLMsUsingProjectionModel(projectionModelId).filter(
+      m => m.isDownloaded,
+    );
+  };
+
+  /**
+   * Check if a projection model can be safely deleted
+   * @param projectionModelId The ID of the projection model to check
+   * @returns Object with canDelete flag and reason if deletion is blocked
+   */
+  canDeleteProjectionModel = (
+    projectionModelId: string,
+  ): {canDelete: boolean; reason?: string; dependentModels?: Model[]} => {
+    const projectionModel = this.models.find(m => m.id === projectionModelId);
+
+    if (
+      !projectionModel ||
+      projectionModel.modelType !== ModelType.PROJECTION
+    ) {
+      return {
+        canDelete: false,
+        reason: 'Model not found or not a projection model',
+      };
+    }
+
+    // Check if it's currently active
+    if (this.activeProjectionModelId === projectionModelId) {
+      return {
+        canDelete: false,
+        reason: 'Projection model is currently active',
+      };
+    }
+
+    // Check if any downloaded LLMs use this as their default projection model
+    const dependentModels =
+      this.getDownloadedLLMsUsingProjectionModel(projectionModelId);
+
+    if (dependentModels.length > 0) {
+      return {
+        canDelete: false,
+        reason: 'Projection model is used by downloaded LLM models',
+        dependentModels,
+      };
+    }
+
+    return {canDelete: true};
+  };
+
+  /**
+   * Automatically cleanup orphaned projection models
+   * @param projectionModelId The ID of the projection model to check for cleanup
+   */
+  cleanupOrphanedProjectionModel = async (projectionModelId: string) => {
+    const projectionModel = this.models.find(m => m.id === projectionModelId);
+
+    if (
+      !projectionModel ||
+      projectionModel.modelType !== ModelType.PROJECTION
+    ) {
+      return; // Not a projection model, nothing to cleanup
+    }
+
+    if (!projectionModel.isDownloaded) {
+      return; // Not downloaded, nothing to cleanup
+    }
+
+    const canDeleteResult = this.canDeleteProjectionModel(projectionModelId);
+
+    if (canDeleteResult.canDelete) {
+      console.log(
+        'Auto-cleaning up orphaned projection model:',
+        projectionModelId,
+      );
+      try {
+        await this.deleteModel(projectionModel);
+      } catch (error) {
+        console.error(
+          'Failed to auto-cleanup orphaned projection model:',
+          error,
+        );
+      }
+    }
+  };
+
+  /**
+   * Automatically cleanup multiple orphaned projection models
+   * @param projectionModelIds Array of projection model IDs to check for cleanup
+   */
+  cleanupOrphanedProjectionModels = async (projectionModelIds: string[]) => {
+    console.log('Checking for orphaned projection models:', projectionModelIds);
+
+    // Process each projection model for potential cleanup
+    for (const projectionModelId of projectionModelIds) {
+      await this.cleanupOrphanedProjectionModel(projectionModelId);
+    }
   };
 
   /**

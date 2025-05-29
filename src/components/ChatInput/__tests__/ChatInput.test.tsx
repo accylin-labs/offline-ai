@@ -304,7 +304,7 @@ describe('input', () => {
     expect.assertions(1);
     const onSendPress = jest.fn();
     const onStartCamera = jest.fn();
-    const {getByLabelText} = render(
+    const {getByText} = render(
       <UserContext.Provider value={user}>
         <ChatInput
           {...{
@@ -317,7 +317,7 @@ describe('input', () => {
       </UserContext.Provider>,
     );
 
-    const videoButton = getByLabelText('Start video');
+    const videoButton = getByText('Start Camera');
     fireEvent.press(videoButton);
     expect(onStartCamera).toHaveBeenCalledTimes(1);
   });

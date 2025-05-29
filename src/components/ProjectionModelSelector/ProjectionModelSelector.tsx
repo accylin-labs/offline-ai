@@ -92,6 +92,63 @@ export const ProjectionModelSelector = observer(
       modelStore.checkSpaceAndDownload(projectionModel.id);
     };
 
+    const handleDeleteModel = (projectionModel: Model) => {
+      // First check if we can delete the model
+      const canDeleteResult = modelStore.canDeleteProjectionModel(
+        projectionModel.id,
+      );
+
+      if (!canDeleteResult.canDelete) {
+        // Show error dialog with specific reason
+        let message =
+          canDeleteResult.reason || l10n.models.multimodal.cannotDeleteTitle;
+
+        if (canDeleteResult.reason === 'Projection model is currently active') {
+          message = l10n.models.multimodal.cannotDeleteActive;
+        } else if (
+          canDeleteResult.dependentModels &&
+          canDeleteResult.dependentModels.length > 0
+        ) {
+          const modelNames = canDeleteResult.dependentModels
+            .map(m => m.name)
+            .join(', ');
+          message = `${l10n.models.multimodal.cannotDeleteInUse}\n\n${l10n.models.multimodal.dependentModels} ${modelNames}`;
+        }
+
+        Alert.alert(l10n.models.multimodal.cannotDeleteTitle, message, [
+          {text: l10n.common.ok, style: 'default'},
+        ]);
+        return;
+      }
+
+      // Show confirmation dialog
+      Alert.alert(
+        l10n.models.multimodal.deleteProjectionTitle,
+        l10n.models.multimodal.deleteProjectionMessage,
+        [
+          {text: l10n.common.cancel, style: 'cancel'},
+          {
+            text: l10n.common.delete,
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await modelStore.deleteModel(projectionModel);
+              } catch (error) {
+                console.error('Failed to delete projection model:', error);
+                Alert.alert(
+                  l10n.models.multimodal.cannotDeleteTitle,
+                  error instanceof Error
+                    ? error.message
+                    : 'Unknown error occurred',
+                  [{text: l10n.common.ok, style: 'default'}],
+                );
+              }
+            },
+          },
+        ],
+      );
+    };
+
     const toggleExpanded = () => {
       setExpanded(!expanded);
     };
@@ -181,30 +238,42 @@ export const ProjectionModelSelector = observer(
 
                       <View style={styles.modelActions}>
                         {projModel.isDownloaded ? (
-                          <TouchableOpacity
-                            onPress={() => handleSelectModel(projModel.id)}
-                            style={[
-                              styles.selectArea,
-                              isSelected && styles.selectedArea,
-                            ]}
-                            activeOpacity={0.7}>
-                            <Icon
-                              name={
-                                isSelected ? 'check-circle' : 'circle-outline'
-                              }
-                              size={20}
-                              color={
-                                isSelected
-                                  ? theme.colors.tertiary
-                                  : theme.colors.onSurfaceVariant
-                              }
-                            />
-                            {!isSelected && (
-                              <Text style={styles.selectText}>
-                                {l10n.models.multimodal.select}
-                              </Text>
-                            )}
-                          </TouchableOpacity>
+                          <View style={styles.downloadedActions}>
+                            <TouchableOpacity
+                              onPress={() => handleSelectModel(projModel.id)}
+                              style={[
+                                styles.selectArea,
+                                isSelected && styles.selectedArea,
+                              ]}
+                              activeOpacity={0.7}>
+                              <Icon
+                                name={
+                                  isSelected ? 'check-circle' : 'circle-outline'
+                                }
+                                size={20}
+                                color={
+                                  isSelected
+                                    ? theme.colors.tertiary
+                                    : theme.colors.onSurfaceVariant
+                                }
+                              />
+                              {!isSelected && (
+                                <Text style={styles.selectText}>
+                                  {l10n.models.multimodal.select}
+                                </Text>
+                              )}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              onPress={() => handleDeleteModel(projModel)}
+                              style={styles.deleteArea}
+                              activeOpacity={0.7}>
+                              <Icon
+                                name="delete-outline"
+                                size={16}
+                                color={theme.colors.error}
+                              />
+                            </TouchableOpacity>
+                          </View>
                         ) : projModel.progress > 0 ? (
                           <View style={styles.downloadProgress}>
                             <ActivityIndicator

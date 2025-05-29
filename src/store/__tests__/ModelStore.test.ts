@@ -7,7 +7,7 @@ import {defaultModels} from '../defaultModels';
 
 import {downloadManager} from '../../services/downloads';
 
-import {ModelOrigin} from '../../utils/types';
+import {ModelOrigin, ModelType} from '../../utils/types';
 import {basicModel, mockContextModel} from '../../../jest/fixtures/models';
 
 import {modelStore, uiStore} from '..';
@@ -148,6 +148,369 @@ describe('ModelStore', () => {
 
       expect(modelStore.activeModelId).toBeUndefined();
       expect(modelStore.context).toBeUndefined();
+    });
+  });
+
+  describe('projection model deletion', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      // Reset store state
+      modelStore.models = [];
+      modelStore.context = undefined;
+      modelStore.activeModelId = undefined;
+      modelStore.activeProjectionModelId = undefined;
+    });
+
+    it('should allow deletion of unused projection model', () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel];
+
+      const result = modelStore.canDeleteProjectionModel(projModel.id);
+      expect(result.canDelete).toBe(true);
+    });
+
+    it('should prevent deletion of active projection model', () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel];
+      modelStore.activeProjectionModelId = projModel.id;
+
+      const result = modelStore.canDeleteProjectionModel(projModel.id);
+      expect(result.canDelete).toBe(false);
+      expect(result.reason).toBe('Projection model is currently active');
+    });
+
+    it('should prevent deletion of projection model used by downloaded LLM', () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel = {
+        ...defaultModels[0],
+        id: 'test-llm-model',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel, llmModel];
+
+      const result = modelStore.canDeleteProjectionModel(projModel.id);
+      expect(result.canDelete).toBe(false);
+      expect(result.reason).toBe(
+        'Projection model is used by downloaded LLM models',
+      );
+      expect(result.dependentModels).toHaveLength(1);
+      expect(result.dependentModels![0].id).toBe(llmModel.id);
+    });
+
+    it('should allow deletion of projection model used only by non-downloaded LLM', () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel = {
+        ...defaultModels[0],
+        id: 'test-llm-model',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: false, // Not downloaded
+      };
+
+      modelStore.models = [projModel, llmModel];
+
+      const result = modelStore.canDeleteProjectionModel(projModel.id);
+      expect(result.canDelete).toBe(true);
+    });
+
+    it('should get LLMs using projection model', () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel1 = {
+        ...defaultModels[0],
+        id: 'test-llm-model-1',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: true,
+      };
+
+      const llmModel2 = {
+        ...defaultModels[0],
+        id: 'test-llm-model-2',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: false,
+      };
+
+      const unrelatedModel = {
+        ...defaultModels[0],
+        id: 'test-unrelated-model',
+        supportsMultimodal: true,
+        defaultProjectionModel: 'other-proj-model',
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel, llmModel1, llmModel2, unrelatedModel];
+
+      const allLLMs = modelStore.getLLMsUsingProjectionModel(projModel.id);
+      expect(allLLMs).toHaveLength(2);
+      expect(allLLMs.map(m => m.id)).toContain(llmModel1.id);
+      expect(allLLMs.map(m => m.id)).toContain(llmModel2.id);
+
+      const downloadedLLMs = modelStore.getDownloadedLLMsUsingProjectionModel(
+        projModel.id,
+      );
+      expect(downloadedLLMs).toHaveLength(1);
+      expect(downloadedLLMs[0].id).toBe(llmModel1.id);
+    });
+
+    it('should automatically cleanup orphaned projection model when LLM is deleted', async () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel = {
+        ...defaultModels[0],
+        id: 'test-llm-model',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel, llmModel];
+
+      // Verify projection model is initially present and downloaded
+      expect(
+        modelStore.models.find(m => m.id === projModel.id)?.isDownloaded,
+      ).toBe(true);
+
+      // Delete the LLM model
+      await modelStore.deleteModel(llmModel);
+
+      // Verify the projection model was automatically cleaned up
+      const remainingProjModel = modelStore.models.find(
+        m => m.id === projModel.id,
+      );
+      expect(remainingProjModel?.isDownloaded).toBe(false);
+    });
+
+    it('should not cleanup projection model if multiple LLMs use it', async () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel1 = {
+        ...defaultModels[0],
+        id: 'test-llm-model-1',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: true,
+      };
+
+      const llmModel2 = {
+        ...defaultModels[0],
+        id: 'test-llm-model-2',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel, llmModel1, llmModel2];
+
+      // Delete one LLM model
+      await modelStore.deleteModel(llmModel1);
+
+      // Verify the projection model is still downloaded (still used by llmModel2)
+      const remainingProjModel = modelStore.models.find(
+        m => m.id === projModel.id,
+      );
+      expect(remainingProjModel?.isDownloaded).toBe(true);
+    });
+
+    it('should not cleanup active projection model', async () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel = {
+        ...defaultModels[0],
+        id: 'test-llm-model',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel, llmModel];
+      modelStore.activeProjectionModelId = projModel.id; // Make it active
+
+      // Delete the LLM model
+      await modelStore.deleteModel(llmModel);
+
+      // Verify the projection model is still downloaded (it's active)
+      const remainingProjModel = modelStore.models.find(
+        m => m.id === projModel.id,
+      );
+      expect(remainingProjModel?.isDownloaded).toBe(true);
+    });
+
+    it('should cleanup multiple orphaned projection models when LLM is deleted', async () => {
+      const projModel1 = {
+        ...defaultModels[0],
+        id: 'test-proj-model-1',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const projModel2 = {
+        ...defaultModels[0],
+        id: 'test-proj-model-2',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel = {
+        ...defaultModels[0],
+        id: 'test-llm-model',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel1.id,
+        compatibleProjectionModels: [projModel1.id, projModel2.id],
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel1, projModel2, llmModel];
+
+      // Verify both projection models are initially downloaded
+      expect(
+        modelStore.models.find(m => m.id === projModel1.id)?.isDownloaded,
+      ).toBe(true);
+      expect(
+        modelStore.models.find(m => m.id === projModel2.id)?.isDownloaded,
+      ).toBe(true);
+
+      // Delete the LLM model
+      await modelStore.deleteModel(llmModel);
+
+      // Verify both projection models were automatically cleaned up
+      const remainingProjModel1 = modelStore.models.find(
+        m => m.id === projModel1.id,
+      );
+      const remainingProjModel2 = modelStore.models.find(
+        m => m.id === projModel2.id,
+      );
+      expect(remainingProjModel1?.isDownloaded).toBe(false);
+      expect(remainingProjModel2?.isDownloaded).toBe(false);
+    });
+
+    it('should only cleanup orphaned projection models, not ones used by other LLMs', async () => {
+      const projModel1 = {
+        ...defaultModels[0],
+        id: 'test-proj-model-1',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const projModel2 = {
+        ...defaultModels[0],
+        id: 'test-proj-model-2',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel1 = {
+        ...defaultModels[0],
+        id: 'test-llm-model-1',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel1.id,
+        compatibleProjectionModels: [projModel1.id, projModel2.id],
+        isDownloaded: true,
+      };
+
+      const llmModel2 = {
+        ...defaultModels[0],
+        id: 'test-llm-model-2',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel2.id, // Uses projModel2
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel1, projModel2, llmModel1, llmModel2];
+
+      // Delete llmModel1
+      await modelStore.deleteModel(llmModel1);
+
+      // projModel1 should be cleaned up (only used by deleted llmModel1)
+      // projModel2 should remain (still used by llmModel2)
+      const remainingProjModel1 = modelStore.models.find(
+        m => m.id === projModel1.id,
+      );
+      const remainingProjModel2 = modelStore.models.find(
+        m => m.id === projModel2.id,
+      );
+      expect(remainingProjModel1?.isDownloaded).toBe(false);
+      expect(remainingProjModel2?.isDownloaded).toBe(true);
+    });
+
+    it('should set isDownloaded to false after deletion to enable orphaned cleanup', async () => {
+      const projModel = {
+        ...defaultModels[0],
+        id: 'test-proj-model',
+        modelType: ModelType.PROJECTION,
+        isDownloaded: true,
+      };
+
+      const llmModel = {
+        ...defaultModels[0],
+        id: 'test-llm-model',
+        supportsMultimodal: true,
+        defaultProjectionModel: projModel.id,
+        isDownloaded: true,
+      };
+
+      modelStore.models = [projModel, llmModel];
+
+      // Verify both models are initially downloaded
+      expect(llmModel.isDownloaded).toBe(true);
+      expect(projModel.isDownloaded).toBe(true);
+
+      // Delete the LLM model
+      await modelStore.deleteModel(llmModel);
+
+      // Verify LLM model is marked as not downloaded after deletion
+      expect(llmModel.isDownloaded).toBe(false);
+
+      // Verify projection model was automatically cleaned up (also marked as not downloaded)
+      expect(projModel.isDownloaded).toBe(false);
     });
   });
 

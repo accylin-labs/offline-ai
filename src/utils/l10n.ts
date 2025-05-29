@@ -162,6 +162,14 @@ export const l10n = {
         reloadModelMessage:
           'The model needs to be reloaded to apply the new projection model. Do you want to reload now?',
         reload: 'Reload',
+        deleteProjectionTitle: 'Delete Projection Model',
+        deleteProjectionMessage:
+          'Are you sure you want to delete this projection model?',
+        cannotDeleteTitle: 'Cannot Delete',
+        cannotDeleteActive: 'This projection model is currently active.',
+        cannotDeleteInUse:
+          'This projection model is used by downloaded LLM models:',
+        dependentModels: 'Dependent models:',
       },
       buttons: {
         addFromHuggingFace: 'Add from Hugging Face',
@@ -1115,6 +1123,13 @@ export const l10n = {
         reloadModelMessage:
           '新しい投影モデルを適用するにはモデルを再読み込みする必要があります。今すぐ再読み込みしますか？',
         reload: '再読み込み',
+        deleteProjectionTitle: '投影モデルを削除',
+        deleteProjectionMessage: 'この投影モデルを削除してもよろしいですか？',
+        cannotDeleteTitle: '削除できません',
+        cannotDeleteActive: 'この投影モデルは現在アクティブです。',
+        cannotDeleteInUse:
+          'この投影モデルはダウンロード済みのLLMモデルで使用されています：',
+        dependentModels: '依存モデル：',
       },
       buttons: {
         addFromHuggingFace: 'Hugging Faceから追加',
@@ -2056,6 +2071,12 @@ export const l10n = {
         reloadModelMessage:
           '需要重新加载模型以应用新的投影模型。您想现在重新加载吗？',
         reload: '重新加载',
+        deleteProjectionTitle: '删除投影模型',
+        deleteProjectionMessage: '您确定要删除此投影模型吗？',
+        cannotDeleteTitle: '无法删除',
+        cannotDeleteActive: '此投影模型当前处于活动状态。',
+        cannotDeleteInUse: '此投影模型被已下载的LLM模型使用：',
+        dependentModels: '依赖模型：',
       },
       buttons: {
         addFromHuggingFace: '从Hugging Face添加',

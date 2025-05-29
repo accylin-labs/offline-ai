@@ -89,6 +89,11 @@ export const createStyles = (theme: Theme) =>
       minWidth: 80,
       alignItems: 'flex-end',
     },
+    downloadedActions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
     selectArea: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -106,6 +111,13 @@ export const createStyles = (theme: Theme) =>
       fontWeight: '500',
       color: theme.colors.onSurfaceVariant,
       marginLeft: 4,
+    },
+    deleteArea: {
+      padding: 6,
+      borderRadius: 6,
+      backgroundColor: theme.colors.errorContainer + '20',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     downloadArea: {
       flexDirection: 'row',
