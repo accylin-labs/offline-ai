@@ -54,7 +54,7 @@ export const ModelTypeTag: React.FC<ModelTypeTagProps> = ({
   const iconColor = getColor();
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="model-type-tag-container">
       <Icon name={getIconName()} size={iconSize} color={iconColor} />
       {label && <Text style={styles.text}>{label}</Text>}
     </View>

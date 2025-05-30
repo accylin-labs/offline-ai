@@ -36,6 +36,8 @@ class MockModelStore {
   addHFModel: jest.Mock;
   downloadHFModel: jest.Mock;
   cancelDownload: jest.Mock;
+  disableAutoRelease: jest.Mock;
+  enableAutoRelease: jest.Mock;
 
   constructor() {
     makeAutoObservable(this, {
@@ -53,6 +55,8 @@ class MockModelStore {
       addHFModel: false,
       downloadHFModel: false,
       cancelDownload: false,
+      disableAutoRelease: false,
+      enableAutoRelease: false,
       lastUsedModel: computed,
       activeModel: computed,
       displayModels: computed,
@@ -73,6 +77,8 @@ class MockModelStore {
     this.addHFModel = jest.fn();
     this.downloadHFModel = jest.fn();
     this.cancelDownload = jest.fn();
+    this.disableAutoRelease = jest.fn();
+    this.enableAutoRelease = jest.fn();
   }
 
   setActiveModel = (modelId: string) => {

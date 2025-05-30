@@ -1,5 +1,5 @@
-export const launchCamera = jest.fn((options, callback) => {
-  callback({
+export const launchCamera = jest.fn(options => {
+  return Promise.resolve({
     didCancel: false,
     assets: [
       {
@@ -11,8 +11,8 @@ export const launchCamera = jest.fn((options, callback) => {
   });
 });
 
-export const launchImageLibrary = jest.fn((options, callback) => {
-  callback({
+export const launchImageLibrary = jest.fn(options => {
+  return Promise.resolve({
     didCancel: false,
     assets: [
       {

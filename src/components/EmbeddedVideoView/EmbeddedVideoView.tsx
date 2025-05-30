@@ -199,7 +199,8 @@ export const EmbeddedVideoView = observer(
         <View style={styles.intervalControlsContainer}>
           <TouchableOpacity
             style={styles.intervalButton}
-            onPress={decreaseInterval}>
+            onPress={decreaseInterval}
+            testID="decrease-interval-button">
             <Text style={styles.intervalButtonText}>-</Text>
           </TouchableOpacity>
           <View>
@@ -210,20 +211,25 @@ export const EmbeddedVideoView = observer(
           </View>
           <TouchableOpacity
             style={styles.intervalButton}
-            onPress={increaseInterval}>
+            onPress={increaseInterval}
+            testID="increase-interval-button">
             <Text style={styles.intervalButtonText}>+</Text>
           </TouchableOpacity>
         </View>
 
         {/* Camera controls */}
         <View style={styles.controlsContainer}>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={onClose}
+            testID="close-button">
             <Icon name="close" style={styles.closeButtonIcon} />
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.flipButton}
-            onPress={toggleCameraPosition}>
+            onPress={toggleCameraPosition}
+            testID="flip-camera-button">
             <Icon name="camera-flip" style={styles.flipButtonIcon} />
           </TouchableOpacity>
         </View>
