@@ -49,7 +49,6 @@ const ThinkingRenderer = ({TDefaultRenderer, ...props}: any) => {
 };
 
 const CodeRenderer = ({TDefaultRenderer, ...props}: any) => {
-  const theme = useTheme();
   const isCodeBlock = props?.tnode?.parent?.tagName === 'pre';
 
   // if not code block, use the default renderer
