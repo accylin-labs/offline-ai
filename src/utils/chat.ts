@@ -22,10 +22,43 @@ export function convertToChatMessages(
   return messages
     .filter(message => message.type === 'text' && message.text !== undefined)
     .map(message => {
-      return {
-        content: (message as MessageType.Text).text!,
-        role: message.author.id === assistant.id ? 'assistant' : 'user',
-      } as ChatMessage;
+      const textMessage = message as MessageType.Text;
+      const role: 'assistant' | 'user' =
+        message.author.id === assistant.id ? 'assistant' : 'user';
+
+      // Check if this message has images (multimodal)
+      if (textMessage.imageUris && textMessage.imageUris.length > 0) {
+        // Create multimodal content with text and images
+        const content: Array<{
+          type: 'text' | 'image_url';
+          text?: string;
+          image_url?: {url: string};
+        }> = [
+          {
+            type: 'text',
+            text: textMessage.text!,
+          },
+        ];
+
+        // Add images to content
+        content.push(
+          ...textMessage.imageUris.map(path => ({
+            type: 'image_url' as const,
+            image_url: {url: path},
+          })),
+        );
+
+        return {
+          role,
+          content,
+        } as ChatMessage;
+      } else {
+        // Text-only message (backward compatibility)
+        return {
+          role,
+          content: textMessage.text!,
+        } as ChatMessage;
+      }
     })
     .reverse();
 }
@@ -58,7 +91,14 @@ export async function applyChatTemplate(
   try {
     // Model's custom chat template. This uses chat-formatter, which is based on Nunjucks (as opposed to Jinja2).
     if (modelChatTemplate?.chatTemplate) {
-      formattedChat = applyTemplate(messages, {
+      // Convert multimodal messages to text-only for chat-formatter compatibility
+      const textOnlyMessages = messages.map(msg => ({
+        ...msg,
+        content: Array.isArray(msg.content)
+          ? msg.content.find(part => part.type === 'text')?.text || ''
+          : msg.content,
+      }));
+      formattedChat = applyTemplate(textOnlyMessages, {
         customTemplate: modelChatTemplate,
         addGenerationPrompt: modelChatTemplate.addGenerationPrompt,
       }) as string;
@@ -68,8 +108,14 @@ export async function applyChatTemplate(
     }
 
     if (!formattedChat) {
-      // Default chat template
-      formattedChat = applyTemplate(messages, {
+      // Default chat template - convert multimodal messages to text-only for chat-formatter compatibility
+      const textOnlyMessages = messages.map(msg => ({
+        ...msg,
+        content: Array.isArray(msg.content)
+          ? msg.content.find(part => part.type === 'text')?.text || ''
+          : msg.content,
+      }));
+      formattedChat = applyTemplate(textOnlyMessages, {
         customTemplate: chatTemplates.default,
         addGenerationPrompt: chatTemplates.default.addGenerationPrompt,
       }) as string;

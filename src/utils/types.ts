@@ -293,7 +293,13 @@ export interface ChatTemplateConfig extends TemplateConfig {
 
 export type ChatMessage = {
   role: 'system' | 'assistant' | 'user';
-  content: string;
+  content:
+    | string
+    | Array<{
+        type: 'text' | 'image_url';
+        text?: string;
+        image_url?: {url: string};
+      }>;
 };
 
 export enum ModelOrigin {
