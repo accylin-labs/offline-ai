@@ -51,6 +51,7 @@ import {
   ChatPalModelPickerSheet,
   ChatHeader,
   ChatEmptyPlaceholder,
+  VideoPalEmptyPlaceholder,
 } from '..';
 import {
   CopyIcon,
@@ -576,15 +577,23 @@ export const ChatView = observer(
       ],
     );
 
-    const renderListEmptyComponent = React.useCallback(
-      () => (
+    const renderListEmptyComponent = React.useCallback(() => {
+      // Show VideoPalEmptyPlaceholder for video pal, otherwise show regular ChatEmptyPlaceholder
+      if (inputProps?.palType === PalType.VIDEO) {
+        return (
+          <VideoPalEmptyPlaceholder
+            bottomComponentHeight={bottomComponentHeight}
+          />
+        );
+      }
+
+      return (
         <ChatEmptyPlaceholder
           bottomComponentHeight={bottomComponentHeight}
           onSelectModel={() => setIsPickerVisible(true)}
         />
-      ),
-      [bottomComponentHeight, setIsPickerVisible],
-    );
+      );
+    }, [bottomComponentHeight, setIsPickerVisible, inputProps?.palType]);
 
     const renderListFooterComponent = React.useCallback(
       () =>

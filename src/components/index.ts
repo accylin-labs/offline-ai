@@ -46,3 +46,4 @@ export * from './TextInput';
 export * from './TextMessage';
 export * from './UsageStats';
 export * from './VideoView';
+export * from './VideoPalEmptyPlaceholder';

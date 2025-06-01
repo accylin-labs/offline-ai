@@ -777,6 +777,17 @@ export const l10n = {
       captureInterval: 'Capture Interval',
       captureIntervalUnit: 'ms',
       liveCommentary: 'Live Commentary',
+      emptyPlaceholder: {
+        title: 'Welcome to Lookie',
+        subtitle: 'Private On-Device Real-time Video Analysis',
+        experimentalNotice:
+          'This is an experimental feature. Accuracy depends on the selected model, speed depends on your device specs, and some models might fail.',
+        howToUse: 'How to use:',
+        step1: '• Edit the prompt (optional) to guide the analysis',
+        step2: '• Tap the camera button to start live video analysis',
+        step3: '• Adjust snapshot frequency while camera is active',
+        step4: '• Switch to another pal for normal text chat',
+      },
     },
     screenTitles: {
       chat: 'Chat',
@@ -1739,6 +1750,17 @@ export const l10n = {
       captureInterval: 'キャプチャ間隔',
       captureIntervalUnit: 'ミリ秒',
       liveCommentary: 'ライブ解説',
+      emptyPlaceholder: {
+        title: 'Lookieへようこそ',
+        subtitle: 'プライベート・オンデバイス・リアルタイム動画解析',
+        experimentalNotice:
+          'これは実験的な機能です。精度は選択したモデルに依存し、速度はデバイスの性能に依存し、一部のモデルは失敗する可能性があります。',
+        howToUse: '使い方：',
+        step1: '• プロンプトを編集（任意）して解析を誘導',
+        step2: '• カメラボタンをタップしてライブ動画解析を開始',
+        step3: '• カメラ起動中にスナップショット頻度を調整',
+        step4: '• 通常のテキストチャットには別のアシスタントに切り替え',
+      },
     },
     screenTitles: {
       chat: 'チャット',
@@ -2649,6 +2671,17 @@ export const l10n = {
       captureInterval: '捕获间隔',
       captureIntervalUnit: '毫秒',
       liveCommentary: '实时解说',
+      emptyPlaceholder: {
+        title: '欢迎使用Lookie',
+        subtitle: '私密设备端实时视频分析',
+        experimentalNotice:
+          '这是一个实验性功能。准确性取决于所选模型，速度取决于您的设备规格，某些模型可能会失败。',
+        howToUse: '使用方法：',
+        step1: '• 编辑提示词（可选）来指导分析',
+        step2: '• 点击相机按钮开始实时视频分析',
+        step3: '• 在相机激活时调整快照频率',
+        step4: '• 切换到其他助手进行正常文本聊天',
+      },
     },
     screenTitles: {
       chat: '聊天',
