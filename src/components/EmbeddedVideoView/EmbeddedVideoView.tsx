@@ -107,6 +107,7 @@ export const EmbeddedVideoView = observer(
           try {
             const photo = await camera.current.takePhoto({
               flash: 'off',
+              enableShutterSound: false,
               // quality: 70, // Lower quality for faster processing
             });
 
