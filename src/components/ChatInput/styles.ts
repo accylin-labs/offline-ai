@@ -68,7 +68,7 @@ export const createStyles = ({
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 24,
-      paddingVertical: 8,
+      paddingVertical: 10,
       minHeight: 36,
     },
     leftControls: {
