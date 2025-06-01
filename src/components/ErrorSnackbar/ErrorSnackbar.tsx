@@ -116,6 +116,7 @@ export const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({
   return (
     <Portal>
       <Snackbar
+        testID="error-snackbar"
         visible={true}
         onDismiss={onDismiss}
         duration={getDuration()}

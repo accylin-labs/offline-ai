@@ -4,10 +4,17 @@ import {Alert} from 'react-native';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import DocumentPicker from 'react-native-document-picker';
 import {fireEvent, render, waitFor, act} from '../../../../jest/test-utils';
+import {runInAction} from 'mobx';
 
 import {ModelsScreen} from '../ModelsScreen';
 
-import {modelStore} from '../../../store';
+import {modelStore, hfStore, uiStore} from '../../../store';
+import {
+  basicModel,
+  downloadedModel,
+  hfModel1,
+  hfModel2,
+} from '../../../../jest/fixtures/models';
 
 jest.useFakeTimers();
 
@@ -302,4 +309,89 @@ describe('ModelsScreen', () => {
       },
     );
   }, 15000);
+
+  // Add tests for model filtering and grouping
+  describe('Model filtering and grouping', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      // Set up mock models
+      modelStore.models = [downloadedModel, basicModel, hfModel1, hfModel2];
+    });
+
+    it('should filter downloaded models when downloaded filter is active', async () => {
+      uiStore.pageStates.modelsScreen.filters = ['downloaded'];
+
+      const {getByText, queryByText} = render(<ModelsScreen />, {
+        withNavigation: true,
+      });
+
+      await waitFor(() => {
+        expect(getByText('downloaded model')).toBeTruthy();
+        expect(queryByText('basic model')).toBeNull();
+      });
+    });
+
+    it('should filter HF models when HF filter is active', async () => {
+      uiStore.pageStates.modelsScreen.filters = ['hf'];
+
+      const {getByText, queryByText} = render(<ModelsScreen />, {
+        withNavigation: true,
+      });
+
+      // Open the Available to Download group, since hf mocked models are not downloaded.
+      const button = getByText('Available to Download');
+      fireEvent.press(button);
+
+      await waitFor(() => {
+        expect(getByText('hf-model-name-1')).toBeTruthy();
+        expect(queryByText('basic model')).toBeNull();
+      });
+    });
+
+    it('should group models by type when grouped filter is active', async () => {
+      uiStore.pageStates.modelsScreen.filters = ['grouped'];
+
+      const {getByText} = render(<ModelsScreen />, {
+        withNavigation: true,
+      });
+
+      await waitFor(() => {
+        expect(getByText('Test Model Type')).toBeTruthy();
+      });
+    });
+
+    it('should group models into ready-to-use and available-to-download when not grouped', async () => {
+      uiStore.pageStates.modelsScreen.filters = [];
+
+      const {getByText} = render(<ModelsScreen />, {
+        withNavigation: true,
+      });
+
+      await waitFor(() => {
+        expect(getByText('Ready to Use')).toBeTruthy();
+        expect(getByText('Available to Download')).toBeTruthy();
+      });
+    });
+
+    it('should handle group expansion and collapse', async () => {
+      uiStore.pageStates.modelsScreen.filters = [];
+
+      const {getByText, queryByText} = render(<ModelsScreen />, {
+        withNavigation: true,
+      });
+
+      // Not downloaded model should not be visible
+      await waitFor(() => {
+        expect(queryByText('basic model')).toBeNull();
+      });
+
+      const availableGroup = getByText('Available to Download');
+      fireEvent.press(availableGroup);
+
+      // Not downloaded model should be visible after expanding the group
+      await waitFor(() => {
+        expect(getByText('basic model')).toBeTruthy();
+      });
+    });
+  });
 });

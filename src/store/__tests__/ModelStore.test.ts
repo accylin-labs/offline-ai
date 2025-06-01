@@ -13,6 +13,11 @@ import * as RNFS from '@dr.pogodin/react-native-fs';
 
 import {modelStore, uiStore} from '..';
 
+// Mock the HF API
+jest.mock('../../api/hf', () => ({
+  fetchModelFilesDetails: jest.fn(),
+}));
+
 // Mock the download manager
 jest.mock('../../services/downloads', () => ({
   downloadManager: {
@@ -959,6 +964,834 @@ describe('ModelStore', () => {
 
     it('should return false if model does not exist in available models', () => {
       expect(modelStore.isModelAvailable('non-existent-model')).toBe(false);
+    });
+  });
+
+  // Add tests for configuration setters
+  describe('configuration setters', () => {
+    it('should set n_threads', () => {
+      modelStore.setNThreads(8);
+      expect(modelStore.n_threads).toBe(8);
+    });
+
+    it('should set flash attention and reset cache types when disabled', () => {
+      // Enable flash attention first
+      modelStore.setFlashAttn(true);
+      expect(modelStore.flash_attn).toBe(true);
+
+      // Disable flash attention - should reset cache types
+      modelStore.setFlashAttn(false);
+      expect(modelStore.flash_attn).toBe(false);
+      expect(modelStore.cache_type_k).toBe('f16');
+      expect(modelStore.cache_type_v).toBe('f16');
+    });
+
+    it('should set cache type K only when flash attention is enabled', () => {
+      // Disable flash attention
+      modelStore.setFlashAttn(false);
+      modelStore.setCacheTypeK('q8_0' as any);
+      expect(modelStore.cache_type_k).toBe('f16'); // Should not change
+
+      // Enable flash attention
+      modelStore.setFlashAttn(true);
+      modelStore.setCacheTypeK('q8_0' as any);
+      expect(modelStore.cache_type_k).toBe('q8_0'); // Should change
+    });
+
+    it('should set cache type V only when flash attention is enabled', () => {
+      // Disable flash attention
+      modelStore.setFlashAttn(false);
+      modelStore.setCacheTypeV('q8_0' as any);
+      expect(modelStore.cache_type_v).toBe('f16'); // Should not change
+
+      // Enable flash attention
+      modelStore.setFlashAttn(true);
+      modelStore.setCacheTypeV('q8_0' as any);
+      expect(modelStore.cache_type_v).toBe('q8_0'); // Should change
+    });
+
+    it('should set n_batch', () => {
+      modelStore.setNBatch(256);
+      expect(modelStore.n_batch).toBe(256);
+    });
+
+    it('should set n_ubatch', () => {
+      modelStore.setNUBatch(128);
+      expect(modelStore.n_ubatch).toBe(128);
+    });
+
+    it('should set n_context', () => {
+      modelStore.setNContext(2048);
+      expect(modelStore.n_context).toBe(2048);
+    });
+
+    it('should get effective values respecting constraints', () => {
+      modelStore.setNContext(1024);
+      modelStore.setNBatch(2048); // Larger than context
+      modelStore.setNUBatch(1024); // Larger than effective batch
+
+      const effective = modelStore.getEffectiveValues();
+      expect(effective.n_context).toBe(1024);
+      expect(effective.n_batch).toBe(1024); // Clamped to context
+      expect(effective.n_ubatch).toBe(1024); // Clamped to effective batch
+    });
+
+    it('should set n_gpu_layers', () => {
+      modelStore.setNGPULayers(25);
+      expect(modelStore.n_gpu_layers).toBe(25);
+    });
+  });
+
+  // Add tests for auto-release functionality
+  describe('auto-release functionality', () => {
+    beforeEach(() => {
+      modelStore.useAutoRelease = true;
+      // Reset auto-release state by enabling/disabling known reasons
+      modelStore.enableAutoRelease('test-cleanup');
+    });
+
+    it('should disable auto-release with reason', () => {
+      modelStore.disableAutoRelease('test-reason');
+      expect(modelStore.isAutoReleaseEnabled).toBe(false);
+    });
+
+    it('should enable auto-release by removing reason', () => {
+      modelStore.disableAutoRelease('test-reason');
+      expect(modelStore.isAutoReleaseEnabled).toBe(false);
+
+      modelStore.enableAutoRelease('test-reason');
+      expect(modelStore.isAutoReleaseEnabled).toBe(true);
+    });
+
+    it('should handle multiple disable reasons', () => {
+      modelStore.disableAutoRelease('reason1');
+      modelStore.disableAutoRelease('reason2');
+      expect(modelStore.isAutoReleaseEnabled).toBe(false);
+
+      modelStore.enableAutoRelease('reason1');
+      expect(modelStore.isAutoReleaseEnabled).toBe(false); // Still disabled by reason2
+
+      modelStore.enableAutoRelease('reason2');
+      expect(modelStore.isAutoReleaseEnabled).toBe(true); // Now enabled
+    });
+
+    it('should be disabled when useAutoRelease is false', () => {
+      modelStore.useAutoRelease = false;
+      expect(modelStore.isAutoReleaseEnabled).toBe(false);
+    });
+  });
+
+  // Add tests for multimodal functionality
+  describe('multimodal functionality', () => {
+    beforeEach(() => {
+      modelStore.models = [];
+      modelStore.context = undefined;
+      modelStore.activeModelId = undefined;
+      modelStore.isMultimodalActive = false;
+    });
+
+    it('should return true for isMultimodalEnabled when cached flag is true', async () => {
+      modelStore.isMultimodalActive = true;
+      const result = await modelStore.isMultimodalEnabled();
+      expect(result).toBe(true);
+    });
+
+    it('should return false for isMultimodalEnabled when no context', async () => {
+      modelStore.context = undefined;
+      const result = await modelStore.isMultimodalEnabled();
+      expect(result).toBe(false);
+    });
+
+    it('should check context and update cached flag for isMultimodalEnabled', async () => {
+      const mockContext = {
+        isMultimodalEnabled: jest.fn().mockResolvedValue(true),
+      };
+      modelStore.context = mockContext as any;
+
+      const result = await modelStore.isMultimodalEnabled();
+      expect(result).toBe(true);
+      expect(mockContext.isMultimodalEnabled).toHaveBeenCalled();
+      expect(modelStore.isMultimodalActive).toBe(true);
+    });
+
+    it('should handle error in isMultimodalEnabled', async () => {
+      const mockContext = {
+        isMultimodalEnabled: jest
+          .fn()
+          .mockRejectedValue(new Error('Test error')),
+      };
+      modelStore.context = mockContext as any;
+
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      const result = await modelStore.isMultimodalEnabled();
+      expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error checking multimodal capability:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should get compatible projection models from explicit list', () => {
+      const llmModel = {
+        id: 'test-llm',
+        supportsMultimodal: true,
+        compatibleProjectionModels: ['proj1', 'proj2'],
+      };
+      const projModel1 = {
+        id: 'proj1',
+        modelType: ModelType.PROJECTION,
+      };
+      const projModel2 = {
+        id: 'proj2',
+        modelType: ModelType.PROJECTION,
+      };
+
+      modelStore.models = [llmModel, projModel1, projModel2] as any;
+
+      const compatible = modelStore.getCompatibleProjectionModels('test-llm');
+      expect(compatible).toHaveLength(2);
+      expect(compatible.map(m => m.id)).toEqual(['proj1', 'proj2']);
+    });
+
+    it('should get compatible projection models from same repository', () => {
+      const llmModel = {
+        id: 'author/repo/model',
+        supportsMultimodal: true,
+      };
+      const projModel1 = {
+        id: 'author/repo/proj1',
+        modelType: ModelType.PROJECTION,
+      };
+      const projModel2 = {
+        id: 'other/repo/proj2',
+        modelType: ModelType.PROJECTION,
+      };
+
+      modelStore.models = [llmModel, projModel1, projModel2] as any;
+
+      const compatible =
+        modelStore.getCompatibleProjectionModels('author/repo/model');
+      expect(compatible).toHaveLength(1);
+      expect(compatible[0].id).toBe('author/repo/proj1');
+    });
+
+    it('should return empty array for non-multimodal model', () => {
+      const llmModel = {
+        id: 'test-llm',
+        supportsMultimodal: false,
+      };
+
+      modelStore.models = [llmModel] as any;
+
+      const compatible = modelStore.getCompatibleProjectionModels('test-llm');
+      expect(compatible).toHaveLength(0);
+    });
+
+    it('should set default projection model', () => {
+      const llmModel = {
+        id: 'test-llm',
+        supportsMultimodal: true,
+        defaultProjectionModel: undefined,
+      };
+
+      modelStore.models = [llmModel] as any;
+
+      modelStore.setDefaultProjectionModel('test-llm', 'proj1');
+
+      // Check that the model in the store was updated
+      const updatedModel = modelStore.models.find(m => m.id === 'test-llm');
+      expect(updatedModel?.defaultProjectionModel).toBe('proj1');
+    });
+
+    it('should get default projection model', () => {
+      const llmModel = {
+        id: 'test-llm',
+        supportsMultimodal: true,
+        defaultProjectionModel: 'proj1',
+      };
+      const projModel = {
+        id: 'proj1',
+        modelType: ModelType.PROJECTION,
+      };
+
+      modelStore.models = [llmModel, projModel] as any;
+
+      const defaultProj = modelStore.getDefaultProjectionModel('test-llm');
+      expect(defaultProj?.id).toBe('proj1');
+    });
+
+    it('should return undefined for default projection model when not set', () => {
+      const llmModel = {
+        id: 'test-llm',
+        supportsMultimodal: true,
+      };
+
+      modelStore.models = [llmModel] as any;
+
+      const defaultProj = modelStore.getDefaultProjectionModel('test-llm');
+      expect(defaultProj).toBeUndefined();
+    });
+  });
+
+  // Add tests for model path handling
+  describe('model path handling', () => {
+    beforeEach(() => {
+      // Reset RNFS mock state
+      (RNFS as any).__resetMockState?.();
+    });
+
+    it('should get full path for local model', async () => {
+      const localModel = {
+        isLocal: true,
+        origin: ModelOrigin.LOCAL,
+        fullPath: '/path/to/local/model.gguf',
+      };
+
+      const path = await modelStore.getModelFullPath(localModel as any);
+      expect(path).toBe('/path/to/local/model.gguf');
+    });
+
+    it('should throw error for local model without fullPath', async () => {
+      const localModel = {
+        isLocal: true,
+        origin: ModelOrigin.LOCAL,
+        fullPath: undefined,
+      };
+
+      await expect(
+        modelStore.getModelFullPath(localModel as any),
+      ).rejects.toThrow('Full path is undefined for local model');
+    });
+
+    it('should throw error for model without filename', async () => {
+      const model = {
+        origin: ModelOrigin.PRESET,
+        filename: undefined,
+      };
+
+      await expect(modelStore.getModelFullPath(model as any)).rejects.toThrow(
+        'Model filename is undefined',
+      );
+    });
+
+    it('should get new path for preset model', async () => {
+      const presetModel = {
+        origin: ModelOrigin.PRESET,
+        filename: 'model.gguf',
+        author: 'test-author',
+      };
+
+      // Mock RNFS.exists to return false for old path
+      (RNFS.exists as jest.Mock).mockResolvedValue(false);
+
+      const path = await modelStore.getModelFullPath(presetModel as any);
+      expect(path).toContain('/models/preset/test-author/model.gguf');
+    });
+
+    it('should get old path for preset model if it exists', async () => {
+      const presetModel = {
+        origin: ModelOrigin.PRESET,
+        filename: 'model.gguf',
+        author: 'test-author',
+      };
+
+      // Mock RNFS.exists to return true for old path
+      (RNFS.exists as jest.Mock).mockResolvedValue(true);
+
+      const path = await modelStore.getModelFullPath(presetModel as any);
+      expect(path).toContain('/model.gguf');
+      expect(path).not.toContain('/models/preset/');
+    });
+
+    it('should get path for HF model', async () => {
+      const hfModel = {
+        origin: ModelOrigin.HF,
+        filename: 'model.gguf',
+        author: 'test-author',
+      };
+
+      const path = await modelStore.getModelFullPath(hfModel as any);
+      expect(path).toContain('/models/hf/test-author/model.gguf');
+    });
+
+    it('should handle error when checking old path for preset model', async () => {
+      const presetModel = {
+        origin: ModelOrigin.PRESET,
+        filename: 'model.gguf',
+        author: 'test-author',
+      };
+
+      // Mock RNFS.exists to throw error for old path
+      (RNFS.exists as jest.Mock).mockRejectedValue(
+        new Error('File system error'),
+      );
+
+      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+
+      const path = await modelStore.getModelFullPath(presetModel as any);
+      expect(path).toContain('/models/preset/test-author/model.gguf');
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        'Error checking old path:',
+        expect.any(Error),
+      );
+
+      consoleLogSpy.mockRestore();
+    });
+  });
+
+  // Add tests for download error handling
+  describe('download error handling', () => {
+    beforeEach(() => {
+      modelStore.downloadError = null;
+    });
+
+    it('should clear download error', () => {
+      modelStore.downloadError = {
+        message: 'Test error',
+        type: 'download',
+        source: 'huggingface',
+        metadata: {modelId: 'test-model'},
+      } as any;
+
+      modelStore.clearDownloadError();
+      expect(modelStore.downloadError).toBeNull();
+    });
+
+    it('should retry download when error has modelId', () => {
+      const testModel = {
+        id: 'test-model',
+        isDownloaded: false,
+      };
+      modelStore.models = [testModel] as any;
+      modelStore.downloadError = {
+        message: 'Test error',
+        type: 'download',
+        source: 'huggingface',
+        metadata: {modelId: 'test-model'},
+      } as any;
+
+      const mockCheckSpaceAndDownload = jest.fn();
+      modelStore.checkSpaceAndDownload = mockCheckSpaceAndDownload;
+
+      modelStore.retryDownload();
+
+      expect(modelStore.downloadError).toBeNull();
+      expect(mockCheckSpaceAndDownload).toHaveBeenCalledWith('test-model');
+    });
+
+    it('should not retry download when error has no modelId', () => {
+      modelStore.downloadError = {
+        message: 'Test error',
+        type: 'download',
+        source: 'huggingface',
+        metadata: {},
+      } as any;
+
+      const mockCheckSpaceAndDownload = jest.fn();
+      modelStore.checkSpaceAndDownload = mockCheckSpaceAndDownload;
+
+      modelStore.retryDownload();
+
+      expect(modelStore.downloadError).toBeNull();
+      expect(mockCheckSpaceAndDownload).not.toHaveBeenCalled();
+    });
+
+    it('should not retry download when model not found', () => {
+      modelStore.models = [];
+      modelStore.downloadError = {
+        message: 'Test error',
+        type: 'download',
+        source: 'huggingface',
+        metadata: {modelId: 'non-existent-model'},
+      } as any;
+
+      const mockCheckSpaceAndDownload = jest.fn();
+      modelStore.checkSpaceAndDownload = mockCheckSpaceAndDownload;
+
+      modelStore.retryDownload();
+
+      expect(modelStore.downloadError).toBeNull();
+      expect(mockCheckSpaceAndDownload).not.toHaveBeenCalled();
+    });
+  });
+
+  // Add tests for startImageCompletion
+  describe('startImageCompletion', () => {
+    beforeEach(() => {
+      modelStore.context = undefined;
+      modelStore.inferencing = false;
+      modelStore.isStreaming = false;
+    });
+
+    it('should throw error when no context available', async () => {
+      modelStore.context = undefined;
+
+      await expect(
+        modelStore.startImageCompletion({
+          prompt: 'Test prompt',
+          image_path: '/path/to/image.jpg',
+        }),
+      ).rejects.toThrow('No model context available');
+    });
+
+    it('should throw error when multimodal is not enabled', async () => {
+      const mockContext = {
+        isMultimodalEnabled: jest.fn().mockResolvedValue(false),
+      };
+      modelStore.context = mockContext as any;
+
+      await expect(
+        modelStore.startImageCompletion({
+          prompt: 'Test prompt',
+          image_path: '/path/to/image.jpg',
+        }),
+      ).rejects.toThrow('Multimodal is not enabled for this model');
+    });
+
+    it('should call onError when no images provided', async () => {
+      const mockContext = {
+        isMultimodalEnabled: jest.fn().mockResolvedValue(true),
+      };
+      modelStore.context = mockContext as any;
+
+      // Mock the isMultimodalEnabled method on the store to return true
+      const originalIsMultimodalEnabled = modelStore.isMultimodalEnabled;
+      modelStore.isMultimodalEnabled = jest.fn().mockResolvedValue(true);
+
+      const onError = jest.fn();
+
+      try {
+        await modelStore.startImageCompletion({
+          prompt: 'Test prompt',
+          onError,
+        });
+
+        expect(onError).toHaveBeenCalledWith(
+          expect.objectContaining({
+            message: 'No images provided for multimodal completion',
+          }),
+        );
+      } finally {
+        // Restore original method
+        modelStore.isMultimodalEnabled = originalIsMultimodalEnabled;
+      }
+    });
+
+    it('should handle single image completion successfully', async () => {
+      const mockContext = {
+        isMultimodalEnabled: jest.fn().mockResolvedValue(true),
+        completion: jest.fn().mockResolvedValue({text: 'Response text'}),
+      };
+      modelStore.context = mockContext as any;
+
+      const onToken = jest.fn();
+      const onComplete = jest.fn();
+
+      await modelStore.startImageCompletion({
+        prompt: 'Test prompt',
+        image_path: '/path/to/image.jpg',
+        onToken,
+        onComplete,
+      });
+
+      expect(mockContext.completion).toHaveBeenCalled();
+      expect(onComplete).toHaveBeenCalledWith('Response text');
+      expect(modelStore.inferencing).toBe(false);
+      expect(modelStore.isStreaming).toBe(false);
+    });
+
+    it('should handle multiple images completion successfully', async () => {
+      const mockContext = {
+        isMultimodalEnabled: jest.fn().mockResolvedValue(true),
+        completion: jest.fn().mockResolvedValue({text: 'Response text'}),
+      };
+      modelStore.context = mockContext as any;
+
+      const onToken = jest.fn();
+      const onComplete = jest.fn();
+
+      await modelStore.startImageCompletion({
+        prompt: 'Test prompt',
+        image_paths: ['/path/to/image1.jpg', '/path/to/image2.jpg'],
+        onToken,
+        onComplete,
+      });
+
+      expect(mockContext.completion).toHaveBeenCalled();
+      expect(onComplete).toHaveBeenCalledWith('Response text');
+    });
+
+    it('should handle completion error', async () => {
+      const mockContext = {
+        isMultimodalEnabled: jest.fn().mockResolvedValue(true),
+        completion: jest.fn().mockRejectedValue(new Error('Completion error')),
+      };
+      modelStore.context = mockContext as any;
+
+      const onError = jest.fn();
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      await modelStore.startImageCompletion({
+        prompt: 'Test prompt',
+        image_path: '/path/to/image.jpg',
+        onError,
+      });
+
+      expect(onError).toHaveBeenCalledWith(expect.any(Error));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error in multi-image completion:',
+        expect.any(Error),
+      );
+      expect(modelStore.inferencing).toBe(false);
+      expect(modelStore.isStreaming).toBe(false);
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should process file:// paths correctly for iOS', async () => {
+      // Mock Platform.OS to be 'ios'
+      const originalPlatform = require('react-native').Platform.OS;
+      require('react-native').Platform.OS = 'ios';
+
+      const mockContext = {
+        isMultimodalEnabled: jest.fn().mockResolvedValue(true),
+        completion: jest.fn().mockResolvedValue({text: 'Response text'}),
+      };
+      modelStore.context = mockContext as any;
+
+      await modelStore.startImageCompletion({
+        prompt: 'Test prompt',
+        image_path: 'file:///path/to/image.jpg',
+      });
+
+      const completionCall = mockContext.completion.mock.calls[0];
+      const params = completionCall[0];
+      const userMessage = params.messages[0];
+      const imageContent = userMessage.content[1];
+
+      expect(imageContent.image_url.url).toBe('/path/to/image.jpg'); // file:// removed
+
+      // Restore original platform
+      require('react-native').Platform.OS = originalPlatform;
+    });
+
+    it('should include system message when provided', async () => {
+      const mockContext = {
+        isMultimodalEnabled: jest.fn().mockResolvedValue(true),
+        completion: jest.fn().mockResolvedValue({text: 'Response text'}),
+      };
+      modelStore.context = mockContext as any;
+
+      await modelStore.startImageCompletion({
+        prompt: 'Test prompt',
+        image_path: '/path/to/image.jpg',
+        systemMessage: 'You are a helpful assistant.',
+      });
+
+      const completionCall = mockContext.completion.mock.calls[0];
+      const params = completionCall[0];
+
+      expect(params.messages).toHaveLength(2);
+      expect(params.messages[0].role).toBe('system');
+      expect(params.messages[0].content).toBe('You are a helpful assistant.');
+    });
+  });
+
+  // Add tests for updateModelHash
+  describe('updateModelHash', () => {
+    beforeEach(() => {
+      // Mock RNFS.hash function
+      (RNFS as any).hash = jest.fn().mockResolvedValue('mock-hash-value');
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should not update hash for non-downloaded model', async () => {
+      const model = {
+        id: 'test-model',
+        isDownloaded: false,
+        hash: undefined,
+      };
+      modelStore.models = [model] as any;
+
+      await modelStore.updateModelHash('test-model');
+
+      expect(model.hash).toBeUndefined();
+    });
+
+    it('should not update hash for model being downloaded', async () => {
+      const model = {
+        id: 'test-model',
+        isDownloaded: true,
+        hash: undefined,
+      };
+      modelStore.models = [model] as any;
+
+      // Mock downloadManager.isDownloading to return true
+      (downloadManager.isDownloading as jest.Mock).mockReturnValue(true);
+
+      await modelStore.updateModelHash('test-model');
+
+      expect(model.hash).toBeUndefined();
+    });
+
+    it('should not update hash if already set and not forced', async () => {
+      const model = {
+        id: 'test-model',
+        isDownloaded: true,
+        hash: 'existing-hash',
+      };
+      modelStore.models = [model] as any;
+
+      // Mock downloadManager.isDownloading to return false
+      (downloadManager.isDownloading as jest.Mock).mockReturnValue(false);
+
+      await modelStore.updateModelHash('test-model', false);
+
+      expect(model.hash).toBe('existing-hash');
+    });
+
+    it('should update hash when forced', async () => {
+      const model = {
+        id: 'test-model',
+        isDownloaded: true,
+        hash: 'existing-hash',
+        filename: 'model.gguf',
+      };
+      modelStore.models = [model] as any;
+
+      // Mock downloadManager.isDownloading to return false
+      (downloadManager.isDownloading as jest.Mock).mockReturnValue(false);
+
+      // Mock getModelFullPath
+      modelStore.getModelFullPath = jest
+        .fn()
+        .mockResolvedValue('/path/to/model.gguf');
+
+      await modelStore.updateModelHash('test-model', true);
+
+      expect(RNFS.hash).toHaveBeenCalledWith('/path/to/model.gguf', 'sha256');
+
+      // Check that the model in the store was updated
+      const updatedModel = modelStore.models.find(m => m.id === 'test-model');
+      expect(updatedModel?.hash).toBe('mock-hash-value');
+    });
+  });
+
+  // Add tests for fetchAndUpdateModelFileDetails
+  describe('fetchAndUpdateModelFileDetails', () => {
+    const {fetchModelFilesDetails} = require('../../api/hf');
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should return early if model has no hfModel.id', async () => {
+      const model = {
+        id: 'test-model',
+        hfModel: undefined,
+      };
+
+      await modelStore.fetchAndUpdateModelFileDetails(model as any);
+
+      // Should not throw or call any APIs
+      expect(fetchModelFilesDetails).not.toHaveBeenCalled();
+    });
+
+    it('should update model file details when matching file found', async () => {
+      const model = {
+        id: 'test-model',
+        hfModel: {id: 'test/model'},
+        hfModelFile: {rfilename: 'model.gguf', lfs: undefined},
+      };
+
+      const mockFileDetails = [
+        {
+          path: 'model.gguf',
+          lfs: {oid: 'test-oid', size: 1000},
+        },
+        {
+          path: 'other-file.txt',
+          lfs: {oid: 'other-oid', size: 500},
+        },
+      ];
+
+      fetchModelFilesDetails.mockResolvedValue(mockFileDetails);
+
+      await modelStore.fetchAndUpdateModelFileDetails(model as any);
+
+      expect(fetchModelFilesDetails).toHaveBeenCalledWith('test/model');
+      expect(model.hfModelFile.lfs).toEqual({oid: 'test-oid', size: 1000});
+    });
+
+    it('should handle error when fetching file details', async () => {
+      const model = {
+        id: 'test-model',
+        hfModel: {id: 'test/model'},
+        hfModelFile: {rfilename: 'model.gguf', lfs: undefined},
+      };
+
+      fetchModelFilesDetails.mockRejectedValue(new Error('API error'));
+
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      await modelStore.fetchAndUpdateModelFileDetails(model as any);
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to fetch model file details:',
+        expect.any(Error),
+      );
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should not update if no matching file found', async () => {
+      const model = {
+        id: 'test-model',
+        hfModel: {id: 'test/model'},
+        hfModelFile: {rfilename: 'model.gguf', lfs: undefined},
+      };
+
+      const mockFileDetails = [
+        {
+          path: 'other-file.txt',
+          lfs: {oid: 'other-oid', size: 500},
+        },
+      ];
+
+      fetchModelFilesDetails.mockResolvedValue(mockFileDetails);
+
+      await modelStore.fetchAndUpdateModelFileDetails(model as any);
+
+      expect(fetchModelFilesDetails).toHaveBeenCalledWith('test/model');
+      expect(model.hfModelFile.lfs).toBeUndefined();
+    });
+
+    it('should not update if matching file has no lfs data', async () => {
+      const model = {
+        id: 'test-model',
+        hfModel: {id: 'test/model'},
+        hfModelFile: {rfilename: 'model.gguf', lfs: undefined},
+      };
+
+      const mockFileDetails = [
+        {
+          path: 'model.gguf',
+          // No lfs property
+        },
+      ];
+
+      fetchModelFilesDetails.mockResolvedValue(mockFileDetails);
+
+      await modelStore.fetchAndUpdateModelFileDetails(model as any);
+
+      expect(fetchModelFilesDetails).toHaveBeenCalledWith('test/model');
+      expect(model.hfModelFile.lfs).toBeUndefined();
     });
   });
 });

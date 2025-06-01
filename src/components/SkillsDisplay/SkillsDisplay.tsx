@@ -69,6 +69,7 @@ export const SkillsDisplay: React.FC<SkillsDisplayProps> = ({
     if (isClickable) {
       return (
         <TouchableOpacity
+          testID="vision-skill-touchable"
           key={skill.key}
           onPress={onVisionPress}
           activeOpacity={0.7}>

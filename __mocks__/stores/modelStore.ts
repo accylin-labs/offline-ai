@@ -38,6 +38,12 @@ class MockModelStore {
   cancelDownload: jest.Mock;
   disableAutoRelease: jest.Mock;
   enableAutoRelease: jest.Mock;
+  deleteModel: jest.Mock;
+  removeModelFromList: jest.Mock;
+  canDeleteProjectionModel: jest.Mock;
+  setDefaultProjectionModel: jest.Mock;
+  isContextLoading: boolean = false;
+  loadingModel: Model | undefined;
 
   constructor() {
     makeAutoObservable(this, {
@@ -57,6 +63,10 @@ class MockModelStore {
       cancelDownload: false,
       disableAutoRelease: false,
       enableAutoRelease: false,
+      deleteModel: false,
+      removeModelFromList: false,
+      canDeleteProjectionModel: false,
+      setDefaultProjectionModel: false,
       lastUsedModel: computed,
       activeModel: computed,
       displayModels: computed,
@@ -79,6 +89,14 @@ class MockModelStore {
     this.cancelDownload = jest.fn();
     this.disableAutoRelease = jest.fn();
     this.enableAutoRelease = jest.fn();
+    this.deleteModel = jest.fn().mockResolvedValue(Promise.resolve());
+    this.removeModelFromList = jest.fn();
+    this.canDeleteProjectionModel = jest.fn().mockReturnValue({
+      canDelete: true,
+      reason: null,
+      dependentModels: [],
+    });
+    this.setDefaultProjectionModel = jest.fn();
   }
 
   setActiveModel = (modelId: string) => {
@@ -131,6 +149,8 @@ class MockModelStore {
     // Mock implementation - return a simple path for tests
     return `/mock/path/${model.filename || model.name}`;
   }
+
+  getCompatibleProjectionModels = jest.fn().mockReturnValue([]);
 }
 
 export const mockModelStore = new MockModelStore();

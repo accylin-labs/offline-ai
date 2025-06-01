@@ -158,7 +158,7 @@ export const ProjectionModelSelector = observer(
     }
 
     return (
-      <View style={styles.container}>
+      <View testID="projection-model-selector" style={styles.container}>
         {/* Optional Header - only show if there are multiple models or user needs to collapse */}
         {compatibleModels.length > 1 && (
           <TouchableOpacity
@@ -205,6 +205,7 @@ export const ProjectionModelSelector = observer(
 
                   return (
                     <View
+                      testID="projection-model-item"
                       key={projModel.id}
                       style={[
                         styles.modelItem,
@@ -240,6 +241,7 @@ export const ProjectionModelSelector = observer(
                         {projModel.isDownloaded ? (
                           <View style={styles.downloadedActions}>
                             <TouchableOpacity
+                              testID="select-projection-model-button"
                               onPress={() => handleSelectModel(projModel.id)}
                               style={[
                                 styles.selectArea,

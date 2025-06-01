@@ -205,6 +205,7 @@ export const DownloadErrorDialog: React.FC<DownloadErrorDialogProps> = ({
   return (
     <Portal>
       <Dialog
+        testID="download-error-dialog"
         visible={visible}
         onDismiss={onDismiss}
         title={getDialogTitle()}
