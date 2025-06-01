@@ -905,7 +905,11 @@ class ModelStore {
       const isMultimodalEnabled = await this.isMultimodalEnabled();
       if (isMultimodalEnabled) {
         console.log('Releasing multimodal context first');
-        await this.context.releaseMultimodal();
+        try {
+          await this.context.releaseMultimodal();
+        } catch (error) {
+          console.error('Error releasing multimodal context:', error);
+        }
       }
 
       // Then release the main context
