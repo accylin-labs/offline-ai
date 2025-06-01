@@ -367,7 +367,11 @@ export const ChatInput = observer(
             ]}>
             {/* Subtle Prompt Label for Video Pals */}
             {palType === PalType.VIDEO && (
-              <Text style={styles.promptLabel}>{l10n.palsScreen.prompt}:</Text>
+              <Text
+                variant="labelSmall"
+                style={[styles.promptLabel, {color: onSurfaceColorVariant}]}>
+                {l10n.palsScreen.prompt}:
+              </Text>
             )}
             <TextInput
               ref={inputRef}

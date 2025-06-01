@@ -213,11 +213,7 @@ export const createStyles = ({
     },
     // Prompt Label for Video Pals
     promptLabel: {
-      fontSize: 11,
-      color: theme.colors.onSurfaceVariant,
-      fontWeight: '500',
       marginBottom: 4,
-      opacity: 0.8,
     },
     inputWithLabel: {
       marginTop: 0,
