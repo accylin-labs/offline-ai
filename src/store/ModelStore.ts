@@ -50,6 +50,7 @@ import {
 
 import {ErrorState, createErrorState} from '../utils/errors';
 import {chatSessionRepository} from '../repositories/ChatSessionRepository';
+import {hasEnoughMemory, isHighEndDevice} from '../hooks/useMemoryCheck';
 
 class ModelStore {
   models: Model[] = [];
@@ -810,6 +811,96 @@ class ModelStore {
       }
     }
 
+    // Check both memory and device capability for models
+    let hasMemory = true;
+    try {
+      hasMemory = await hasEnoughMemory(model, isMultimodalInit);
+    } catch (error) {
+      console.error('Memory check failed:', error);
+      return null;
+    }
+    const isCapable = isMultimodalInit ? await isHighEndDevice() : true;
+
+    // Determine what warnings to show
+    const hasMemoryIssue = !hasMemory;
+    const hasCapabilityIssue = isMultimodalInit && !isCapable;
+
+    if (hasMemoryIssue || hasCapabilityIssue) {
+      console.warn(
+        `Device performance warning for model: ${model.name} - Memory: ${hasMemoryIssue}, Capability: ${hasCapabilityIssue}`,
+      );
+
+      // Determine appropriate alert message
+      let title: string;
+      let message: string;
+
+      if (hasMemoryIssue && hasCapabilityIssue) {
+        // Both memory and multimodal capability issues
+        title = uiStore.l10n.memory.alerts.combinedWarningTitle;
+        message = uiStore.l10n.memory.alerts.combinedWarningMessage;
+      } else if (hasMemoryIssue) {
+        // Only memory issue
+        title = uiStore.l10n.memory.alerts.memoryWarningTitle;
+        message = uiStore.l10n.memory.alerts.memoryWarningMessage;
+      } else {
+        // Only multimodal capability issue
+        title = uiStore.l10n.memory.alerts.multimodalWarningTitle;
+        message = uiStore.l10n.memory.alerts.multimodalWarningMessage;
+      }
+
+      // Show alert and let user decide
+      return new Promise((resolve, reject) => {
+        Alert.alert(title, message, [
+          {
+            text: uiStore.l10n.memory.alerts.cancel,
+            style: 'cancel',
+            onPress: () => {
+              reject(new Error('Model loading cancelled by user'));
+            },
+          },
+          {
+            text: uiStore.l10n.memory.alerts.continue,
+            onPress: async () => {
+              try {
+                const ctx = await this.proceedWithInitialization(
+                  model,
+                  mmProjPath,
+                  isMultimodalInit,
+                  projectionModel,
+                );
+                resolve(ctx);
+              } catch (error) {
+                reject(error);
+              }
+            },
+          },
+        ]);
+      });
+    }
+
+    // If device is capable or not multimodal, proceed with normal initialization
+    return this.proceedWithInitialization(
+      model,
+      mmProjPath,
+      isMultimodalInit,
+      projectionModel,
+    );
+  };
+
+  /**
+   * Proceed with the actual model initialization after device capability checks
+   */
+  private async proceedWithInitialization(
+    model: Model,
+    mmProjPath?: string,
+    isMultimodalInit: boolean = false,
+    projectionModel?: Model,
+  ): Promise<LlamaContext> {
+    const filePath = await this.getModelFullPath(model);
+    if (!filePath) {
+      throw new Error('Model path is undefined');
+    }
+
     runInAction(() => {
       this.isContextLoading = true;
       this.loadingModel = model;
@@ -891,7 +982,7 @@ class ModelStore {
         this.lastUsedModelId = model.id;
       });
     }
-  };
+  }
 
   releaseContext = async () => {
     console.log('attempt to release');

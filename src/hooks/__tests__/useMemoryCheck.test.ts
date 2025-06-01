@@ -30,6 +30,7 @@ describe('useMemoryCheck', () => {
     expect(result.current).toEqual({
       memoryWarning: '',
       shortMemoryWarning: '',
+      multimodalWarning: '',
     });
   });
 
@@ -47,6 +48,7 @@ describe('useMemoryCheck', () => {
     expect(result.current).toEqual({
       memoryWarning: l10n.en.memory.warning,
       shortMemoryWarning: l10n.en.memory.shortWarning,
+      multimodalWarning: '',
     });
   });
 
@@ -74,6 +76,7 @@ describe('useMemoryCheck', () => {
     expect(result.current).toEqual({
       memoryWarning: '',
       shortMemoryWarning: '',
+      multimodalWarning: '',
     });
 
     // Ensure the error is logged. TODO: check if there is a better way.

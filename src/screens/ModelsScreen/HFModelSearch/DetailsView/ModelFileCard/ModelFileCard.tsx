@@ -69,7 +69,11 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
       ),
     ).get();
 
-    const {shortMemoryWarning} = useMemoryCheck(hfAsModel(hfModel, modelFile));
+    const convertedModel = hfAsModel(hfModel, modelFile);
+    const {shortMemoryWarning, multimodalWarning} = useMemoryCheck(
+      convertedModel,
+      convertedModel.supportsMultimodal,
+    );
 
     const warnings = [
       !modelFile.canFitInStorage && {
@@ -83,6 +87,12 @@ export const ModelFileCard: FC<ModelFileCardProps> = observer(
         icon: 'memory',
         message: l10n.models.modelFile.warnings.memory.message,
         shortMessage: shortMemoryWarning,
+      },
+      multimodalWarning && {
+        type: 'multimodal',
+        icon: 'alert-circle-outline',
+        message: multimodalWarning,
+        shortMessage: l10n.memory.shortWarning,
       },
       isLegacyQuantization(modelFile.rfilename) && {
         type: 'legacy',

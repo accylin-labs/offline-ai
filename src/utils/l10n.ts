@@ -121,6 +121,21 @@ export const l10n = {
       shortWarning: 'Memory Warning',
       warning:
         'Warning: Model size may exceed available memory. This could affect performance and stability of your device.',
+      multimodalWarning:
+        'This device may not have sufficient resources for multimodal models.',
+      alerts: {
+        memoryWarningTitle: 'Memory Warning',
+        memoryWarningMessage:
+          'This model may exceed available memory, which could cause instability. Continue loading?',
+        multimodalWarningTitle: 'Device Performance Warning',
+        multimodalWarningMessage:
+          'This device may not have sufficient resources for multimodal models. Loading may cause instability. Continue anyway?',
+        combinedWarningTitle: 'Performance Warning',
+        combinedWarningMessage:
+          'This model may exceed available memory and this device may not have sufficient resources for multimodal models. Loading may cause instability. Continue anyway?',
+        cancel: 'Cancel',
+        continue: 'Continue',
+      },
     },
     storage: {
       checkFailed: 'Failed to check storage',
@@ -1092,6 +1107,21 @@ export const l10n = {
       shortWarning: 'メモリ警告',
       warning:
         '警告：モデルサイズが利用可能なメモリを超える可能性があります。デバイスのパフォーマンスと安定性に影響する可能性があります。',
+      multimodalWarning:
+        'このデバイスはマルチモーダルモデルに十分なリソースがない可能性があります。',
+      alerts: {
+        memoryWarningTitle: 'メモリ警告',
+        memoryWarningMessage:
+          'このモデルは利用可能なメモリを超える可能性があり、不安定になる可能性があります。読み込みを続行しますか？',
+        multimodalWarningTitle: 'デバイス性能警告',
+        multimodalWarningMessage:
+          'このデバイスはマルチモーダルモデルに十分なリソースがない可能性があります。読み込みにより不安定になる可能性があります。続行しますか？',
+        combinedWarningTitle: '性能警告',
+        combinedWarningMessage:
+          'このモデルは利用可能なメモリを超える可能性があり、このデバイスはマルチモーダルモデルに十分なリソースがない可能性があります。読み込みにより不安定になる可能性があります。続行しますか？',
+        cancel: 'キャンセル',
+        continue: '続行',
+      },
     },
     storage: {
       checkFailed: 'ストレージの確認に失敗しました',
@@ -2055,6 +2085,20 @@ export const l10n = {
       shortWarning: '内存警告',
       warning:
         '警告：模型大小可能会超过可用内存，这可能会影响设备的性能和稳定性',
+      multimodalWarning: '此设备可能没有足够的资源运行多模态模型。',
+      alerts: {
+        memoryWarningTitle: '内存警告',
+        memoryWarningMessage:
+          '此模型可能超过可用内存，这可能导致不稳定。继续加载吗？',
+        multimodalWarningTitle: '设备性能警告',
+        multimodalWarningMessage:
+          '此设备可能没有足够的资源运行多模态模型。加载可能导致不稳定。仍要继续吗？',
+        combinedWarningTitle: '性能警告',
+        combinedWarningMessage:
+          '此模型可能超过可用内存，且此设备可能没有足够的资源运行多模态模型。加载可能导致不稳定。仍要继续吗？',
+        cancel: '取消',
+        continue: '继续',
+      },
     },
     storage: {
       checkFailed: '检查存储失败',

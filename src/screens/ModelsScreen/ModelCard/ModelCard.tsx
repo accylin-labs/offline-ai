@@ -58,7 +58,8 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     const [integrityError, setIntegrityError] = useState<string | null>(null);
     const [showProjectionSelector, setShowProjectionSelector] = useState(false);
 
-    const {memoryWarning, shortMemoryWarning} = useMemoryCheck(model);
+    const {memoryWarning, shortMemoryWarning, multimodalWarning} =
+      useMemoryCheck(model, model.supportsMultimodal);
     const {isOk: storageOk, message: storageNOkMessage} = useStorageCheck(
       model,
       {enablePeriodicCheck: true, checkInterval: 10000},
@@ -324,8 +325,8 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                 </View>
               </View>
 
-              {/* Display warning icon if there's a memory warning */}
-              {shortMemoryWarning && isDownloaded && (
+              {/* Display warning icon if there's a memory or multimodal warning */}
+              {(shortMemoryWarning || multimodalWarning) && isDownloaded && (
                 <TouchableRipple
                   testID="memory-warning-button"
                   onPress={handleWarningPress}
@@ -337,7 +338,9 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                       size={20}
                       style={styles.warningIcon}
                     />
-                    <Text style={styles.warningText}>{shortMemoryWarning}</Text>
+                    <Text style={styles.warningText}>
+                      {shortMemoryWarning || multimodalWarning}
+                    </Text>
                   </View>
                 </TouchableRipple>
               )}
@@ -446,7 +449,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
               setSnackbarVisible(false);
             },
           }}>
-          {memoryWarning}
+          {memoryWarning || multimodalWarning}
         </Snackbar>
       </>
     );
