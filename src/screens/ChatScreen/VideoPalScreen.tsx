@@ -5,7 +5,7 @@ import {ChatView, EmbeddedVideoView} from '../../components';
 import {L10nContext, UserContext} from '../../utils';
 import {modelStore, palStore} from '../../store';
 import 'react-native-get-random-values';
-import {user as defaultUser, assistant} from '../../utils/chat';
+import {user as defaultUser} from '../../utils/chat';
 import {PalType} from '../../components/PalsSheets/types';
 import {VideoPal} from '../../store/PalStore';
 
@@ -178,7 +178,7 @@ export const VideoPalScreen = observer(() => {
 
   // Handle image capture from the video stream
   const handleImageCapture = useCallback(
-    async (imagePath: string) => {
+    async (imageBase64: string) => {
       // Don't process if we're stopping the camera
       if (isStoppingCamera) {
         return;
@@ -199,10 +199,10 @@ export const VideoPalScreen = observer(() => {
       const systemPrompt = activeVideoPal?.systemPrompt || '';
 
       try {
-        // Start the completion with the image using the user-editable prompt
+        // Start the completion with the base64 image using the user-editable prompt
         await modelStore.startImageCompletion({
           prompt: promptText,
-          image_path: imagePath,
+          image_path: imageBase64, // Now passing base64 data URL instead of file path
           systemMessage: systemPrompt,
           onToken: token => {
             // Only update response text if we're not stopping the camera
@@ -249,19 +249,7 @@ export const VideoPalScreen = observer(() => {
         ) : (
           // Regular chat view when camera is not active
           <ChatView
-            messages={
-              responseText
-                ? [
-                    {
-                      id: 'video-analysis',
-                      text: responseText,
-                      createdAt: Date.now(),
-                      author: assistant,
-                      type: 'text',
-                    },
-                  ]
-                : []
-            }
+            messages={[]}
             onSendPress={() => {}}
             onStopPress={() => modelStore.context?.stopCompletion()}
             user={user}
