@@ -415,6 +415,7 @@ export const ChatInput = observer(
                   <Menu
                     visible={showImageUploadMenu}
                     onDismiss={() => setShowImageUploadMenu(false)}
+                    anchorPosition="top"
                     anchor={
                       <TouchableOpacity
                         style={styles.plusButton}
