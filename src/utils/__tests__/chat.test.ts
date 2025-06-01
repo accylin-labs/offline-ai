@@ -48,7 +48,7 @@ describe('convertToChatMessages', () => {
     ] as ChatMessage[]);
   });
 
-  it('should convert multimodal messages with images correctly', () => {
+  it('should convert multimodal messages with images correctly when multimodal is enabled', () => {
     const messages: MessageType.Text[] = [
       {
         id: '1',
@@ -67,7 +67,7 @@ describe('convertToChatMessages', () => {
       },
     ];
 
-    const result = convertToChatMessages(messages);
+    const result = convertToChatMessages(messages, true);
 
     expect(result).toEqual([
       {
@@ -90,6 +90,39 @@ describe('convertToChatMessages', () => {
             image_url: {url: 'file:///path/to/image2.jpg'},
           },
         ],
+      },
+    ] as ChatMessage[]);
+  });
+
+  it('should convert multimodal messages to text-only when multimodal is disabled', () => {
+    const messages: MessageType.Text[] = [
+      {
+        id: '1',
+        author: user,
+        text: 'Look at this image',
+        type: 'text',
+        imageUris: ['file:///path/to/image1.jpg', 'file:///path/to/image2.jpg'],
+        createdAt: Date.now(),
+      },
+      {
+        id: '2',
+        author: assistant,
+        text: 'I can see the images',
+        type: 'text',
+        createdAt: Date.now(),
+      },
+    ];
+
+    const result = convertToChatMessages(messages, false);
+
+    expect(result).toEqual([
+      {
+        role: 'assistant',
+        content: 'I can see the images',
+      },
+      {
+        role: 'user',
+        content: 'Look at this image', // Images should be stripped, only text remains
       },
     ] as ChatMessage[]);
   });
@@ -127,7 +160,7 @@ describe('convertToChatMessages', () => {
       },
     ];
 
-    const result = convertToChatMessages(messages);
+    const result = convertToChatMessages(messages, true);
 
     expect(result).toEqual([
       {
@@ -185,7 +218,7 @@ describe('convertToChatMessages', () => {
       },
     ];
 
-    const result = convertToChatMessages(messages);
+    const result = convertToChatMessages(messages, true);
 
     expect(result).toEqual([
       {

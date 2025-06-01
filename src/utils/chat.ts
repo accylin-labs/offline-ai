@@ -18,6 +18,7 @@ export const assistant = {id: assistantId};
 
 export function convertToChatMessages(
   messages: MessageType.Any[],
+  isMultimodalEnabled: boolean = true,
 ): ChatMessage[] {
   return messages
     .filter(message => message.type === 'text' && message.text !== undefined)
@@ -26,8 +27,12 @@ export function convertToChatMessages(
       const role: 'assistant' | 'user' =
         message.author.id === assistant.id ? 'assistant' : 'user';
 
-      // Check if this message has images (multimodal)
-      if (textMessage.imageUris && textMessage.imageUris.length > 0) {
+      // Check if this message has images (multimodal) and if multimodal is enabled
+      if (
+        textMessage.imageUris &&
+        textMessage.imageUris.length > 0 &&
+        isMultimodalEnabled
+      ) {
         // Create multimodal content with text and images
         const content: Array<{
           type: 'text' | 'image_url';

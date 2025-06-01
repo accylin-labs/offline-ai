@@ -77,6 +77,7 @@ const prepareCompletion = async ({
     chatSessionStore.currentSessionMessages.filter(
       msg => msg.id !== textMessage.id && msg.type !== 'image',
     ),
+    isMultimodalEnabled,
   );
 
   // Check if we should include thinking parts in the context
