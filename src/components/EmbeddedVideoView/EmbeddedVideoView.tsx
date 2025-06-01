@@ -7,20 +7,24 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+
+import {observer} from 'mobx-react';
+import 'react-native-get-random-values';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ResponseBubble} from '../ResponseBubble';
 import {
   Camera,
   useCameraDevice,
   useCameraPermission,
   CameraPosition,
 } from 'react-native-vision-camera';
-import {observer} from 'mobx-react';
+
 import {useTheme} from '../../hooks';
+
 import {createStyles} from './styles';
+import {ResponseBubble} from '../ResponseBubble';
+
 import {L10nContext} from '../../utils';
-import 'react-native-get-random-values';
 
 interface EmbeddedVideoViewProps {
   onCapture: (imageBase64: string) => void;
@@ -45,7 +49,6 @@ export const EmbeddedVideoView = observer(
     const [cameraPosition, setCameraPosition] =
       useState<CameraPosition>('back');
     const [isCapturing, setIsCapturing] = useState(false);
-    const [isCameraActive, setIsCameraActive] = useState(true);
     const camera = useRef<Camera>(null);
     const device = useCameraDevice(cameraPosition);
     const captureTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -104,7 +107,7 @@ export const EmbeddedVideoView = observer(
       stopCapturing();
 
       captureTimerRef.current = setInterval(async () => {
-        if (camera.current && !isCapturing && isCameraActive) {
+        if (camera.current && !isCapturing) {
           setIsCapturing(true);
           try {
             const photo = await camera.current.takePhoto({
@@ -133,24 +136,13 @@ export const EmbeddedVideoView = observer(
             onCapture(imageBase64);
           } catch (error) {
             // Only log error if camera is still supposed to be active
-            if (isCameraActive) {
-              console.error(
-                'Error taking photo or converting to base64:',
-                error,
-              );
-            }
+            console.error('Error taking photo or converting to base64:', error);
           } finally {
             setIsCapturing(false);
           }
         }
       }, captureInterval);
-    }, [
-      stopCapturing,
-      captureInterval,
-      isCapturing,
-      onCapture,
-      isCameraActive,
-    ]);
+    }, [stopCapturing, captureInterval, isCapturing, onCapture]);
 
     // Start capturing frames at the specified interval
     useEffect(() => {
@@ -159,7 +151,6 @@ export const EmbeddedVideoView = observer(
       }
 
       return () => {
-        setIsCameraActive(false); // Mark camera as inactive to prevent further captures
         stopCapturing();
       };
     }, [hasPermission, device, captureInterval, startCapturing, stopCapturing]);
