@@ -34,7 +34,7 @@ describe('convertToChatMessages', () => {
       },
     ];
 
-    const result = convertToChatMessages(messages);
+    const result = convertToChatMessages(messages, true);
 
     expect(result).toEqual([
       {
