@@ -4,7 +4,12 @@ import {render} from '@testing-library/react-native';
 import {ModelTypeTag, ModelType} from '../ModelTypeTag';
 
 // Mock react-native-vector-icons
-jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => 'Icon');
+jest.mock('react-native-vector-icons/MaterialCommunityIcons', () => {
+  return (props: any) => {
+    const {View} = require('react-native');
+    return <View testID="mock-icon" {...props} />;
+  };
+});
 
 // Mock useTheme hook
 jest.mock('../../../hooks', () => ({
@@ -69,81 +74,77 @@ describe('ModelTypeTag', () => {
   });
 
   it('uses correct icon for vision type', () => {
-    const {UNSAFE_getByType} = render(<ModelTypeTag type="vision" />);
+    const {getByTestId} = render(<ModelTypeTag type="vision" />);
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.name).toBe('eye');
   });
 
   it('uses correct icon for mmproj type', () => {
-    const {UNSAFE_getByType} = render(<ModelTypeTag type="mmproj" />);
+    const {getByTestId} = render(<ModelTypeTag type="mmproj" />);
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.name).toBe('image-outline');
   });
 
   it('uses correct icon for llm type', () => {
-    const {UNSAFE_getByType} = render(<ModelTypeTag type="llm" />);
+    const {getByTestId} = render(<ModelTypeTag type="llm" />);
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.name).toBe('brain');
   });
 
   it('uses correct icon size for small size', () => {
-    const {UNSAFE_getByType} = render(
-      <ModelTypeTag type="vision" size="small" />,
-    );
+    const {getByTestId} = render(<ModelTypeTag type="vision" size="small" />);
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.size).toBe(12);
   });
 
   it('uses correct icon size for medium size', () => {
-    const {UNSAFE_getByType} = render(
-      <ModelTypeTag type="vision" size="medium" />,
-    );
+    const {getByTestId} = render(<ModelTypeTag type="vision" size="medium" />);
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.size).toBe(16);
   });
 
   it('uses correct color for vision type', () => {
-    const {UNSAFE_getByType} = render(<ModelTypeTag type="vision" />);
+    const {getByTestId} = render(<ModelTypeTag type="vision" />);
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.color).toBe('#FF6B35'); // tertiary color
   });
 
   it('uses correct color for mmproj type', () => {
-    const {UNSAFE_getByType} = render(<ModelTypeTag type="mmproj" />);
+    const {getByTestId} = render(<ModelTypeTag type="mmproj" />);
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.color).toBe('#FF6B35'); // tertiary color
   });
 
   it('uses correct color for llm type', () => {
-    const {UNSAFE_getByType} = render(<ModelTypeTag type="llm" />);
+    const {getByTestId} = render(<ModelTypeTag type="llm" />);
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.color).toBe('#4ECDC4'); // secondary color
   });
 
   it('handles unknown type gracefully', () => {
-    const {UNSAFE_getByType} = render(
+    const {getByTestId} = render(
       <ModelTypeTag type={'unknown' as ModelType} />,
     );
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     expect(icon.props.name).toBe('cube-outline');
     expect(icon.props.color).toBe('#666666'); // onSurfaceVariant color
   });
 
   it('renders both icon and label when both are provided', () => {
-    const {UNSAFE_getByType, getByText} = render(
+    const {getByTestId, getByText} = render(
       <ModelTypeTag type="vision" label="Vision Model" />,
     );
 
-    const icon = UNSAFE_getByType('Icon');
+    const icon = getByTestId('mock-icon');
     const label = getByText('Vision Model');
 
     expect(icon).toBeTruthy();

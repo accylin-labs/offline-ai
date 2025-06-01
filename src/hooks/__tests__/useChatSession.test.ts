@@ -288,7 +288,9 @@ describe('useChatSession', () => {
       if (shouldInclude && systemPrompt?.trim()) {
         // Check that a system message was included in the messages passed to completion
         expect(capturedMessages.some(msg => msg.role === 'system')).toBe(true);
-        const systemMessage = capturedMessages.find(msg => msg.role === 'system');
+        const systemMessage = capturedMessages.find(
+          msg => msg.role === 'system',
+        );
         expect(systemMessage.content).toBe(systemPrompt);
       } else {
         // Check that no system message was included

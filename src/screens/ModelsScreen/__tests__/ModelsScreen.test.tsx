@@ -4,11 +4,10 @@ import {Alert} from 'react-native';
 import * as RNFS from '@dr.pogodin/react-native-fs';
 import DocumentPicker from 'react-native-document-picker';
 import {fireEvent, render, waitFor, act} from '../../../../jest/test-utils';
-import {runInAction} from 'mobx';
 
 import {ModelsScreen} from '../ModelsScreen';
 
-import {modelStore, hfStore, uiStore} from '../../../store';
+import {modelStore, uiStore} from '../../../store';
 import {
   basicModel,
   downloadedModel,
