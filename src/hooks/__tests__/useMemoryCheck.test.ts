@@ -3,6 +3,9 @@ import {renderHook} from '@testing-library/react-hooks';
 
 import {largeMemoryModel, localModel} from '../../../jest/fixtures/models';
 
+// Unmock the hook for actual testing
+jest.unmock('../useMemoryCheck');
+
 import {useMemoryCheck} from '../useMemoryCheck';
 
 import {l10n} from '../../utils/l10n';

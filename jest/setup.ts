@@ -86,6 +86,16 @@ jest.mock('../src/hooks/useTheme', () => {
   };
 });
 
+jest.mock('../src/hooks/useMemoryCheck', () => ({
+  useMemoryCheck: jest.fn().mockReturnValue({
+    memoryWarning: '',
+    shortMemoryWarning: '',
+    multimodalWarning: '',
+  }),
+  hasEnoughMemory: jest.fn().mockResolvedValue(true),
+  isHighEndDevice: jest.fn().mockResolvedValue(true),
+}));
+
 jest.mock('../src/services/downloads', () => ({
   downloadManager: require('../__mocks__/services/downloads').downloadManager,
 }));

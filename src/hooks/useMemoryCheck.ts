@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import DeviceInfo from 'react-native-device-info';
-import {Platform, NativeModules} from 'react-native';
+import {NativeModules} from 'react-native';
 import {Model} from '../utils/types';
 import {L10nContext} from '../utils';
 

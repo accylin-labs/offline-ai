@@ -9,6 +9,9 @@ import {
   largeMemoryModel,
 } from '../../../../../jest/fixtures/models';
 
+// Unmock useMemoryCheck for memory warning tests
+jest.unmock('../../../../hooks/useMemoryCheck');
+
 import {ModelCard} from '../ModelCard';
 
 import {downloadManager} from '../../../../services/downloads';
@@ -64,7 +67,9 @@ describe('ModelCard', () => {
     });
 
     // Snackbar
-    fireEvent.press(getByTestId('memory-warning-button'));
+    act(() => {
+      fireEvent.press(getByTestId('memory-warning-button'));
+    });
     await waitFor(() => {
       expect(getByText(l10n.en.common.dismiss)).toBeTruthy();
       expect(queryByTestId('memory-warning-snackbar')).toBeTruthy();
