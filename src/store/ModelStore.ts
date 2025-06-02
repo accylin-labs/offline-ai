@@ -604,12 +604,51 @@ class ModelStore {
     });
   };
 
+  /**
+   * Private method to handle projection model download for vision models
+   * @param model The vision model that needs its projection model downloaded
+   */
+  private _downloadProjectionModelIfNeeded = async (model: Model) => {
+    // Only auto-download for vision models that aren't projection models themselves
+    if (
+      !model.supportsMultimodal ||
+      !model.defaultProjectionModel ||
+      model.modelType === ModelType.PROJECTION
+    ) {
+      return;
+    }
+
+    const projModelId = model.defaultProjectionModel;
+    const projModel = this.models.find(m => m.id === projModelId);
+
+    if (
+      projModel &&
+      !projModel.isDownloaded &&
+      !downloadManager.isDownloading(projModelId)
+    ) {
+      console.log('Auto-downloading projection model for vision model:', {
+        llm: model.id,
+        projection: projModelId,
+      });
+
+      try {
+        // Download the projection model
+        await this.checkSpaceAndDownload(projModelId);
+      } catch (error) {
+        console.error('Failed to auto-download projection model:', error);
+        // Don't re-throw - projection model download failure shouldn't fail the main model download
+        // The user can manually download the projection model later if needed
+      }
+    }
+  };
+
   checkSpaceAndDownload = async (modelId: string) => {
     const model = this.models.find(m => m.id === modelId);
-    // Skip if model is undefined, local or doesn't have a download URL
+    // Skip if model is undefined, already downloaded, local or doesn't have a download URL
     // TODO: we need a better way to handle this. Why this could ever happen?
     if (
       !model ||
+      model.isDownloaded ||
       model.isLocal ||
       model.origin === ModelOrigin.LOCAL ||
       !model.downloadUrl
@@ -621,6 +660,9 @@ class ModelStore {
       const destinationPath = await this.getModelFullPath(model);
       const authToken = hfStore.shouldUseToken ? hfStore.hfToken : null;
       await downloadManager.startDownload(model, destinationPath, authToken);
+
+      // For vision models, automatically download the projection model
+      await this._downloadProjectionModelIfNeeded(model);
     } catch (err) {
       console.error('Failed to start download:', err);
 
@@ -1039,49 +1081,16 @@ class ModelStore {
     this.activeModelId = modelId;
   }
 
-  downloadHFModel = async (
-    hfModel: HuggingFaceModel,
-    modelFile: ModelFile,
-    options?: {
-      downloadProjectionModel?: boolean;
-    },
-  ) => {
+  downloadHFModel = async (hfModel: HuggingFaceModel, modelFile: ModelFile) => {
     try {
       const newModel = await this.addHFModel(hfModel, modelFile);
 
-      // For vision models, automatically download the projection model
-      if (
-        newModel.supportsMultimodal &&
-        newModel.defaultProjectionModel &&
-        (options?.downloadProjectionModel ?? true)
-      ) {
-        const projModelId = newModel.defaultProjectionModel;
+      // Wait a bit to ensure the projection model is added to the store
+      // This is needed because addHFModel adds mmproj models asynchronously
+      await new Promise(resolve => setTimeout(resolve, 200));
 
-        // Wait a bit to ensure the projection model is added to the store
-        await new Promise(resolve => setTimeout(resolve, 200));
-
-        const projModel = this.models.find(m => m.id === projModelId);
-
-        if (projModel && !projModel.isDownloaded) {
-          // Start downloading both models
-          console.log('Downloading vision model with projection model:', {
-            llm: newModel.id,
-            projection: projModelId,
-          });
-
-          // Download the LLM first
-          this.checkSpaceAndDownload(newModel.id);
-
-          // Then download the projection model
-          this.checkSpaceAndDownload(projModelId);
-        } else {
-          // Just download the LLM
-          this.checkSpaceAndDownload(newModel.id);
-        }
-      } else {
-        // Regular model download
-        this.checkSpaceAndDownload(newModel.id);
-      }
+      // Use the centralized download method which handles mmproj automatically
+      this.checkSpaceAndDownload(newModel.id);
 
       // The error handling is now done in the downloadManager callbacks
     } catch (error) {
