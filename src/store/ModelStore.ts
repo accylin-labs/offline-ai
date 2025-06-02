@@ -1561,6 +1561,26 @@ class ModelStore {
   };
 
   /**
+   * Check if a vision model has its required projection model downloaded
+   * @param model The vision model to check
+   * @returns true if the model doesn't need a projection model or if it has one downloaded
+   */
+  hasRequiredProjectionModel = (model: Model): boolean => {
+    // Non-multimodal models don't need projection models
+    if (!model.supportsMultimodal || !model.defaultProjectionModel) {
+      return true;
+    }
+
+    // Find the projection model
+    const projectionModel = this.models.find(
+      m => m.id === model.defaultProjectionModel,
+    );
+
+    // Return true if projection model exists and is downloaded
+    return projectionModel?.isDownloaded ?? false;
+  };
+
+  /**
    * Check if a projection model can be safely deleted
    * @param projectionModelId The ID of the projection model to check
    * @returns Object with canDelete flag and reason if deletion is blocked

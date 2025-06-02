@@ -70,6 +70,12 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     const isDownloading = modelStore.isDownloading(model.id);
     const isHfModel = model.origin === ModelOrigin.HF;
 
+    // Check if projection model is missing for downloaded vision models
+    const hasProjectionModelWarning =
+      isDownloaded &&
+      model.supportsMultimodal &&
+      !modelStore.hasRequiredProjectionModel(model);
+
     // Check integrity when model is downloaded
     useEffect(() => {
       if (isDownloaded) {
@@ -197,6 +203,16 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
       setSnackbarVisible(true);
     };
 
+    const handleProjectionWarningPress = useCallback(() => {
+      if (model.defaultProjectionModel) {
+        // Try to download the missing projection model
+        modelStore.checkSpaceAndDownload(model.defaultProjectionModel);
+      } else {
+        // Show projection model selector if no default is set
+        setShowProjectionSelector(true);
+      }
+    }, [model.defaultProjectionModel]);
+
     const renderDownloadOverlay = () => (
       <View>
         {!storageOk && (
@@ -321,6 +337,8 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                         ? toggleProjectionSelector
                         : undefined
                     }
+                    hasProjectionModelWarning={hasProjectionModelWarning}
+                    onProjectionWarningPress={handleProjectionWarningPress}
                   />
                 </View>
               </View>
