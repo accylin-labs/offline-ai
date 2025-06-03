@@ -401,10 +401,10 @@ describe('ModelCard', () => {
         defaultProjectionModel: 'missing/projection-model',
       };
 
-      // Mock hasRequiredProjectionModel to return false
-      (modelStore.hasRequiredProjectionModel as jest.Mock) = jest
+      // Mock getProjectionModelStatus to return false
+      (modelStore.getProjectionModelStatus as jest.Mock) = jest
         .fn()
-        .mockReturnValue(false);
+        .mockReturnValue({isAvailable: false, state: 'missing'});
 
       const {getByTestId} = customRender(
         <ModelCard model={visionModelWithMissingProjection} />,
@@ -422,10 +422,10 @@ describe('ModelCard', () => {
         defaultProjectionModel: 'missing/projection-model',
       };
 
-      // Mock hasRequiredProjectionModel to return false
-      (modelStore.hasRequiredProjectionModel as jest.Mock) = jest
+      // Mock getProjectionModelStatus to return false
+      (modelStore.getProjectionModelStatus as jest.Mock) = jest
         .fn()
-        .mockReturnValue(false);
+        .mockReturnValue({isAvailable: false, state: 'missing'});
 
       const {getByTestId} = customRender(
         <ModelCard model={visionModelWithMissingProjection} />,

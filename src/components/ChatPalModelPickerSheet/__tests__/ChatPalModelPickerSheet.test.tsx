@@ -29,6 +29,10 @@ jest.mock('../../../store', () => ({
     activeModelId: 'model1',
     initContext: jest.fn(),
     hasRequiredProjectionModel: jest.fn().mockReturnValue(true),
+    getProjectionModelStatus: jest.fn().mockReturnValue({
+      isAvailable: true,
+      state: 'not_needed',
+    }),
   },
   palStore: {
     pals: [

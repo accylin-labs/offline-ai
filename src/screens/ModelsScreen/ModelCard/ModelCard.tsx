@@ -70,11 +70,12 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
     const isDownloading = modelStore.isDownloading(model.id);
     const isHfModel = model.origin === ModelOrigin.HF;
 
-    // Check if projection model is missing for downloaded vision models
+    // Check projection model status for downloaded vision models
+    const projectionModelStatus = modelStore.getProjectionModelStatus(model);
     const hasProjectionModelWarning =
       isDownloaded &&
       model.supportsMultimodal &&
-      !modelStore.hasRequiredProjectionModel(model);
+      projectionModelStatus.state === 'missing';
 
     // Check integrity when model is downloaded
     useEffect(() => {

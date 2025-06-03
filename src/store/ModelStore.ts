@@ -1589,9 +1589,28 @@ class ModelStore {
    * @returns true if the model doesn't need a projection model or if it has one downloaded
    */
   hasRequiredProjectionModel = (model: Model): boolean => {
+    const status = this.getProjectionModelStatus(model);
+    return status.isAvailable;
+  };
+
+  /**
+   * Get detailed status of a vision model's projection model
+   * @param model The vision model to check
+   * @returns Object with availability status and detailed state information
+   */
+  getProjectionModelStatus = (
+    model: Model,
+  ): {
+    isAvailable: boolean;
+    state: 'not_needed' | 'downloaded' | 'downloading' | 'missing';
+    projectionModel?: Model;
+  } => {
     // Non-multimodal models don't need projection models
     if (!model.supportsMultimodal || !model.defaultProjectionModel) {
-      return true;
+      return {
+        isAvailable: true,
+        state: 'not_needed',
+      };
     }
 
     // Find the projection model
@@ -1599,8 +1618,37 @@ class ModelStore {
       m => m.id === model.defaultProjectionModel,
     );
 
-    // Return true if projection model exists and is downloaded
-    return projectionModel?.isDownloaded ?? false;
+    if (!projectionModel) {
+      return {
+        isAvailable: false,
+        state: 'missing',
+      };
+    }
+
+    // Check if projection model is downloaded
+    if (projectionModel.isDownloaded) {
+      return {
+        isAvailable: true,
+        state: 'downloaded',
+        projectionModel,
+      };
+    }
+
+    // Check if projection model is currently downloading
+    if (downloadManager.isDownloading(projectionModel.id)) {
+      return {
+        isAvailable: true, // Consider it available during download
+        state: 'downloading',
+        projectionModel,
+      };
+    }
+
+    // Projection model exists but is not downloaded and not downloading
+    return {
+      isAvailable: false,
+      state: 'missing',
+      projectionModel,
+    };
   };
 
   /**

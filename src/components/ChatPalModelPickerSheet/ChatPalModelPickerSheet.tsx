@@ -198,7 +198,8 @@ export const ChatPalModelPickerSheet = observer(
                   model={model}
                   hasProjectionModelWarning={
                     model.supportsMultimodal &&
-                    !modelStore.hasRequiredProjectionModel(model)
+                    modelStore.getProjectionModelStatus(model).state ===
+                      'missing'
                   }
                   onProjectionWarningPress={() =>
                     model.defaultProjectionModel &&
