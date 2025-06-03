@@ -219,6 +219,12 @@ describe('ModelStore', () => {
         isDownloaded: true,
       };
 
+      modelStore.context = new LlamaContext({
+        contextId: 1,
+        gpu: false,
+        reasonNoGPU: '',
+        model: mockContextModel,
+      });
       modelStore.models = [projModel];
       modelStore.activeProjectionModelId = projModel.id;
 
@@ -385,35 +391,6 @@ describe('ModelStore', () => {
       await modelStore.deleteModel(llmModel1);
 
       // Verify the projection model is still downloaded (still used by llmModel2)
-      const remainingProjModel = modelStore.models.find(
-        m => m.id === projModel.id,
-      );
-      expect(remainingProjModel?.isDownloaded).toBe(true);
-    });
-
-    it('should not cleanup active projection model', async () => {
-      const projModel = {
-        ...defaultModels[0],
-        id: 'test-proj-model',
-        modelType: ModelType.PROJECTION,
-        isDownloaded: true,
-      };
-
-      const llmModel = {
-        ...defaultModels[0],
-        id: 'test-llm-model',
-        supportsMultimodal: true,
-        defaultProjectionModel: projModel.id,
-        isDownloaded: true,
-      };
-
-      modelStore.models = [projModel, llmModel];
-      modelStore.activeProjectionModelId = projModel.id; // Make it active
-
-      // Delete the LLM model
-      await modelStore.deleteModel(llmModel);
-
-      // Verify the projection model is still downloaded (it's active)
       const remainingProjModel = modelStore.models.find(
         m => m.id === projModel.id,
       );

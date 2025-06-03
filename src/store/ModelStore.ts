@@ -761,19 +761,20 @@ class ModelStore {
     const filePath = await this.getModelFullPath(_model);
     if (_model.isLocal || _model.origin === ModelOrigin.LOCAL) {
       // Local models are always removed from the list, when the file is deleted.
+
+      // Check if we need to release context (if this model is currently active)
+      const needsContextRelease = this.activeModelId === _model.id;
+
+      // Remove model from list first
       runInAction(() => {
         this.models.splice(modelIndex, 1);
-        if (this.activeModelId === _model.id) {
-          this.releaseContext();
-        }
-        // If this is a projection model, clear it from active projection
-        if (
-          _model.modelType === ModelType.PROJECTION &&
-          this.activeProjectionModelId === _model.id
-        ) {
-          this.activeProjectionModelId = undefined;
-        }
       });
+
+      // Release context if needed - this will handle all state cleanup
+      if (needsContextRelease) {
+        await this.releaseContext(true); // Clear active model and all related state
+      }
+
       // Delete the file from internal storage
       try {
         await RNFS.unlink(filePath);
@@ -787,21 +788,21 @@ class ModelStore {
       try {
         if (filePath) {
           await RNFS.unlink(filePath);
+
+          // Check if we need to release context (if this model is currently active)
+          const needsContextRelease = this.activeModelId === _model.id;
+
+          // Update model state first
           runInAction(() => {
             _model.progress = 0;
             _model.isDownloaded = false; // Mark as not downloaded after successful deletion
-            if (this.activeModelId === _model.id) {
-              this.releaseContext();
-              this.activeModelId = undefined;
-            }
-            // If this is a projection model, clear it from active projection
-            if (
-              _model.modelType === ModelType.PROJECTION &&
-              this.activeProjectionModelId === _model.id
-            ) {
-              this.activeProjectionModelId = undefined;
-            }
           });
+
+          // Release context if needed - this will handle all state cleanup
+          if (needsContextRelease) {
+            await this.releaseContext(true); // Clear active model and all related state
+          }
+
           //console.log('models: ', this.models);
         } else {
           console.error("Failed to delete, file doesn't exist: ", filePath);
@@ -1026,10 +1027,18 @@ class ModelStore {
     }
   }
 
-  releaseContext = async () => {
+  releaseContext = async (clearActiveModel: boolean = false) => {
     console.log('attempt to release');
     chatSessionStore.exitEditMode();
     if (!this.context) {
+      // Even if no context exists, clear state if requested (for deletion scenarios)
+      if (clearActiveModel) {
+        runInAction(() => {
+          this.activeModelId = undefined;
+          this.isMultimodalActive = false;
+          this.activeProjectionModelId = undefined;
+        });
+      }
       return Promise.resolve('No context to release');
     }
 
@@ -1040,8 +1049,19 @@ class ModelStore {
         console.log('Releasing multimodal context first');
         try {
           await this.context.releaseMultimodal();
+          // Immediately clear multimodal state after successful release
+          runInAction(() => {
+            this.isMultimodalActive = false;
+            this.activeProjectionModelId = undefined;
+          });
+          console.log('Multimodal context released and state cleared');
         } catch (error) {
           console.error('Error releasing multimodal context:', error);
+          // Even if release fails, clear the state to prevent blocking deletion
+          runInAction(() => {
+            this.isMultimodalActive = false;
+            this.activeProjectionModelId = undefined;
+          });
         }
       }
 
@@ -1054,17 +1074,20 @@ class ModelStore {
       runInAction(() => {
         this.context = undefined;
         this.activeContextSettings = undefined;
-        //this.activeModelId = undefined; // activeModelId is set to undefined in manualReleaseContext
+        // Ensure multimodal state is cleared even if something went wrong above
+        this.isMultimodalActive = false;
+        this.activeProjectionModelId = undefined;
+        // Clear active model if requested (for deletion scenarios)
+        if (clearActiveModel) {
+          this.activeModelId = undefined;
+        }
       });
     }
     return 'Context released successfully';
   };
 
   manualReleaseContext = async () => {
-    await this.releaseContext();
-    runInAction(() => {
-      this.activeModelId = undefined;
-    });
+    await this.releaseContext(true); // Clear active model for manual release
   };
 
   get activeModel(): Model | undefined {
@@ -1600,12 +1623,21 @@ class ModelStore {
       };
     }
 
-    // Check if it's currently active
+    // Check if it's currently active - but also verify that we actually have a context
+    // This prevents false positives when the context has been released but state hasn't updated
     if (this.activeProjectionModelId === projectionModelId) {
-      return {
-        canDelete: false,
-        reason: 'Projection model is currently active',
-      };
+      // Double-check: if we don't have an active context, the projection model isn't really active
+      if (!this.context) {
+        console.log(
+          'Projection model marked as active but no context exists, allowing deletion:',
+          projectionModelId,
+        );
+      } else {
+        return {
+          canDelete: false,
+          reason: 'Projection model is currently active',
+        };
+      }
     }
 
     // Check if any downloaded LLMs use this as their default projection model
@@ -1613,6 +1645,11 @@ class ModelStore {
       this.getDownloadedLLMsUsingProjectionModel(projectionModelId);
 
     if (dependentModels.length > 0) {
+      console.log(
+        'Cannot delete projection model. Used by downloaded LLM models:',
+        dependentModels.map(m => m.id),
+      );
+
       return {
         canDelete: false,
         reason: 'Projection model is used by downloaded LLM models',
@@ -1642,6 +1679,7 @@ class ModelStore {
     }
 
     const canDeleteResult = this.canDeleteProjectionModel(projectionModelId);
+    console.log('Can delete projection model:', canDeleteResult);
 
     if (canDeleteResult.canDelete) {
       console.log(

@@ -467,7 +467,10 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
               setSnackbarVisible(false);
             },
           }}>
-          {memoryWarning || multimodalWarning}
+          {memoryWarning ||
+            multimodalWarning ||
+            (hasProjectionModelWarning &&
+              l10n.models.multimodal.projectionMissingWarning)}
         </Snackbar>
       </>
     );
