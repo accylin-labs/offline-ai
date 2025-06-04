@@ -2846,11 +2846,11 @@ export const l10n = {
         'Une application qui apporte des modèles de langage directement sur votre téléphone. Repose sur llama.cpp et llama.rn.',
       supportProject: 'Soutenir le projet',
       supportProjectDescription:
-        'Si vous appréciez PocketPal AI, merci de considérer soutenir le projet en :',
-      githubButton: 'Mettant une étoile sur GitHub',
+        'Si vous appréciez PocketPal AI, merci de soutenir le projet en :',
+      githubButton: 'Ajouter une étoile sur GitHub',
       orText: 'ou',
       orBy: 'ou en',
-      sponsorButton: 'Devenant sponsor',
+      sponsorButton: 'Devenir sponsor',
       versionCopiedTitle: 'Version copiée',
       versionCopiedDescription:
         'Les informations de version ont été copiées dans le presse-papier',
@@ -2971,7 +2971,7 @@ export const l10n = {
       },
       chatPalModelPickerSheet: {
         modelsTab: 'Modèles',
-        palsTab: 'Assistants',
+        palsTab: 'Pals',
         noPal: "Pas d'assistant",
         disablePal: "Désactiver l'assistant actif",
         noDescription: 'Pas de description',
@@ -3159,7 +3159,7 @@ export const l10n = {
         menuItems: {
           chat: 'Discussion',
           models: 'Modèles',
-          pals: 'Assistants',
+          pals: 'Pals',
           benchmark: 'Benchmark',
           settings: 'Paramètres',
           appInfo: 'Info application',
