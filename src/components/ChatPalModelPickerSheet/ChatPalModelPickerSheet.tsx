@@ -207,6 +207,7 @@ export const ChatPalModelPickerSheet = observer(
                       model.defaultProjectionModel,
                     )
                   }
+                  visionEnabled={modelStore.getModelVisionPreference(model)}
                 />
               )}
             </View>
