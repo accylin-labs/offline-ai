@@ -1840,6 +1840,7 @@ describe('ModelStore', () => {
         isLocal: false,
         isDownloaded: false,
         origin: ModelOrigin.PRESET,
+        visionEnabled: true,
       };
 
       const projectionModel = {
@@ -1859,6 +1860,40 @@ describe('ModelStore', () => {
 
       // Should call startDownload twice: once for vision model, once for projection
       expect(downloadManager.startDownload).toHaveBeenCalledTimes(2);
+    });
+
+     it('should not auto-download projection model for vision models that are not enabled for vision', async () => {
+      const visionModel = {
+        ...defaultModels[0],
+        id: 'vision-model-0',
+        filename: 'vision.gguf',
+        supportsMultimodal: true,
+        defaultProjectionModel: 'projection-model-0',
+        modelType: ModelType.VISION,
+        downloadUrl: 'https://example.com/vision.gguf',
+        isLocal: false,
+        isDownloaded: false,
+        origin: ModelOrigin.PRESET,
+        visionEnabled: false,
+      };
+
+      const projectionModel = {
+        ...defaultModels[0],
+        id: 'projection-model-0',
+        filename: 'projection.gguf',
+        modelType: ModelType.PROJECTION,
+        downloadUrl: 'https://example.com/projection.gguf',
+        isDownloaded: false,
+        isLocal: false,
+        origin: ModelOrigin.PRESET,
+      };
+
+      modelStore.models = [visionModel, projectionModel];
+
+      await modelStore.checkSpaceAndDownload('vision-model-0');
+
+      // Should call startDownload twice: once for vision model, once for projection
+      expect(downloadManager.startDownload).toHaveBeenCalledTimes(1);
     });
 
     it('should not auto-download projection model if already downloaded', async () => {
@@ -2011,6 +2046,7 @@ describe('ModelStore', () => {
         isLocal: false,
         isDownloaded: false,
         origin: ModelOrigin.HF,
+        visionEnabled: true,
       };
 
       const hfProjectionModel = {
@@ -2069,6 +2105,7 @@ describe('ModelStore', () => {
         isLocal: false,
         isDownloaded: false,
         origin: ModelOrigin.PRESET,
+        visionEnabled: true,
       };
 
       const projectionModel = {
