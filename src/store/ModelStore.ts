@@ -29,6 +29,7 @@ import {
   getMmprojFiles,
   filterProjectionModels,
 } from '../utils';
+import {getRecommendedProjectionModel} from '../utils/multimodalHelpers';
 import {defaultModels, MODEL_LIST_VERSION} from './defaultModels';
 
 import {downloadManager} from '../services/downloads';
@@ -1140,6 +1141,9 @@ class ModelStore {
   ) => {
     try {
       const newModel = await this.addHFModel(hfModel, modelFile);
+      if (!newModel) {
+        throw new Error('Failed to add model to store');
+      }
 
       // Set vision preference based on user choice
       if (newModel.supportsMultimodal && options?.enableVision !== undefined) {
@@ -1191,6 +1195,7 @@ class ModelStore {
 
   /**
    * Adds a new HF model to the models list, only if it doesn't exist yet.
+   * For multimodal models, ensures all required projection models are also added.
    * @param hfModel - The Hugging Face model to add.
    * @param modelFile - The model file to add.
    * @returns The new model that was added.
@@ -1198,17 +1203,22 @@ class ModelStore {
   addHFModel = async (hfModel: HuggingFaceModel, modelFile: ModelFile) => {
     const newModel = hfAsModel(hfModel, modelFile);
     const storeModel = this.models.find(m => m.id === newModel.id);
-    if (storeModel) {
-      // Model already exists, return the existing model
+
+    // For non-multimodal models, return early if the model already exists
+    if (storeModel && !newModel.supportsMultimodal) {
       return storeModel;
     }
 
-    // Add the model to the store
-    runInAction(() => {
-      this.models.push(newModel);
-    });
+    // Add the model to the store if it doesn't exist
+    let modelToReturn = storeModel;
+    if (!storeModel) {
+      runInAction(() => {
+        this.models.push(newModel);
+      });
+      modelToReturn = newModel;
+    }
 
-    // If this is a vision model, add its projection models if they don't exist yet
+    // For multimodal models, always ensure projection models are in the store
     if (
       newModel.supportsMultimodal &&
       newModel.compatibleProjectionModels?.length
@@ -1216,7 +1226,7 @@ class ModelStore {
       // Get the mmproj files from the repository
       const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
 
-      // Add each projection model to the store
+      // Add each projection model to the store if it doesn't exist
       for (const mmprojFile of mmprojFiles) {
         const projModelId = `${hfModel.id}/${mmprojFile.rfilename}`;
         const existingProjModel = this.models.find(m => m.id === projModelId);
@@ -1228,6 +1238,35 @@ class ModelStore {
             this.models.push(projModel);
           });
         }
+      }
+
+      // If we're working with an existing model, update its projection model references
+      // to ensure they're current with what's now in the store
+      if (storeModel) {
+        const updatedCompatibleModels = mmprojFiles.map(
+          file => `${hfModel.id}/${file.rfilename}`,
+        );
+
+        runInAction(() => {
+          // Update compatible projection models list
+          storeModel.compatibleProjectionModels = updatedCompatibleModels;
+
+          // Ensure default projection model is set if not already set
+          if (
+            !storeModel.defaultProjectionModel &&
+            updatedCompatibleModels.length > 0
+          ) {
+            // Use the same logic as hfAsModel to determine the default
+            const mmprojFilenames = mmprojFiles.map(file => file.rfilename);
+            const recommendedFile = getRecommendedProjectionModel(
+              modelFile.rfilename,
+              mmprojFilenames,
+            );
+            if (recommendedFile) {
+              storeModel.defaultProjectionModel = `${hfModel.id}/${recommendedFile}`;
+            }
+          }
+        });
       }
     }
 
@@ -1263,7 +1302,7 @@ class ModelStore {
     }
 
     await this.refreshDownloadStatuses();
-    return newModel;
+    return modelToReturn;
   };
 
   addLocalModel = async (localFilePath: string) => {
