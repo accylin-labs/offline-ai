@@ -618,6 +618,15 @@ class ModelStore {
       return;
     }
 
+    // Check if vision is enabled for this model
+    if (!this.getModelVisionPreference(model)) {
+      console.log(
+        'Vision disabled for model, skipping projection model download:',
+        model.id,
+      );
+      return;
+    }
+
     const projModelId = model.defaultProjectionModel;
     const projModel = this.models.find(m => m.id === projModelId);
 
@@ -739,6 +748,16 @@ class ModelStore {
           canDeleteResult.reason || 'Cannot delete projection model',
         );
       }
+
+      // Disable vision for dependent models when their projection model is deleted
+      if (
+        canDeleteResult.dependentModels &&
+        canDeleteResult.dependentModels.length > 0
+      ) {
+        canDeleteResult.dependentModels.forEach(model => {
+          this.setModelVisionEnabled(model.id, false);
+        });
+      }
     }
 
     // Store all projection model IDs that this LLM could use
@@ -839,12 +858,19 @@ class ModelStore {
     let isMultimodalInit = false;
     let projectionModel: Model | undefined;
 
-    // If mmProjPath is provided directly, use it
-    if (mmProjPath) {
+    // Check if vision is enabled for this model
+    const visionEnabled = this.getModelVisionPreference(model);
+
+    // If mmProjPath is provided directly, use it (but only if vision is enabled)
+    if (mmProjPath && visionEnabled) {
       isMultimodalInit = true;
     }
-    // Otherwise, check if the model has a default projection model
-    else if (model.supportsMultimodal && model.defaultProjectionModel) {
+    // Otherwise, check if the model has a default projection model and vision is enabled
+    else if (
+      model.supportsMultimodal &&
+      model.defaultProjectionModel &&
+      visionEnabled
+    ) {
       projectionModel = this.models.find(
         m => m.id === model.defaultProjectionModel,
       );
@@ -1104,9 +1130,43 @@ class ModelStore {
     this.activeModelId = modelId;
   }
 
-  downloadHFModel = async (hfModel: HuggingFaceModel, modelFile: ModelFile) => {
+  downloadHFModel = async (
+    hfModel: HuggingFaceModel,
+    modelFile: ModelFile,
+    options?: {
+      enableVision?: boolean;
+      projectionModelId?: string; // User-selected projection model
+    },
+  ) => {
     try {
       const newModel = await this.addHFModel(hfModel, modelFile);
+
+      // Set vision preference based on user choice
+      if (newModel.supportsMultimodal && options?.enableVision !== undefined) {
+        runInAction(() => {
+          newModel.visionEnabled = options.enableVision;
+        });
+      }
+
+      // Override default projection model with user selection if provided
+      if (newModel.supportsMultimodal && options?.projectionModelId) {
+        // Validate that selected projection model exists in repository
+        const mmprojFiles = getMmprojFiles(hfModel.siblings || []);
+        const selectedExists = mmprojFiles.some(
+          file =>
+            `${hfModel.id}/${file.rfilename}` === options.projectionModelId,
+        );
+
+        if (selectedExists) {
+          runInAction(() => {
+            newModel.defaultProjectionModel = options.projectionModelId;
+          });
+        } else {
+          console.warn(
+            'Selected projection model not found in repository, using auto-determined default',
+          );
+        }
+      }
 
       // Wait a bit to ensure the projection model is added to the store
       // This is needed because addHFModel adds mmproj models asynchronously
@@ -1688,24 +1748,26 @@ class ModelStore {
       }
     }
 
-    // Check if any downloaded LLMs use this as their default projection model
+    // Get dependent models for warning purposes
     const dependentModels =
       this.getDownloadedLLMsUsingProjectionModel(projectionModelId);
 
     if (dependentModels.length > 0) {
       console.log(
-        'Cannot delete projection model. Used by downloaded LLM models:',
+        'Projection model is used by downloaded LLM models:',
         dependentModels.map(m => m.id),
       );
 
+      // Return true to allow manual deletion with warning
+      // Automatic cleanup will check dependencies separately
       return {
-        canDelete: false,
+        canDelete: true,
         reason: 'Projection model is used by downloaded LLM models',
         dependentModels,
       };
     }
 
-    return {canDelete: true};
+    return {canDelete: true, dependentModels};
   };
 
   /**
@@ -1726,22 +1788,26 @@ class ModelStore {
       return; // Not downloaded, nothing to cleanup
     }
 
-    const canDeleteResult = this.canDeleteProjectionModel(projectionModelId);
-    console.log('Can delete projection model:', canDeleteResult);
+    // For automatic cleanup, check if there are any dependent models
+    const dependentModels =
+      this.getDownloadedLLMsUsingProjectionModel(projectionModelId);
 
-    if (canDeleteResult.canDelete) {
+    if (dependentModels.length > 0) {
       console.log(
-        'Auto-cleaning up orphaned projection model:',
-        projectionModelId,
+        'Skipping auto-cleanup of projection model - still used by downloaded LLMs:',
+        dependentModels.map(m => m.id),
       );
-      try {
-        await this.deleteModel(projectionModel);
-      } catch (error) {
-        console.error(
-          'Failed to auto-cleanup orphaned projection model:',
-          error,
-        );
-      }
+      return;
+    }
+
+    console.log(
+      'Auto-cleaning up orphaned projection model:',
+      projectionModelId,
+    );
+    try {
+      await this.deleteModel(projectionModel);
+    } catch (error) {
+      console.error('Failed to auto-cleanup orphaned projection model:', error);
     }
   };
 
@@ -1756,6 +1822,47 @@ class ModelStore {
     for (const projectionModelId of projectionModelIds) {
       await this.cleanupOrphanedProjectionModel(projectionModelId);
     }
+  };
+
+  /**
+   * Set vision preference for a model
+   * @param modelId The ID of the model
+   * @param enabled Whether vision capabilities should be enabled
+   */
+  setModelVisionEnabled = (modelId: string, enabled: boolean) => {
+    const model = this.models.find(m => m.id === modelId);
+    if (model && model.supportsMultimodal) {
+      runInAction(() => {
+        model.visionEnabled = enabled;
+      });
+
+      // If this is the active model and vision is being disabled, reload without vision
+      if (
+        this.activeModelId === modelId &&
+        !enabled &&
+        this.isMultimodalActive
+      ) {
+        console.log(
+          'Vision disabled for active model, reloading without vision',
+        );
+        this.initContext(model);
+      }
+    }
+  };
+
+  /**
+   * Get vision preference for a model
+   * @param model The model to check
+   * @returns true if vision should be enabled (defaults to true for backward compatibility)
+   */
+  getModelVisionPreference = (model: Model): boolean => {
+    // For non-multimodal models, always return false
+    if (!model.supportsMultimodal) {
+      return false;
+    }
+
+    // Default to true for backward compatibility if not explicitly set
+    return model.visionEnabled !== false;
   };
 
   /**

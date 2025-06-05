@@ -233,7 +233,7 @@ describe('ModelStore', () => {
       expect(result.reason).toBe('Projection model is currently active');
     });
 
-    it('should prevent deletion of projection model used by downloaded LLM', () => {
+    it('should allow deletion of projection model used by downloaded LLM with warning', () => {
       const projModel = {
         ...defaultModels[0],
         id: 'test-proj-model',
@@ -252,10 +252,7 @@ describe('ModelStore', () => {
       modelStore.models = [projModel, llmModel];
 
       const result = modelStore.canDeleteProjectionModel(projModel.id);
-      expect(result.canDelete).toBe(false);
-      expect(result.reason).toBe(
-        'Projection model is used by downloaded LLM models',
-      );
+      expect(result.canDelete).toBe(true);
       expect(result.dependentModels).toHaveLength(1);
       expect(result.dependentModels![0].id).toBe(llmModel.id);
     });
@@ -791,7 +788,9 @@ describe('ModelStore', () => {
       const modelFile = hfModel.siblings[0];
       (RNFS.exists as jest.Mock).mockResolvedValue(false);
 
-      await modelStore.downloadHFModel(hfModel as any, modelFile as any);
+      await modelStore.downloadHFModel(hfModel as any, modelFile as any, {
+        enableVision: true,
+      });
       expect(downloadManager.startDownload).toHaveBeenCalledWith(
         expect.objectContaining({
           id: 'test/hf-model/model-01.gguf',
@@ -824,7 +823,9 @@ describe('ModelStore', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation();
 
-      await modelStore.downloadHFModel(hfModel as any, modelFile as any);
+      await modelStore.downloadHFModel(hfModel as any, modelFile as any, {
+        enableVision: true,
+      });
 
       // Check that error is logged
       expect(consoleErrorSpy).toHaveBeenCalledWith(

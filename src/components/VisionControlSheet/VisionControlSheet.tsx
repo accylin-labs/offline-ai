@@ -1,0 +1,133 @@
+import React, {useContext} from 'react';
+import {View} from 'react-native';
+import {Text, Switch, Divider} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import {Sheet} from '../Sheet';
+import {ProjectionModelSelector} from '..';
+import {useTheme} from '../../hooks';
+import {L10nContext} from '../../utils';
+import {Model} from '../../utils/types';
+import {modelStore} from '../../store';
+
+import {createStyles} from './styles';
+
+interface VisionControlSheetProps {
+  isVisible: boolean;
+  onClose: () => void;
+  model: Model;
+}
+
+export const VisionControlSheet: React.FC<VisionControlSheetProps> = ({
+  isVisible,
+  onClose,
+  model,
+}) => {
+  const theme = useTheme();
+  const l10n = useContext(L10nContext);
+  const styles = createStyles(theme);
+
+  const visionEnabled = modelStore.getModelVisionPreference(model);
+  const projectionStatus = modelStore.getProjectionModelStatus(model);
+
+  const handleVisionToggle = (enabled: boolean) => {
+    modelStore.setModelVisionEnabled(model.id, enabled);
+  };
+
+  const handleProjectionModelSelect = (projectionModelId: string) => {
+    modelStore.setDefaultProjectionModel(model.id, projectionModelId);
+  };
+
+  const renderVisionToggle = () => (
+    <View style={styles.toggleContainer}>
+      <View style={styles.toggleHeader}>
+        <Icon
+          name={visionEnabled ? 'eye' : 'eye-off'}
+          size={24}
+          disabled={!projectionStatus.isAvailable && !visionEnabled}
+          color={visionEnabled ? theme.colors.text : theme.colors.textSecondary}
+        />
+        <View style={styles.toggleTextContainer}>
+          <Text
+            style={[
+              styles.toggleTitle,
+              !visionEnabled && {color: theme.colors.textSecondary},
+            ]}>
+            {l10n.models.multimodal.visionControls.visionEnabled}
+          </Text>
+        </View>
+        <Switch
+          value={visionEnabled}
+          onValueChange={handleVisionToggle}
+          disabled={!projectionStatus.isAvailable && !visionEnabled}
+        />
+      </View>
+    </View>
+  );
+
+  const renderProjectionModelSelector = () => {
+    if (!visionEnabled) {
+      return (
+        <View style={styles.projectionModelsContainer}>
+          <View style={styles.disabledProjectionSelector}>
+            <ProjectionModelSelector
+              model={model}
+              onProjectionModelSelect={handleProjectionModelSelect}
+            />
+          </View>
+        </View>
+      );
+    }
+
+    return (
+      <ProjectionModelSelector
+        model={model}
+        onProjectionModelSelect={handleProjectionModelSelect}
+      />
+    );
+  };
+
+  const renderWarningMessage = () => {
+    if (visionEnabled && !projectionStatus.isAvailable) {
+      return (
+        <View style={styles.warningContainer}>
+          <Icon
+            name="alert-circle-outline"
+            size={20}
+            color={theme.colors.error}
+          />
+          <Text style={styles.warningText}>
+            {l10n.models.multimodal.projectionMissingWarning}
+          </Text>
+        </View>
+      );
+    }
+    return null;
+  };
+
+  const getSheetTitle = () => {
+    const maxLength = 40;
+    if (model.name.length > maxLength) {
+      return model.name.substring(0, maxLength) + '...';
+    }
+    return model.name;
+  };
+
+  return (
+    <Sheet
+      isVisible={isVisible}
+      onClose={onClose}
+      title={getSheetTitle()}
+      snapPoints={['60%']}>
+      <Sheet.ScrollView contentContainerStyle={styles.container}>
+        {renderVisionToggle()}
+
+        <Divider style={styles.divider} />
+
+        {renderProjectionModelSelector()}
+
+        {renderWarningMessage()}
+      </Sheet.ScrollView>
+    </Sheet>
+  );
+};
