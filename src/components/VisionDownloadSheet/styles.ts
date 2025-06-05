@@ -225,4 +225,11 @@ export const createStyles = (theme: Theme) =>
       color: theme.colors.error,
       lineHeight: 18,
     },
+    actionsContainer: {
+      flexDirection: 'row',
+      // justifyContent: 'space-between',
+      // alignItems: 'center',
+      // width: '100%',
+      paddingHorizontal: 24,
+    },
   });

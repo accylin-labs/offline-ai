@@ -141,7 +141,7 @@ export const VisionDownloadSheet: React.FC<VisionDownloadSheetProps> = ({
         {renderProjectionModelSelector()}
       </Sheet.ScrollView>
 
-      <Sheet.Actions>
+      <Sheet.Actions style={styles.actionsContainer}>
         <Button mode="text" onPress={onClose} disabled={isDownloading}>
           {l10n.common.cancel}
         </Button>
