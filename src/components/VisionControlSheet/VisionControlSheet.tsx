@@ -38,36 +38,44 @@ export const VisionControlSheet: React.FC<VisionControlSheetProps> = ({
     modelStore.setDefaultProjectionModel(model.id, projectionModelId);
   };
 
-  const renderVisionToggle = () => (
-    <View style={styles.toggleContainer}>
-      <View style={styles.toggleHeader}>
-        <Icon
-          name={visionEnabled ? 'eye' : 'eye-off'}
-          size={24}
-          disabled={!projectionStatus.isAvailable && !visionEnabled}
-          color={visionEnabled ? theme.colors.text : theme.colors.textSecondary}
-        />
-        <View style={styles.toggleTextContainer}>
-          <Text
-            style={[
-              styles.toggleTitle,
-              !visionEnabled && {color: theme.colors.textSecondary},
-            ]}>
-            {l10n.models.multimodal.visionControls.visionEnabled}
-          </Text>
+  const renderVisionToggle = () => {
+    const isDisabled =
+      !projectionStatus.isAvailable && !visionEnabled && model.isDownloaded;
+
+    return (
+      <View style={styles.toggleContainer}>
+        <View style={styles.toggleHeader}>
+          <Icon
+            name={visionEnabled ? 'eye' : 'eye-off'}
+            size={24}
+            disabled={!projectionStatus.isAvailable && !visionEnabled}
+            color={
+              visionEnabled ? theme.colors.text : theme.colors.textSecondary
+            }
+          />
+          <View style={styles.toggleTextContainer}>
+            <Text
+              style={[
+                styles.toggleTitle,
+                !visionEnabled && {color: theme.colors.textSecondary},
+              ]}>
+              {l10n.models.multimodal.visionControls.visionEnabled}
+            </Text>
+          </View>
+          <Switch
+            value={visionEnabled}
+            onValueChange={handleVisionToggle}
+            disabled={isDisabled}
+          />
         </View>
-        <Switch
-          value={visionEnabled}
-          onValueChange={handleVisionToggle}
-          disabled={
-            !projectionStatus.isAvailable &&
-            !visionEnabled &&
-            model.isDownloaded
-          }
-        />
+        {isDisabled && (
+          <Text variant="bodySmall" style={styles.helpText}>
+            {l10n.models.multimodal.visionControls.requiresProjectionModel}
+          </Text>
+        )}
       </View>
-    </View>
-  );
+    );
+  };
 
   const renderProjectionModelSelector = () => {
     return (

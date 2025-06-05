@@ -199,6 +199,8 @@ export const l10n = {
           visionModeDescription: 'Process images and text',
           textOnlyModeDescription: 'Process text only',
           includesVisionCapability: 'Includes vision capability',
+          requiresProjectionModel:
+            'Download a compatible projection model first',
         },
         cannotDeleteActive: 'This projection model is currently active.',
         cannotDeleteInUse:
@@ -1206,6 +1208,8 @@ export const l10n = {
           visionModeDescription: '画像とテキストを処理',
           textOnlyModeDescription: 'テキストのみ処理',
           includesVisionCapability: 'ビジョン機能を含む',
+          requiresProjectionModel:
+            '先に互換性のある投影モデルをダウンロードしてください',
         },
         cannotDeleteActive: 'この投影モデルは現在アクティブです。',
         cannotDeleteInUse:
@@ -2200,6 +2204,7 @@ export const l10n = {
           visionModeDescription: '处理图像和文本',
           textOnlyModeDescription: '仅处理文本',
           includesVisionCapability: '包含视觉功能',
+          requiresProjectionModel: '请先下载兼容的投影模型',
         },
         cannotDeleteActive: '此投影模型当前处于活动状态。',
         cannotDeleteInUse: '此投影模型被已下载的LLM模型使用：',

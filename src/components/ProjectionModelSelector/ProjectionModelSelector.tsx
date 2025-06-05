@@ -275,11 +275,6 @@ export const ProjectionModelSelector = observer(
                                         : theme.colors.onSurfaceVariant
                                     }
                                   />
-                                  {!isSelected && (
-                                    <Text style={styles.selectText}>
-                                      {l10n.models.multimodal.select}
-                                    </Text>
-                                  )}
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                   onPress={() => handleDeleteModel(projModel)}

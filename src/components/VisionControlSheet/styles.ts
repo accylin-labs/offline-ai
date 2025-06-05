@@ -25,6 +25,10 @@ export const createStyles = (theme: Theme) =>
       color: theme.colors.text,
       marginBottom: 4,
     },
+    helpText: {
+      color: theme.colors.error,
+      marginLeft: 36, // Align with toggle title
+    },
 
     divider: {
       marginVertical: 16,
