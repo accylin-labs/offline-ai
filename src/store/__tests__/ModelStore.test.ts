@@ -1862,7 +1862,7 @@ describe('ModelStore', () => {
       expect(downloadManager.startDownload).toHaveBeenCalledTimes(2);
     });
 
-     it('should not auto-download projection model for vision models that are not enabled for vision', async () => {
+    it('should not auto-download projection model for vision models that are not enabled for vision', async () => {
       const visionModel = {
         ...defaultModels[0],
         id: 'vision-model-0',
