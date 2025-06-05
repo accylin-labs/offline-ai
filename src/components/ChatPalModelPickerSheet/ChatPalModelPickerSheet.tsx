@@ -35,14 +35,20 @@ const ObservedSkillsDisplay = observer(({model}) => {
     model.supportsMultimodal &&
     modelStore.getProjectionModelStatus(model).state === 'missing';
 
-  const toggleVision = () => {
+  const toggleVision = async () => {
     if (!model.supportsMultimodal) {
       return;
     }
-    modelStore.setModelVisionEnabled(
-      model.id,
-      !modelStore.getModelVisionPreference(model),
-    );
+    try {
+      await modelStore.setModelVisionEnabled(
+        model.id,
+        !modelStore.getModelVisionPreference(model),
+      );
+    } catch (error) {
+      console.error('Failed to toggle vision setting:', error);
+      // The error is already handled in setModelVisionEnabled (vision state is reverted)
+      // We could show a toast/snackbar here if needed
+    }
   };
   const visionEnabled = modelStore.getModelVisionPreference(model);
 

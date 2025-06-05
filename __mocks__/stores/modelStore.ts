@@ -159,7 +159,7 @@ class MockModelStore {
     state: 'not_needed',
   });
   getModelVisionPreference = jest.fn().mockReturnValue(true);
-  setModelVisionEnabled = jest.fn();
+  setModelVisionEnabled = jest.fn().mockResolvedValue(undefined);
   getDownloadedLLMsUsingProjectionModel = jest.fn().mockReturnValue([]);
 }
 

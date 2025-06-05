@@ -30,8 +30,14 @@ export const VisionControlSheet: React.FC<VisionControlSheetProps> = ({
   const visionEnabled = modelStore.getModelVisionPreference(model);
   const projectionStatus = modelStore.getProjectionModelStatus(model);
 
-  const handleVisionToggle = (enabled: boolean) => {
-    modelStore.setModelVisionEnabled(model.id, enabled);
+  const handleVisionToggle = async (enabled: boolean) => {
+    try {
+      await modelStore.setModelVisionEnabled(model.id, enabled);
+    } catch (error) {
+      console.error('Failed to toggle vision setting:', error);
+      // The error is already handled in setModelVisionEnabled (vision state is reverted)
+      // We could show a toast/snackbar here if needed
+    }
   };
 
   const handleProjectionModelSelect = (projectionModelId: string) => {

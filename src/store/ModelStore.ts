@@ -755,9 +755,12 @@ class ModelStore {
         canDeleteResult.dependentModels &&
         canDeleteResult.dependentModels.length > 0
       ) {
-        canDeleteResult.dependentModels.forEach(model => {
-          this.setModelVisionEnabled(model.id, false);
-        });
+        // Use Promise.allSettled to handle potential errors gracefully
+        await Promise.allSettled(
+          canDeleteResult.dependentModels.map(dependentModel =>
+            this.setModelVisionEnabled(dependentModel.id, false),
+          ),
+        );
       }
     }
 
@@ -1852,23 +1855,52 @@ class ModelStore {
    * @param modelId The ID of the model
    * @param enabled Whether vision capabilities should be enabled
    */
-  setModelVisionEnabled = (modelId: string, enabled: boolean) => {
+  setModelVisionEnabled = async (modelId: string, enabled: boolean) => {
     const model = this.models.find(m => m.id === modelId);
-    if (model && model.supportsMultimodal) {
-      runInAction(() => {
-        model.visionEnabled = enabled;
-      });
+    if (!model || !model.supportsMultimodal) {
+      return;
+    }
 
-      // If this is the active model and vision is being disabled, reload without vision
-      if (
-        this.activeModelId === modelId &&
-        !enabled &&
-        this.isMultimodalActive
-      ) {
-        console.log(
-          'Vision disabled for active model, reloading without vision',
+    // Store the previous vision state to detect changes
+    const previousVisionEnabled = this.getModelVisionPreference(model);
+
+    runInAction(() => {
+      model.visionEnabled = enabled;
+    });
+
+    // Check if this model is currently active and if vision state actually changed
+    const isActiveModel = this.activeModelId === modelId;
+    const visionStateChanged = previousVisionEnabled !== enabled;
+
+    if (isActiveModel && visionStateChanged && this.context) {
+      console.log(
+        `Vision ${
+          enabled ? 'enabled' : 'disabled'
+        } for active model, reloading context`,
+        {
+          modelId,
+          previousState: previousVisionEnabled,
+          newState: enabled,
+          isMultimodalActive: this.isMultimodalActive,
+        },
+      );
+
+      try {
+        // Reload the context with the new vision setting
+        await this.initContext(model);
+      } catch (error) {
+        console.error(
+          'Failed to reload context after vision state change:',
+          error,
         );
-        this.initContext(model);
+
+        // Revert the vision setting if context reload failed
+        runInAction(() => {
+          model.visionEnabled = previousVisionEnabled;
+        });
+
+        // Re-throw the error so the UI can handle it appropriately
+        throw error;
       }
     }
   };
