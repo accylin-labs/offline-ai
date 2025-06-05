@@ -59,50 +59,24 @@ export const VisionControlSheet: React.FC<VisionControlSheetProps> = ({
         <Switch
           value={visionEnabled}
           onValueChange={handleVisionToggle}
-          disabled={!projectionStatus.isAvailable && !visionEnabled}
+          disabled={
+            !projectionStatus.isAvailable &&
+            !visionEnabled &&
+            model.isDownloaded
+          }
         />
       </View>
     </View>
   );
 
   const renderProjectionModelSelector = () => {
-    if (!visionEnabled) {
-      return (
-        <View style={styles.projectionModelsContainer}>
-          <View style={styles.disabledProjectionSelector}>
-            <ProjectionModelSelector
-              model={model}
-              onProjectionModelSelect={handleProjectionModelSelect}
-            />
-          </View>
-        </View>
-      );
-    }
-
     return (
       <ProjectionModelSelector
         model={model}
         onProjectionModelSelect={handleProjectionModelSelect}
+        showDownloadActions={model.isDownloaded}
       />
     );
-  };
-
-  const renderWarningMessage = () => {
-    if (visionEnabled && !projectionStatus.isAvailable) {
-      return (
-        <View style={styles.warningContainer}>
-          <Icon
-            name="alert-circle-outline"
-            size={20}
-            color={theme.colors.error}
-          />
-          <Text style={styles.warningText}>
-            {l10n.models.multimodal.projectionMissingWarning}
-          </Text>
-        </View>
-      );
-    }
-    return null;
   };
 
   const getSheetTitle = () => {
@@ -125,8 +99,6 @@ export const VisionControlSheet: React.FC<VisionControlSheetProps> = ({
         <Divider style={styles.divider} />
 
         {renderProjectionModelSelector()}
-
-        {renderWarningMessage()}
       </Sheet.ScrollView>
     </Sheet>
   );
