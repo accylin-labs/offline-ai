@@ -614,7 +614,8 @@ class ModelStore {
     if (
       !model.supportsMultimodal ||
       !model.defaultProjectionModel ||
-      model.modelType === ModelType.PROJECTION
+      model.modelType === ModelType.PROJECTION ||
+      !model.visionEnabled
     ) {
       return;
     }
@@ -1150,9 +1151,10 @@ class ModelStore {
 
       // Set vision preference based on user choice
       if (newModel.supportsMultimodal && options?.enableVision !== undefined) {
-        runInAction(() => {
-          newModel.visionEnabled = options.enableVision;
-        });
+        this.setModelVisionEnabled(newModel.id, options.enableVision);
+        // runInAction(() => {
+        //   newModel.visionEnabled = options.enableVision;
+        // });
       }
 
       // Override default projection model with user selection if provided

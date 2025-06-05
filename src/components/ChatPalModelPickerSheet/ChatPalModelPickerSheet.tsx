@@ -33,6 +33,7 @@ interface ChatPalModelPickerSheetProps {
 const ObservedSkillsDisplay = observer(({model}) => {
   const hasProjectionModelWarning =
     model.supportsMultimodal &&
+    model.visionEnabled &&
     modelStore.getProjectionModelStatus(model).state === 'missing';
 
   const toggleVision = async () => {
