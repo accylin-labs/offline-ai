@@ -30,6 +30,36 @@ interface ChatPalModelPickerSheetProps {
   keyboardHeight: number;
 }
 
+const ObservedSkillsDisplay = observer(({model}) => {
+  const hasProjectionModelWarning =
+    model.supportsMultimodal &&
+    modelStore.getProjectionModelStatus(model).state === 'missing';
+
+  const toggleVision = () => {
+    if (!model.supportsMultimodal) {
+      return;
+    }
+    modelStore.setModelVisionEnabled(
+      model.id,
+      !modelStore.getModelVisionPreference(model),
+    );
+  };
+  const visionEnabled = modelStore.getModelVisionPreference(model);
+
+  return (
+    <SkillsDisplay
+      model={model}
+      hasProjectionModelWarning={hasProjectionModelWarning}
+      onVisionPress={toggleVision}
+      onProjectionWarningPress={() =>
+        model.defaultProjectionModel &&
+        modelStore.checkSpaceAndDownload(model.defaultProjectionModel)
+      }
+      visionEnabled={visionEnabled}
+    />
+  );
+});
+
 export const ChatPalModelPickerSheet = observer(
   ({
     isVisible,
@@ -193,23 +223,7 @@ export const ChatPalModelPickerSheet = observer(
                 ]}>
                 {model.name}
               </Text>
-              {modelSkills && (
-                <SkillsDisplay
-                  model={model}
-                  hasProjectionModelWarning={
-                    model.supportsMultimodal &&
-                    modelStore.getProjectionModelStatus(model).state ===
-                      'missing'
-                  }
-                  onProjectionWarningPress={() =>
-                    model.defaultProjectionModel &&
-                    modelStore.checkSpaceAndDownload(
-                      model.defaultProjectionModel,
-                    )
-                  }
-                  visionEnabled={modelStore.getModelVisionPreference(model)}
-                />
-              )}
+              {modelSkills && <ObservedSkillsDisplay model={model} />}
             </View>
           </Pressable>
         );
