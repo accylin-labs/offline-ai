@@ -18,7 +18,7 @@ interface ProjectionModelSelectorProps {
   model: Model;
   onProjectionModelSelect?: (projectionModelId: string) => void;
   showDownloadActions?: boolean; // Controls whether to show download/delete buttons
-  context?: 'search' | 'downloaded'; // Context for data source selection
+  context?: 'search' | 'modelsList'; // Context for data source selection
   availableProjectionModels?: Model[]; // For search context - models from HF repository
 }
 
@@ -30,7 +30,7 @@ export const ProjectionModelSelector = observer(
     model,
     onProjectionModelSelect,
     showDownloadActions = true,
-    context = 'downloaded',
+    context = 'modelsList',
     availableProjectionModels,
   }: ProjectionModelSelectorProps) => {
     const theme = useTheme();
