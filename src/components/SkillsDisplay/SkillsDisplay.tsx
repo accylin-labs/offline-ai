@@ -55,7 +55,7 @@ export const SkillsDisplay: React.FC<SkillsDisplayProps> = ({
     if (isVision) {
       if (!visionEnabled) {
         // Vision disabled - use muted color and different icon
-        color = theme.colors.outline;
+        color = theme.colors.textSecondary;
         iconName = 'eye-off';
         /* } else if (!visionAvailable) {
        //   // Vision enabled but not available - use warning color
