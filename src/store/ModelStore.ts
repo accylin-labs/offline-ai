@@ -1526,22 +1526,6 @@ class ModelStore {
         });
       }
 
-      // If not enabled but we have an active model that should support multimodal,
-      // log additional information for debugging
-      if (!isEnabled && this.activeModel?.supportsMultimodal) {
-        console.log(
-          'Active model supports multimodal but it is not enabled:',
-          this.activeModel.name,
-        );
-        console.log('Model ID:', this.activeModel.id);
-        if (this.activeModel.defaultProjectionModel) {
-          console.log(
-            'Default projection model:',
-            this.activeModel.defaultProjectionModel,
-          );
-        }
-      }
-
       return isEnabled;
     } catch (error) {
       console.error('Error checking multimodal capability:', error);
