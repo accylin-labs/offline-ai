@@ -87,7 +87,7 @@ android {
 
     namespace "com.pocketpal"
     defaultConfig {
-        applicationId "com.pocketpalai"
+        applicationId "web.alvin.pocketpal"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 81 

@@ -70,7 +70,7 @@ Download PocketPal AI from the App Store:
 
 Get PocketPal AI on Google Play:
 
-[**Get it on Google Play**](https://play.google.com/store/apps/details?id=com.pocketpalai)
+[**Get it on Google Play**](https://play.google.com/store/apps/details?id=web.alvin.pocketpal)
 
 ## Usage
 

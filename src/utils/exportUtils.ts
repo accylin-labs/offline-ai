@@ -151,7 +151,10 @@ export const exportLegacyChatSessions = async (): Promise<void> => {
  * @param modelFullPath The fullpath of the model to export
  * @param modelFileName The filename of the model to export
  */
-export const exportModel = async (modelFullPath: string, modelFileName: string): Promise<void> => {
+export const exportModel = async (
+  modelFullPath: string,
+  modelFileName: string,
+): Promise<void> => {
   const currentL10n = uiStore.l10n;
   try {
     const tempFilePath = modelFullPath;
@@ -186,8 +189,8 @@ export const exportModel = async (modelFullPath: string, modelFileName: string):
       const permissionGranted = await ensureLegacyStoragePermission();
       if (!permissionGranted) {
         // If permission denied, fall back to direct sharing
-        console.log('Model FullPath',tempFilePath)
-        console.log('Model Filename',filename)
+        console.log('Model FullPath', tempFilePath);
+        console.log('Model Filename', filename);
         try {
           await Share.open({
             url: `file://${tempFilePath}`,
@@ -201,61 +204,57 @@ export const exportModel = async (modelFullPath: string, modelFileName: string):
           throw error;
         }
       }
-        try {
+      try {
         // Save to appropriate directory based on platform
         const savePath = modelFullPath;
 
-        Alert.alert(
-          currentL10n.components.exportUtils.share,
-          filename,
-          [
-            {
-              text: currentL10n.components.exportUtils.share,
-              onPress: async () => {
-                // Use react-native-share for both platforms
-                try {
-                  const options = {
-                    title: `Share ${filename}`,
-                    message: 'PocketPal AI Chat Export',
-                    url: `file://${savePath}`,
-                    type: 'application/octet-stream',
-                    failOnCancel: false,
-                  };
+        Alert.alert(currentL10n.components.exportUtils.share, filename, [
+          {
+            text: currentL10n.components.exportUtils.share,
+            onPress: async () => {
+              // Use react-native-share for both platforms
+              try {
+                const options = {
+                  title: `Share ${filename}`,
+                  message: 'PocketPal AI Chat Export',
+                  url: `file://${savePath}`,
+                  type: 'application/octet-stream',
+                  failOnCancel: false,
+                };
 
-                  await Share.open(options);
-                } catch (error) {
-                  const shareError = error as any;
-                  console.error('Error sharing file:', shareError);
+                await Share.open(options);
+              } catch (error) {
+                const shareError = error as any;
+                console.error('Error sharing file:', shareError);
 
-                  // Fallback to sharing content directly if file sharing fails
-                  if (shareError.message !== 'User did not share') {
-                    try {
-                      await Share.open({
-                        title: `Share ${filename}`,
-                        message: filename,
-                      });
-                    } catch (err) {
-                      const fallbackError = err as any;
-                      console.error(
-                        'Error with fallback sharing:',
-                        fallbackError,
+                // Fallback to sharing content directly if file sharing fails
+                if (shareError.message !== 'User did not share') {
+                  try {
+                    await Share.open({
+                      title: `Share ${filename}`,
+                      message: filename,
+                    });
+                  } catch (err) {
+                    const fallbackError = err as any;
+                    console.error(
+                      'Error with fallback sharing:',
+                      fallbackError,
+                    );
+                    // Ignore cancellation errors
+                    if (fallbackError.message !== 'User did not share') {
+                      Alert.alert(
+                        currentL10n.components.exportUtils.shareError,
+                        currentL10n.components.exportUtils.shareErrorMessage,
+                        [{text: currentL10n.components.exportUtils.ok}],
                       );
-                      // Ignore cancellation errors
-                      if (fallbackError.message !== 'User did not share') {
-                        Alert.alert(
-                          currentL10n.components.exportUtils.shareError,
-                          currentL10n.components.exportUtils.shareErrorMessage,
-                          [{text: currentL10n.components.exportUtils.ok}],
-                        );
-                      }
                     }
                   }
                 }
-              },
+              }
             },
-            {text: currentL10n.components.exportUtils.ok},
-          ],
-        );
+          },
+          {text: currentL10n.components.exportUtils.ok},
+        ]);
       } catch (error) {
         console.error('Error saving to Downloads:', error);
 
@@ -292,10 +291,10 @@ export const exportModel = async (modelFullPath: string, modelFileName: string):
           ],
         );
       }
-    }  
+    }
   } catch (error) {
     console.error('Error exporting model:', error);
-        // Show a more user-friendly error message
+    // Show a more user-friendly error message
     Alert.alert(
       currentL10n.components.exportUtils.exportError,
       currentL10n.components.exportUtils.exportErrorMessage,
