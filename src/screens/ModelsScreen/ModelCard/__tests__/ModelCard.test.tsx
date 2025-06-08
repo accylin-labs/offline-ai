@@ -1,3 +1,4 @@
+import Share from 'react-native-share';
 import React from 'react';
 import {Linking, Alert} from 'react-native';
 
@@ -29,6 +30,11 @@ jest.mock('react-native/Libraries/Linking/Linking', () => ({
   removeEventListener: jest.fn(),
   canOpenURL: jest.fn().mockImplementation(() => Promise.resolve(true)),
   getInitialURL: jest.fn().mockImplementation(() => Promise.resolve(null)),
+}));
+
+// Mock react-native-share
+jest.mock('react-native-share', () => ({
+  open: jest.fn().mockResolvedValue({success: true}),
 }));
 
 const mockNavigate = jest.fn();
@@ -145,6 +151,15 @@ describe('ModelCard', () => {
     expect(Linking.openURL).toHaveBeenCalledWith(basicModel.hfUrl);
   });
 
+  
+  it('opens the HuggingFace URL share when the icon button is pressed', () => {
+    const {getByTestId} = customRender(<ModelCard model={basicModel} />);
+
+    const openButton = getByTestId('share-huggingface-url');
+    fireEvent.press(openButton);
+    expect(Linking.openURL).toHaveBeenCalledWith(basicModel.hfUrl);
+  });
+  
   it('handles model load correctly', async () => {
     const {getByTestId} = customRender(<ModelCard model={downloadedModel} />);
 

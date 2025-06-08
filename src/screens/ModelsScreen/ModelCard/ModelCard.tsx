@@ -36,6 +36,7 @@ import {
   checkModelFileIntegrity,
 } from '../../../utils';
 import {SkillsDisplay} from '../../../components';
+import { exportModel } from '../../../utils/exportUtils';
 
 type ChatScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList>;
 
@@ -175,6 +176,18 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
         });
       }
     }, [model.hfUrl]);
+    
+    const ShareModel = async () => {
+      const fullpath = await modelStore.getModelFullPath(model);
+      if (fullpath) {
+        try {
+          await exportModel(fullpath, model.filename);
+        } catch (error) {
+          console.error('Error exporting model:', error);
+          Alert.alert('Export Error', 'Failed to export the model.');
+        }
+      }
+    };
 
     const handleRemove = useCallback(() => {
       Alert.alert(
@@ -315,6 +328,16 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                         size={14}
                         iconColor={theme.colors.onSurfaceVariant}
                         onPress={openHuggingFaceUrl}
+                        style={styles.hfButton}
+                      />
+                    )}
+                    {model.hfUrl && (
+                      <IconButton
+                        testID="share-huggingface-url"
+                        icon="share"
+                        size={14}
+                        iconColor={theme.colors.onSurfaceVariant}
+                        onPress={ShareModel}
                         style={styles.hfButton}
                       />
                     )}
