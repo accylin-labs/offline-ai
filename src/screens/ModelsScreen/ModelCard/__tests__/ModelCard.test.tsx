@@ -1,4 +1,3 @@
-import Share from 'react-native-share';
 import React from 'react';
 import {Linking, Alert} from 'react-native';
 
@@ -151,15 +150,6 @@ describe('ModelCard', () => {
     expect(Linking.openURL).toHaveBeenCalledWith(basicModel.hfUrl);
   });
 
-  
-  it('opens the HuggingFace URL share when the icon button is pressed', () => {
-    const {getByTestId} = customRender(<ModelCard model={basicModel} />);
-
-    const openButton = getByTestId('share-huggingface-url');
-    fireEvent.press(openButton);
-    expect(Linking.openURL).toHaveBeenCalledWith(basicModel.hfUrl);
-  });
-  
   it('handles model load correctly', async () => {
     const {getByTestId} = customRender(<ModelCard model={downloadedModel} />);
 

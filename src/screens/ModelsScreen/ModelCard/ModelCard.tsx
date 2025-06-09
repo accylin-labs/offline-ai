@@ -36,7 +36,7 @@ import {
   checkModelFileIntegrity,
 } from '../../../utils';
 import {SkillsDisplay} from '../../../components';
-import { exportModel } from '../../../utils/exportUtils';
+import {exportModel} from '../../../utils/exportUtils';
 
 type ChatScreenNavigationProp = DrawerNavigationProp<RootDrawerParamList>;
 
@@ -176,7 +176,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
         });
       }
     }, [model.hfUrl]);
-    
+
     const ShareModel = async () => {
       const fullpath = await modelStore.getModelFullPath(model);
       if (fullpath) {
@@ -331,9 +331,8 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                         style={styles.hfButton}
                       />
                     )}
-                    {model.hfUrl && (
+                    {isDownloaded && (
                       <IconButton
-                        testID="share-huggingface-url"
                         icon="share"
                         size={14}
                         iconColor={theme.colors.onSurfaceVariant}
