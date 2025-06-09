@@ -331,7 +331,7 @@ export const ModelCard: React.FC<ModelCardProps> = observer(
                         style={styles.hfButton}
                       />
                     )}
-                    {model.hfUrl && (
+                    {isDownloaded && (
                       <IconButton
                         icon="share"
                         size={14}

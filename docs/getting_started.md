@@ -6,7 +6,7 @@ Note: Part of this guide is outdated. It will be updated soon.
 
 **iPhone** users can grab it here: [PocketPal AI on the App Store](https://apps.apple.com/us/app/pocketpal-ai/id6502579498)
 
-**Android** users can get it from here: [PocketPal AI on Google Play](https://play.google.com/store/apps/details?id=web.alvin.pocketpal)
+**Android** users can get it from here: [PocketPal AI on Google Play](https://play.google.com/store/apps/details?id=com.pocketpalai)
 
 Note: This is a personal project, so I am working on it in my spare time. It might have bugs and issues, and obviously, I have not tested it on all devices. If you encounter any issues, open an issue, or even better, contribute to the project!
 
