@@ -7,15 +7,15 @@ export const createStyles = (theme: Theme) =>
     codeHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      padding: 4,
+      alignItems: 'center',
     },
     codeLanguage: {
       color: theme.colors.onSurfaceVariant,
       fontSize: 12,
     },
-    iconContainer: {
-      marginRight: 5,
-      color: theme.colors.onSurfaceVariant,
-      fontSize: 16,
+    iconTouchable: {
+      padding: 12, // 16 (icon) + 10*2 = 40 for accessibility
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });

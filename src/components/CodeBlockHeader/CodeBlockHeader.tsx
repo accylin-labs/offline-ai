@@ -1,10 +1,14 @@
 import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
+
 import Clipboard from '@react-native-clipboard/clipboard';
-import {createStyles} from './styles';
-import {useTheme} from '../../hooks';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+import {CopyIcon} from '../../assets/icons';
+
+import {useTheme} from '../../hooks';
+
+import {createStyles} from './styles';
 
 interface CodeBlockHeaderProps {
   language: string;
@@ -33,8 +37,12 @@ export const CodeBlockHeader: React.FC<CodeBlockHeaderProps> = ({
       <Text style={styles.codeLanguage} numberOfLines={1} ellipsizeMode="tail">
         {language}
       </Text>
-      <TouchableOpacity onPress={handleCopy}>
-        <Icon name="content-copy" style={styles.iconContainer} />
+      <TouchableOpacity onPress={handleCopy} style={styles.iconTouchable}>
+        <CopyIcon
+          width={16}
+          height={16}
+          stroke={theme.colors.onSurfaceVariant}
+        />
       </TouchableOpacity>
     </View>
   );
