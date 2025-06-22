@@ -37,6 +37,7 @@ import {chatSessionStore, modelStore, palStore} from '../../store';
 
 import {MessageType, User} from '../../utils/types';
 import {calculateChatMessages, unwrap, UserContext} from '../../utils';
+import {L10nContext} from '../../utils';
 import {PalType} from '../PalsSheets/types';
 
 import {
@@ -175,6 +176,7 @@ export const ChatView = observer(
     usePreviewData = true,
     user,
   }: ChatProps) => {
+    const l10n = React.useContext(L10nContext);
     const theme = useTheme();
     const styles = createStyles({theme});
 
@@ -417,7 +419,7 @@ export const ChatView = observer(
 
       const baseItems: MenuItem[] = [
         {
-          label: 'Copy',
+          label: l10n.components.chatView.menuItems.copy,
           onPress: () => {
             handleCopy(selectedMessage);
             handleMenuDismiss();
@@ -429,7 +431,7 @@ export const ChatView = observer(
 
       if (!isAuthor) {
         baseItems.push({
-          label: 'Regenerate',
+          label: l10n.components.chatView.menuItems.regenerate,
           onPress: () => {
             handleTryAgain(selectedMessage);
             handleMenuDismiss();
@@ -439,7 +441,7 @@ export const ChatView = observer(
         });
 
         baseItems.push({
-          label: 'Regenerate with',
+          label: l10n.components.chatView.menuItems.regenerateWith,
           icon: () => <GridIcon stroke={theme.colors.primary} />,
           disabled: false,
           submenu: models.map(model => ({
@@ -455,7 +457,7 @@ export const ChatView = observer(
 
       if (isAuthor) {
         baseItems.push({
-          label: 'Edit',
+          label: l10n.components.chatView.menuItems.edit,
           onPress: () => {
             handleEdit(selectedMessage);
             handleMenuDismiss();
