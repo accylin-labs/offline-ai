@@ -408,6 +408,13 @@ export const ChatView = observer(
       setSelectedMessage(null);
     }, []);
 
+    const {
+      copy: copyLabel,
+      regenerate: regenerateLabel,
+      regenerateWith: regenerateWithLabel,
+      edit: editLabel,
+    } = l10n.components.chatView.menuItems;
+
     const menuItems = React.useMemo((): MenuItem[] => {
       if (!selectedMessage || selectedMessage.type !== 'text') {
         return [];
@@ -419,7 +426,7 @@ export const ChatView = observer(
 
       const baseItems: MenuItem[] = [
         {
-          label: l10n.components.chatView.menuItems.copy,
+          label: copyLabel,
           onPress: () => {
             handleCopy(selectedMessage);
             handleMenuDismiss();
@@ -431,7 +438,7 @@ export const ChatView = observer(
 
       if (!isAuthor) {
         baseItems.push({
-          label: l10n.components.chatView.menuItems.regenerate,
+          label: regenerateLabel,
           onPress: () => {
             handleTryAgain(selectedMessage);
             handleMenuDismiss();
@@ -441,7 +448,7 @@ export const ChatView = observer(
         });
 
         baseItems.push({
-          label: l10n.components.chatView.menuItems.regenerateWith,
+          label: regenerateWithLabel,
           icon: () => <GridIcon stroke={theme.colors.primary} />,
           disabled: false,
           submenu: models.map(model => ({
@@ -457,7 +464,7 @@ export const ChatView = observer(
 
       if (isAuthor) {
         baseItems.push({
-          label: l10n.components.chatView.menuItems.edit,
+          label: editLabel,
           onPress: () => {
             handleEdit(selectedMessage);
             handleMenuDismiss();
@@ -478,6 +485,10 @@ export const ChatView = observer(
       handleMenuDismiss,
       size.width,
       theme.colors.primary,
+      copyLabel,
+      regenerateLabel,
+      regenerateWithLabel,
+      editLabel,
     ]);
 
     const renderMenuItem = React.useCallback(
