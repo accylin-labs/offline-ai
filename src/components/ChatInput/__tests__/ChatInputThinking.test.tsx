@@ -97,7 +97,7 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={false}
           onThinkingToggle={jest.fn()}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     expect(queryByLabelText(/thinking mode/i)).toBeNull();
@@ -112,7 +112,7 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={false}
           onThinkingToggle={jest.fn()}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     expect(getByLabelText('Enable thinking mode')).toBeTruthy();
@@ -127,7 +127,7 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={false}
           onThinkingToggle={jest.fn()}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     expect(getByLabelText('Enable thinking mode')).toBeTruthy();
@@ -142,7 +142,7 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={true}
           onThinkingToggle={jest.fn()}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     expect(getByLabelText('Disable thinking mode')).toBeTruthy();
@@ -158,7 +158,7 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={false}
           onThinkingToggle={mockOnThinkingToggle}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     const toggleButton = getByLabelText('Enable thinking mode');
@@ -177,7 +177,7 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={true}
           onThinkingToggle={mockOnThinkingToggle}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     const toggleButton = getByLabelText('Disable thinking mode');
@@ -196,7 +196,7 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={false}
           onThinkingToggle={jest.fn()}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     expect(getByLabelText('Enable thinking mode')).toBeTruthy();
@@ -212,7 +212,7 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={false}
           onThinkingToggle={jest.fn()}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     expect(getByLabelText('Enable thinking mode')).toBeTruthy();
@@ -227,11 +227,11 @@ describe('ChatInput Thinking Toggle', () => {
           isThinkingEnabled={false}
           onThinkingToggle={undefined}
         />
-      </UserContext.Provider>
+      </UserContext.Provider>,
     );
 
     const toggleButton = getByLabelText('Enable thinking mode');
-    
+
     // Should not throw when pressed
     expect(() => fireEvent.press(toggleButton)).not.toThrow();
   });
