@@ -410,7 +410,6 @@ export const ChatInput = observer(
             <TextInput
               ref={inputRef}
               multiline
-              key={onSurfaceColor}
               placeholder={
                 palType === PalType.VIDEO
                   ? l10n.video.promptPlaceholder
@@ -563,11 +562,7 @@ export const ChatInput = observer(
             <View style={styles.rightControls}>
               {/* Send/Stop Button */}
               {isStopVisible ? (
-                <StopButton
-                  key={onSurfaceColor}
-                  color={onSurfaceColor}
-                  onPress={onStopPress}
-                />
+                <StopButton color={onSurfaceColor} onPress={onStopPress} />
               ) : palType === PalType.VIDEO && !isCameraActive ? (
                 /* Compact Start Video Button for Video Pals */
                 <TouchableOpacity
@@ -594,7 +589,6 @@ export const ChatInput = observer(
                 isSendButtonVisible && (
                   <View style={{opacity: sendButtonOpacity}}>
                     <SendButton
-                      key={onSurfaceColor}
                       color={onSurfaceColor}
                       onPress={isSendButtonEnabled ? handleSend : () => {}}
                       touchableOpacityProps={{

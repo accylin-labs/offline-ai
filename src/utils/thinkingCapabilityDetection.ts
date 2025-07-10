@@ -6,15 +6,7 @@ import {LlamaContext} from '@pocketpalai/llama.rn';
 import {Model} from './types';
 
 // List of known thinking-capable model architectures
-const KNOWN_THINKING_CAPABLE_ARCHITECTURES = [
-  'deepseek-r1',
-  'deepseek-r1-distill',
-  'qwen3',
-  'cohere-command-r',
-  'cohere-command-r-plus',
-  'smollm3',
-  'hermes-2-pro', // Supports thinking via chat template
-];
+const KNOWN_THINKING_CAPABLE_ARCHITECTURES = ['qwen3', 'smollm3'];
 
 // Thinking-related tokens to check in chat templates
 const THINKING_TOKENS = [
@@ -57,14 +49,6 @@ export async function supportsThinking(
       if (archLower.includes(architecture)) {
         return true;
       }
-    }
-  }
-
-  // Second check: Name-based detection as fallback
-  const modelNameLower = model.name.toLowerCase();
-  for (const architecture of KNOWN_THINKING_CAPABLE_ARCHITECTURES) {
-    if (modelNameLower.includes(architecture)) {
-      return true;
     }
   }
 
