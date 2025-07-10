@@ -127,29 +127,12 @@ describe('supportsThinking', () => {
     mockModel.hfModel = {
       specs: {
         gguf: {
-          architecture: 'deepseek-r1',
+          architecture: 'qwen3',
         },
       },
     } as any;
 
     expect(await supportsThinking(mockModel)).toBe(true);
-  });
-
-  it('should detect thinking support based on model name', async () => {
-    const deepSeekModel = createMockModel('DeepSeek-R1-7B');
-    expect(await supportsThinking(deepSeekModel)).toBe(true);
-
-    const qwenModel = createMockModel('Qwen3-8B-Instruct');
-    expect(await supportsThinking(qwenModel)).toBe(true);
-
-    const cohereModel = createMockModel('Cohere-Command-R-Plus');
-    expect(await supportsThinking(cohereModel)).toBe(true);
-
-    const smolModel = createMockModel('SmolLM3-1.7B');
-    expect(await supportsThinking(smolModel)).toBe(true);
-
-    const hermesModel = createMockModel('Hermes-2-Pro-Llama-3-8B');
-    expect(await supportsThinking(hermesModel)).toBe(true);
   });
 
   it('should detect thinking support based on chat template', async () => {
@@ -174,16 +157,15 @@ describe('supportsThinking', () => {
     expect(await supportsThinking(gemmaModel)).toBe(false);
   });
 
-  it('should prioritize name-based detection over template', async () => {
-    const deepSeekModelWithoutTemplate = createMockModel(
-      'DeepSeek-R1-7B',
-      'Standard template',
-    );
-    expect(await supportsThinking(deepSeekModelWithoutTemplate)).toBe(true);
-  });
-
   it('should handle models without chat templates', async () => {
-    const modelWithoutTemplate = createMockModel('DeepSeek-R1-7B');
+    const modelWithoutTemplate = createMockModel('SmolLM3-1.7B');
+    modelWithoutTemplate.hfModel = {
+      specs: {
+        gguf: {
+          architecture: 'qwen3',
+        },
+      },
+    } as any;
     expect(await supportsThinking(modelWithoutTemplate)).toBe(true);
 
     const regularModelWithoutTemplate = createMockModel('Llama-3.1-8B');
