@@ -63,7 +63,6 @@ export const createStyles = ({
       flexDirection: 'row',
       alignItems: 'center',
       gap: 4,
-      flex: 1,
     },
     inputWrapper: {
       flexDirection: 'row',
