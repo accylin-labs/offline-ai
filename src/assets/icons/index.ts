@@ -1,5 +1,7 @@
 export {default as AlertIcon} from './alert.svg';
+export {default as AtomIcon} from './atom.svg';
 export {default as BenchmarkIcon} from './benchmark.svg';
+export {default as CameraIcon} from './camera.svg';
 export {default as ChatIcon} from './chat.svg';
 export {default as CheckCircleIcon} from './check-circle.svg';
 export {default as ChevronDownIcon} from './chevron-down.svg';
@@ -35,3 +37,4 @@ export {default as StopIcon} from './stop.svg';
 export {default as ShareIcon} from './share.svg';
 export {default as TrashIcon} from './trash.svg';
 export {default as UploadIcon} from './upload.svg';
+export {default as VideoRecorderIcon} from './video-recorder.svg';
